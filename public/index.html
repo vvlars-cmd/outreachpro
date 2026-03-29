@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OutreachPro — AI Sales Engagement</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0c14;--surf:#12131e;--surf2:#191a28;--surf3:#22233a;
+  --bdr:#252638;--bdr2:#1c1d30;
+  --ink:#e8eaf8;--ink2:#9a9bc0;--muted:#4e4f72;
+  --blu:#4f72ff;--blu-lt:rgba(79,114,255,.13);--blu-md:rgba(79,114,255,.22);
+  --grn:#22d4a0;--grn-lt:rgba(34,212,160,.1);
+  --amb:#f5a623;--amb-lt:rgba(245,166,35,.1);
+  --red:#ff4f6a;--red-lt:rgba(255,79,106,.1);
+  --prp:#a855f7;--prp-lt:rgba(168,85,247,.12);
+  --cyn:#22d4e8;
+  --head:'Syne',sans-serif;--body:'DM Sans',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:10px;--sw:228px;
+}
+html,body{height:100%;overflow:hidden;font-family:var(--body);font-size:14px;background:var(--bg);color:var(--ink)}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:4px}
+input,select,button,textarea{font-family:inherit}
+code{font-family:var(--mono);font-size:.84em;background:var(--surf2);padding:1px 5px;border-radius:4px;color:var(--cyn)}
+a{color:var(--blu);text-decoration:none}
+/* LAYOUT */
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sw);min-width:var(--sw);background:var(--surf);border-right:1px solid var(--bdr);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+/* BRAND */
+.brand{padding:18px 16px 12px;border-bottom:1px solid var(--bdr2);flex-shrink:0}
+.brand-eye{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px}
+.brand-name{font-family:var(--head);font-size:19px;font-weight:800;color:var(--ink)}
+.brand-name span{color:var(--blu)}
+.brand-sub{font-size:10px;color:var(--ink2);margin-top:2px}
+/* WORKSPACE BADGE */
+.ws-badge{margin:10px 10px 0;background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:8px 10px;cursor:pointer;transition:border-color .15s}
+.ws-badge.cw{border-color:rgba(34,212,160,.3);background:rgba(34,212,160,.06)}
+.ws-eye{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+.ws-name{font-family:var(--head);font-size:13px;font-weight:700;color:var(--grn);margin-top:2px}
+.ws-live{display:inline-flex;align-items:center;gap:4px;margin-top:4px}
+.ws-dot{width:5px;height:5px;border-radius:50%;background:var(--grn);animation:pulse 2s ease infinite}
+.ws-live span{font-size:9px;font-weight:700;color:var(--grn);letter-spacing:.1em}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* NAV */
+.nav-scroll{flex:1;overflow-y:auto;padding:8px 0}
+.sec-label{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;padding:10px 20px 4px}
+.ni{display:flex;align-items:center;gap:9px;width:calc(100% - 16px);margin:0 8px;padding:8px 10px;border:none;background:transparent;color:var(--ink2);font-size:12.5px;font-weight:500;font-family:var(--head);border-radius:8px;cursor:pointer;text-align:left;transition:all .14s;white-space:nowrap;position:relative}
+.ni:hover{background:var(--surf2);color:var(--ink)}
+.ni.on{background:var(--blu-lt);color:var(--blu);font-weight:700}
+.ni.on::before{content:'';position:absolute;left:-8px;top:6px;bottom:6px;width:3px;background:var(--blu);border-radius:0 3px 3px 0}
+.ni svg{flex-shrink:0;width:14px;height:14px;opacity:.75}
+.ni.on svg{opacity:1}
+.nbadge{margin-left:auto;font-size:10px;font-weight:700;background:var(--surf3);color:var(--ink2);padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
+.ni.on .nbadge{background:var(--blu-md);color:var(--blu)}
+.nbadge.grn{background:var(--grn-lt)!important;color:var(--grn)!important}
+.nbadge.red{background:var(--red-lt)!important;color:var(--red)!important}
+.nav-div{height:1px;background:var(--bdr2);margin:6px 12px}
+/* SIDEBAR FOOT */
+.sidebar-foot{padding:12px;border-top:1px solid var(--bdr2);flex-shrink:0}
+.user-pill{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:background .15s}
+.user-pill:hover{background:var(--surf2)}
+.avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--blu),var(--prp));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:#fff}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-plan{font-size:10px;font-weight:500}
+/* TOPBAR */
+.topbar{height:52px;background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.topbar-title{font-family:var(--head);font-size:15px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.lang-sel{background:var(--surf2);border:1px solid var(--bdr);color:var(--ink);padding:4px 8px;border-radius:7px;font-size:11px;cursor:pointer}
+.lang-sel:focus{outline:none;border-color:var(--blu)}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;font-family:var(--head);transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--blu);color:#fff}
+.btn-primary:hover{background:#3d5fe8}
+.btn-ghost{background:transparent;color:var(--ink2);border:1px solid var(--bdr)}
+.btn-ghost:hover{color:var(--ink);border-color:var(--ink2)}
+.btn-green{background:var(--grn);color:#000}
+.btn-green:hover{filter:brightness(1.1)}
+.btn-danger{background:var(--red-lt);color:var(--red);border:1px solid rgba(255,79,106,.2)}
+.btn-sm{padding:5px 11px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:10px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+/* CONTENT AREA */
+.content{flex:1;overflow-y:auto;padding:22px}
+.view{display:none;animation:fadein .22s ease}
+.view.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+/* CARDS */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.card-pad{padding:18px 20px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-title{font-family:var(--head);font-size:14px;font-weight:700}
+/* INPUTS */
+.inp{border:1px solid var(--bdr);border-radius:8px;padding:8px 12px;font-size:13px;color:var(--ink);outline:none;background:var(--surf2);transition:border-color .14s;width:100%}
+.inp:focus{border-color:var(--blu);box-shadow:0 0 0 3px var(--blu-lt)}
+textarea.inp{resize:vertical;line-height:1.6;min-height:80px}
+select.inp{cursor:pointer}
+.inp-label{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-bottom:5px;display:block}
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+/* KPI */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi{padding:16px;border-radius:var(--r);border:1px solid var(--bdr);background:var(--surf);position:relative;overflow:hidden}
+.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.kpi.blue::before{background:var(--blu)}.kpi.green::before{background:var(--grn)}
+.kpi.amber::before{background:var(--amb)}.kpi.purple::before{background:var(--prp)}
+.kpi.red::before{background:var(--red)}
+.kpi-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.kpi-val{font-family:var(--head);font-size:30px;font-weight:800;line-height:1}
+.kpi-sub{font-size:11px;color:var(--grn);margin-top:4px}
+.kpi-sub.neg{color:var(--red)}
+.kpi-icon{position:absolute;right:14px;top:14px;font-size:20px;opacity:.6}
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--bdr);white-space:nowrap}
+td{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--bdr2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(79,114,255,.03)}
+/* STATUS PILLS */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.pill-blue{background:var(--blu-lt);color:var(--blu)}
+.pill-green{background:var(--grn-lt);color:var(--grn)}
+.pill-amber{background:var(--amb-lt);color:var(--amb)}
+.pill-red{background:var(--red-lt);color:var(--red)}
+.pill-muted{background:var(--surf2);color:var(--muted)}
+.pill-purple{background:var(--prp-lt);color:var(--prp)}
+/* PROGRESS */
+.progress-wrap{height:4px;background:var(--surf2);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;background:var(--blu);transition:width .4s}
+.progress-fill.green{background:var(--grn)}
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surf);color:var(--ink);padding:11px 18px;border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--bdr);box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:9999;transform:translateY(80px);opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{border-color:var(--grn);background:rgba(34,212,160,.1)}
+.toast.err{border-color:var(--red);background:rgba(255,79,106,.1)}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surf);border:1px solid var(--bdr);border-radius:14px;padding:24px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.modal-title{font-family:var(--head);font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;color:var(--ink2);cursor:pointer;font-size:18px;line-height:1}
+/* SECTION HEADER */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-title{font-family:var(--head);font-size:16px;font-weight:700}
+/* LOG BOX */
+.log-box{background:#0a0b12;border:1px solid var(--bdr);border-radius:8px;padding:12px;height:160px;overflow-y:auto;font-family:var(--mono);font-size:11px;margin-top:10px}
+.log-info{color:var(--ink2)}.log-ok{color:var(--grn)}.log-err{color:var(--red)}.log-prog{color:var(--amb)}
+/* CHIPS */
+.chip{padding:4px 12px;border-radius:20px;font-size:11px;background:var(--surf2);border:1px solid var(--bdr);color:var(--ink2);cursor:pointer;transition:all .14s;display:inline-flex;align-items:center;gap:4px}
+.chip.on{background:var(--blu-lt);border-color:var(--blu);color:var(--blu)}
+/* COMPOSER */
+.composer-grid{display:grid;grid-template-columns:1fr 310px;gap:16px;align-items:start}
+.composer-toolbar{display:flex;gap:4px;padding:8px 12px;background:var(--surf2);border-bottom:1px solid var(--bdr);flex-wrap:wrap;align-items:center}
+.tool-btn{background:none;border:1px solid var(--bdr);border-radius:5px;color:var(--ink2);padding:4px 9px;font-size:11px;cursor:pointer;transition:all .14s;min-width:28px;text-align:center}
+.tool-btn:hover,.tool-btn.on{background:var(--blu-lt);color:var(--blu);border-color:var(--blu)}
+.composer-editor{min-height:240px;padding:14px;background:var(--surf2);color:var(--ink);outline:none;font-size:13px;line-height:1.7}
+.composer-editor:empty::before{content:attr(data-placeholder);color:var(--muted)}
+.token-chip{padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--mono);background:var(--prp-lt);color:var(--prp);cursor:pointer;border:1px solid rgba(168,85,247,.2);transition:all .14s;display:inline-block}
+.token-chip:hover{background:var(--prp);color:#fff}
+.preview-pane{background:#fff;border-radius:8px;padding:16px;min-height:200px;font-size:13px;color:#1a1a2e;line-height:1.6}
+.ai-badge{font-size:10px;font-weight:700;color:var(--blu);letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:5px;margin-bottom:8px}
+.ai-result-box{background:var(--blu-lt);border:1px solid var(--blu-md);border-radius:6px;padding:10px;font-size:12px;color:var(--ink);margin-top:8px;line-height:1.5;display:none}
+.tpl-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr2);font-size:12px}
+.tpl-item:last-child{border-bottom:none}
+/* UNIBOX */
+.unibox-layout{display:grid;grid-template-columns:270px 1fr;gap:0;height:calc(100vh - 115px);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.inbox-list{border-right:1px solid var(--bdr);overflow-y:auto;background:var(--surf)}
+.inbox-item{padding:12px 14px;border-bottom:1px solid var(--bdr2);cursor:pointer;transition:background .12s}
+.inbox-item:hover{background:var(--surf2)}
+.inbox-item.on{background:var(--blu-lt);border-right:3px solid var(--blu)}
+.inbox-from{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox-preview{font-size:11px;color:var(--ink2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inbox-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.inbox-time{font-size:10px;color:var(--muted)}
+.inbox-detail{display:flex;flex-direction:column;background:var(--surf2)}
+.inbox-thread{flex:1;padding:20px;overflow-y:auto}
+.inbox-reply-area{padding:14px;border-top:1px solid var(--bdr)}
+.ai-label-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700}
+.ai-int{background:var(--grn-lt);color:var(--grn)}.ai-notnow{background:var(--amb-lt);color:var(--amb)}
+.ai-meet{background:var(--blu-lt);color:var(--blu)}.ai-other{background:var(--surf2);color:var(--muted)}
+/* KANBAN */
+.kanban{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px;min-height:300px}
+.kanban-col{min-width:195px;flex-shrink:0}
+.kanban-col-head{padding:10px 12px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:8px 8px 0 0;background:var(--surf2);border:1px solid var(--bdr);border-bottom:none;color:var(--ink2)}
+.kanban-body{background:var(--surf2);border:1px solid var(--bdr);border-top:none;border-radius:0 0 8px 8px;min-height:100px;padding:8px}
+.kcard{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:10px;margin-bottom:8px;cursor:pointer;transition:all .14s}
+.kcard:hover{border-color:var(--blu)}
+.kc-name{font-size:12px;font-weight:600;margin-bottom:3px}
+.kc-val{font-size:11px;color:var(--grn);font-weight:600}
+.kc-sub{font-size:10px;color:var(--muted)}
+/* WARMUP */
+.warmup-ring-wrap{position:relative;width:110px;height:110px;margin:0 auto 12px}
+.warmup-score{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:26px;font-weight:800;color:var(--grn)}
+.warmup-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--bdr2)}
+/* CHART */
+.bar-chart{display:flex;align-items:flex-end;gap:5px;height:120px;padding:0 0 2px}
+.bar-grp{flex:1;display:flex;align-items:flex-end;gap:2px;height:100%}
+.bar{flex:1;border-radius:3px 3px 0 0;min-width:8px;transition:opacity .2s;cursor:default}
+.bar:hover{opacity:.75}
+.chart-labels{display:flex;gap:5px;margin-top:4px}
+.chart-lbl{flex:1;font-size:9px;color:var(--muted);text-align:center}
+/* SETTINGS TABS */
+.stabs{display:flex;gap:4px;background:var(--surf2);border-radius:9px;padding:4px;margin-bottom:20px;flex-wrap:wrap}
+.stab{padding:6px 14px;border-radius:7px;border:none;background:none;color:var(--ink2);font-size:12px;font-weight:600;font-family:var(--head);cursor:pointer;transition:all .15s}
+.stab:hover{color:var(--ink)}.stab.on{background:var(--surf);color:var(--blu);box-shadow:0 0 0 1px var(--bdr)}
+.stab-panel{display:none}.stab-panel.on{display:block}
+.sig-preview{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:12px;font-family:var(--mono);font-size:11px;color:var(--ink2);margin-top:10px;line-height:1.7;white-space:pre-wrap}
+/* HELP */
+.help-layout{display:grid;grid-template-columns:190px 1fr;gap:0;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;min-height:400px}
+.help-nav{border-right:1px solid var(--bdr);padding:10px 0;background:var(--surf)}
+.help-ni{padding:8px 16px;font-size:12px;cursor:pointer;color:var(--ink2);transition:all .14s}
+.help-ni:hover{background:var(--surf2);color:var(--ink)}.help-ni.on{background:var(--blu-lt);color:var(--blu);font-weight:600}
+.help-body{padding:20px;font-size:13px;line-height:1.75;color:var(--ink2);overflow-y:auto}
+.help-body h2{font-family:var(--head);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:10px}
+.help-body h3{font-size:13px;font-weight:700;color:var(--ink);margin:14px 0 6px}
+.help-body p{margin-bottom:10px}.help-body ul{padding-left:18px;margin-bottom:10px}
+.help-body li{margin-bottom:4px}
+/* INBOX TESTER */
+.score-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:20px;font-weight:800;border:4px solid}
+.score-high{border-color:var(--grn);color:var(--grn)}.score-mid{border-color:var(--amb);color:var(--amb)}.score-low{border-color:var(--red);color:var(--red)}
+/* CYCLEWASH */
+.cw-header{background:linear-gradient(135deg,rgba(34,212,160,.1),rgba(34,212,160,.02));border:1px solid rgba(34,212,160,.2);border-radius:var(--r);padding:16px 20px;margin-bottom:20px}
+/* WARP */
+.warp-btn{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(79,114,255,.15),rgba(168,85,247,.1));border:1px solid var(--blu-md);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--blu);transition:all .2s}
+.warp-btn.on{background:linear-gradient(135deg,var(--blu),var(--prp));color:#fff;border-color:transparent}
+.warp-dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:wp 1s ease infinite}
+@keyframes wp{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+/* WIZARD */
+.wizard-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2000;align-items:center;justify-content:center}
+.wizard-ov.show{display:flex}
+.wizard-box{background:var(--surf);border:1px solid var(--bdr);border-radius:16px;padding:28px;width:90%;max-width:560px}
+.wiz-steps{display:flex;gap:5px;margin-bottom:22px}
+.wiz-step{flex:1;height:3px;border-radius:2px;background:var(--surf2);transition:background .3s}
+.wiz-step.done{background:var(--blu)}.wiz-step.active{background:var(--grn)}
+.wiz-icon{font-size:42px;text-align:center;margin-bottom:12px}
+.wiz-title{font-family:var(--head);font-size:18px;font-weight:800;text-align:center;margin-bottom:8px}
+.wiz-desc{font-size:13px;color:var(--ink2);text-align:center;line-height:1.65;margin-bottom:16px}
+.wiz-tip{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:12px;font-size:12px;color:var(--muted)}
+.wiz-actions{display:flex;justify-content:space-between;align-items:center;margin-top:20px}
+/* STAT ROW */
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--bdr2);font-size:13px}
+.stat-row:last-child{border-bottom:none}
+/* EMPTY STATE */
+.empty{padding:50px 20px;text-align:center;color:var(--muted)}
+.empty h3{font-family:var(--head);font-size:15px;font-weight:700;color:var(--ink2);margin-bottom:8px}
+.empty p{font-size:12px;line-height:1.5}
+/* SEQUENCE */
+.seq-step{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:14px;margin-bottom:8px;position:relative}
+.seq-num{width:22px;height:22px;border-radius:50%;background:var(--blu);color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+/* event card */
+.ev-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .15s}
+.ev-card:hover{border-color:var(--blu);transform:translateY(-1px)}
+
+/* v2.3 size overrides */
+body { font-size: 15px !important; }
+.ni { font-size: 15px !important; padding: 11px 16px !important; font-weight: 600 !important; gap: 10px !important; }
+.ni .ni-label { font-size: 15px !important; font-weight: 600 !important; }
+.ni svg { width: 20px !important; height: 20px !important; }
+.sec-label { font-size: 11px !important; padding: 14px 16px 5px !important; }
+.brand-name { font-size: 22px !important; font-weight: 800 !important; }
+.ws-name { font-size: 14px !important; font-weight: 700 !important; }
+.topbar-title { font-size: 21px !important; font-weight: 700 !important; }
+.topbar { height: 62px !important; }
+.btn { font-size: 15px !important; padding: 11px 22px !important; font-weight: 700 !important; cursor: pointer !important; }
+.btn-sm { font-size: 14px !important; padding: 9px 16px !important; }
+.btn-xs { font-size: 13px !important; padding: 7px 12px !important; }
+.kpi-val { font-size: 30px !important; font-weight: 800 !important; }
+.kpi-label { font-size: 13px !important; font-weight: 600 !important; }
+.sec-title { font-size: 21px !important; font-weight: 700 !important; }
+.card-title { font-size: 16px !important; font-weight: 700 !important; }
+.inp { font-size: 15px !important; padding: 11px 13px !important; }
+.stat-row { font-size: 14px !important; padding: 10px 0 !important; }
+.pill { font-size: 13px !important; padding: 4px 11px !important; }
+
+/* Tooltips */
+[title] { position: relative; }
+[data-tip]:hover::after, .has-tip:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1d2e;
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  z-index: 9999;
+  pointer-events: none;
+  font-family: var(--body);
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-eye">AI Sales Platform</div>
+    <div class="brand-name">Outreach<span>Pro</span></div>
+    <div class="brand-sub">Instantly.ai Clone + CycleWASH</div>
+  </div>
+  <div class="ws-badge cw" onclick="nav('cyclewash')" title="CycleWASH — your active workspace">
+    <div class="ws-eye">Active Workspace</div>
+    <div class="ws-name">cycleWASH</div>
+    <div class="ws-live"><div class="ws-dot"></div><span>LIVE</span></div>
+  </div>
+  <div class="nav-scroll">
+    <div class="sec-label">Overview</div>
+    <button class="ni on" data-view="dashboard" onclick="nav('dashboard')" title="Dashboard — overview of leads, campaigns and pipeline">
+      <svg viewBox="0 0 15 15" fill="currentColor"><rect x="0" y="0" width="6.5" height="6.5" rx="1.5"/><rect x="8.5" y="0" width="6.5" height="6.5" rx="1.5"/><rect x="0" y="8.5" width="6.5" height="6.5" rx="1.5"/><rect x="8.5" y="8.5" width="6.5" height="6.5" rx="1.5"/></svg>
+      Dashboard
+    </button>
+    <div class="sec-label">Outreach</div>
+    <button class="ni" data-view="campaigns" onclick="nav('campaigns')" title="Campaigns — manage your cold email sequences">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="3" width="13" height="10" rx="1.5"/><path d="M1 6l6.5 4L14 6"/></svg>
+      Campaigns <span class="nbadge" id="b-campaigns">0</span>
+    </button>
+    <button class="ni" data-view="sequences" onclick="nav('sequences')" title="Sequences — build multi-step email workflows">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="2.5" r="1.5"/><circle cx="7.5" cy="7.5" r="1.5"/><circle cx="7.5" cy="12.5" r="1.5"/><path d="M7.5 4v2M7.5 9v2"/></svg>
+      Sequences
+    </button>
+    <button class="ni" data-view="unibox" onclick="nav('unibox')" title="Unibox — unified inbox for all replies">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="13" height="11" rx="1.5"/><path d="M1 5h13M5 9h5"/></svg>
+      Unibox <span class="nbadge red" id="b-unibox">3</span>
+    </button>
+    <div class="sec-label">Leads</div>
+    <button class="ni" data-view="leads" onclick="nav('leads')" title="Lead Finder — browse and manage your leads">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="4.5" r="2.5"/><path d="M2 13c0-3 2.5-5.5 5.5-5.5S13 10 13 13"/></svg>
+      Lead Finder <span class="nbadge" id="b-leads">25</span>
+    </button>
+    <button class="ni" data-view="apify" onclick="nav('apify')" title="Apify Scraper — find leads on Google Maps">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="5.5"/><path d="M7.5 2v11M2 7.5h11"/></svg>
+      Apify Scraper
+    </button>
+    <button class="ni" data-view="gm-scraper" onclick="nav('gm-scraper')" title="Gmail Scraper — extract leads from your inbox">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="3" width="13" height="9" rx="1.5"/><path d="M1 5l6.5 3.5L14 5"/></svg>
+      Gmail Scraper
+    </button>
+    <div class="sec-label">Compose</div>
+    <button class="ni" data-view="composer" onclick="nav('composer')" title="Email Composer — write AI-personalised emails">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 11L1 14l3-1 8-8-2-2-8 8z"/><path d="M10 3l2 2"/></svg>
+      Email Composer
+    </button>
+    <div class="sec-label">Optimise</div>
+    <button class="ni" data-view="warmup" onclick="nav('warmup')" title="Email Warmup — build sender reputation">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7.5 1v13M3.5 5c0-2.2 1.8-4 4-4s4 1.8 4 4"/></svg>
+      Email Warmup
+    </button>
+    <button class="ni" data-view="analytics" onclick="nav('analytics')" title="Analytics — track opens, replies and pipeline">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="10" width="3" height="4"/><rect x="6" y="6" width="3" height="8"/><rect x="11" y="2" width="3" height="12"/></svg>
+      Analytics
+    </button>
+    <button class="ni" data-view="inbox-test" onclick="nav('inbox-test')" title="Inbox Tester — check your spam score">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="6"/><path d="M7.5 4.5v4l2 2"/></svg>
+      Inbox Tester
+    </button>
+    <div class="sec-label">CRM</div>
+    <button class="ni" data-view="crm" onclick="nav('crm')" title="CRM Pipeline — track deals from prospect to won">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="5" height="13" rx="1"/><rect x="9" y="1" width="5" height="9" rx="1"/></svg>
+      CRM Pipeline
+    </button>
+    <button class="ni" data-view="accounts" onclick="nav('accounts')" title="Email Accounts — manage sending accounts">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="3" width="13" height="9" rx="1.5"/><path d="M1 7h13"/></svg>
+      Email Accounts
+    </button>
+    <div class="nav-div"></div>
+    <button class="ni" data-view="cyclewash" onclick="nav('cyclewash')" title="CycleWASH — your active workspace">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="5"/><path d="M4 7.5a3.5 3.5 0 017 0"/></svg>
+      CycleWASH
+    </button>
+    <button class="ni" data-view="settings" onclick="nav('settings')" title="Settings — configure API keys and preferences">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="2"/><path d="M7.5 1v2M7.5 12v2M1 7.5h2M12 7.5h2M3 3l1.4 1.4M10.6 10.6L12 12M3 12l1.4-1.4M10.6 4.4L12 3"/></svg>
+      Settings <span class="nbadge red" id="b-settings" style="display:none">!</span>
+    </button>
+    <button class="ni" data-view="help" onclick="nav('help')" title="Help — tutorials and documentation">
+      <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="6"/><path d="M7.5 11v-.5M7.5 4.5c0 1.5-2 2-2 3.5h4c0-1.5-2-2-2-3.5z"/></svg>
+      Help
+    </button>
+  </div>
+  <div class="sidebar-foot">
+    <div class="user-pill">
+      <div class="avatar">CW</div>
+      <div class="user-info">
+        <div class="user-name" id="u-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4dddad2dbf4d7cdd7d8d1c3d5c7dc9ad0d1">[email&#160;protected]</a></div>
+        <div class="user-plan" id="u-gmail" style="color:var(--red)">● Not connected</div>
+      </div>
+    </div>
+  </div>
+</aside>
+<!-- ═══════════ MAIN ═══════════ -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-title" id="top-title">Dashboard</div>
+    <div class="topbar-actions">
+      <div class="warp-btn" id="warp-btn" onclick="toggleWarp()" title="WARP mode — AI auto-generates your entire campaign"><div class="warp-dot"></div><span id="warp-lbl">WARP</span></div>
+      <select class="lang-sel" id="lang-sel" onchange="setLang(this.value)">
+        <option value="en">🇬🇧 EN</option><option value="de">🇩🇪 DE</option>
+        <option value="fr">🇫🇷 FR</option><option value="es">🇪🇸 ES</option>
+        <option value="it">🇮🇹 IT</option><option value="nl">🇳🇱 NL</option>
+      </select>
+      <button class="btn btn-ghost btn-sm" onclick="showWizard()">Tutorial</button>
+      <button class="btn btn-primary btn-sm" onclick="openNewCampaignModal()" title="Create a new email campaign">+ Campaign</button>
+    </div>
+  </header>
+  <div class="content" id="content">
+
+    <!-- ════════ DASHBOARD ════════ -->
+    <div class="view on" id="view-dashboard">
+      <div class="kpi-grid" id="kpi-dash"></div>
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">Events 2026 — CycleWASH</div><button class="btn btn-ghost btn-sm" onclick="nav('cyclewash')" title="CycleWASH — your active workspace">View all →</button></div>
+          <div class="grid2" id="dash-events"></div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">Campaign Performance (7d)</div></div>
+          <div class="bar-chart" id="dash-chart"></div>
+          <div class="chart-labels" id="dash-chart-lbl"></div>
+          <div style="display:flex;gap:14px;margin-top:8px;font-size:11px">
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--blu);opacity:.6;display:inline-block"></span>Sent</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:2px;background:var(--grn);display:inline-block"></span>Replied</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">Campaigns</div><button class="btn btn-ghost btn-sm" onclick="nav('campaigns')" title="Campaigns — manage your cold email sequences">All →</button></div>
+          <div id="dash-campaigns"></div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">AI Copilot <span class="pill pill-blue" style="font-size:10px">claude-sonnet-4</span></div></div>
+          <div id="copilot-log" style="background:var(--surf2);border-radius:8px;padding:12px;min-height:90px;max-height:180px;overflow-y:auto;font-size:12px;color:var(--ink2);margin-bottom:10px">
+            <span style="color:var(--muted);font-style:italic">Ask me anything about your outreach...</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <input class="inp" id="copilot-input" placeholder="e.g. Find leads in Frankfurt, write a cold email sequence..." onkeydown="if(event.key==='Enter')copilotSend()"/>
+            <button class="btn btn-primary btn-sm" onclick="copilotSend()">↵</button>
+          </div>
+        </div>
+      </div>
+    
+      <div style="padding:12px 14px;border-top:1px solid var(--bdr);margin-top:auto">
+        <button onclick="hardReset()" title="Clear all local data and reload" style="width:100%;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:1.5px solid #fee2e2;background:#fff5f5;color:#dc2626;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--head)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          Hard Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- ════════ CAMPAIGNS ════════ -->
+    <div class="view" id="view-campaigns">
+      <div class="sec-head">
+        <div class="sec-title">Campaigns</div>
+        <div style="display:flex;gap:8px">
+          <input class="inp" id="camp-q" placeholder="Search..." style="width:180px" oninput="renderCampaigns()"/>
+          <select class="inp" style="width:120px" id="camp-f" onchange="renderCampaigns()">
+            <option value="all">All status</option><option value="active">Active</option>
+            <option value="paused">Paused</option><option value="draft">Draft</option>
+          </select>
+          <button class="btn btn-primary btn-sm" onclick="openNewCampaignModal()" title="Create a new email campaign">+ New</button>
+        </div>
+      </div>
+      <div class="card" id="campaigns-wrap"></div>
+    </div>
+
+    <!-- ════════ SEQUENCES ════════ -->
+    <div class="view" id="view-sequences">
+      <div class="sec-head"><div class="sec-title">Sequence Builder</div><button class="btn btn-primary btn-sm" onclick="addSeqStep()">+ Add Step</button></div>
+      <div class="grid2" style="align-items:start">
+        <div>
+          <div class="card card-pad" style="margin-bottom:14px">
+            <div class="inp-label">Campaign</div>
+            <select class="inp" id="seq-camp-sel" onchange="loadSeq()"></select>
+          </div>
+          <div id="seq-steps-wrap"></div>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px" onclick="saveSeq()">Save Sequence</button>
+        </div>
+        <div class="card card-pad" id="step-editor">
+          <div class="empty"><h3>Select a step to edit</h3><p>Click any step in the sequence list.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ UNIBOX ════════ -->
+    <div class="view" id="view-unibox">
+      <div class="sec-head">
+        <div class="sec-title">Unibox</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="filterInbox('all')">All</button>
+          <button class="btn btn-ghost btn-sm" onclick="filterInbox('interested')">🟢 Interested</button>
+          <button class="btn btn-ghost btn-sm" onclick="filterInbox('not_now')">🟡 Not now</button>
+          <button class="btn btn-ghost btn-sm" onclick="filterInbox('meeting')">🔵 Meeting</button>
+        </div>
+      </div>
+      <div class="unibox-layout">
+        <div class="inbox-list" id="inbox-list"></div>
+        <div class="inbox-detail">
+          <div class="inbox-thread" id="inbox-thread">
+            <div class="empty"><h3>Select a conversation</h3><p>Click a lead on the left to read their reply.</p></div>
+          </div>
+          <div class="inbox-reply-area" id="inbox-reply" style="display:none">
+            <textarea class="inp" rows="3" id="reply-txt" placeholder="Write a reply..."></textarea>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn btn-primary btn-sm" onclick="sendReply()">Send Reply</button>
+              <button class="btn btn-ghost btn-sm" onclick="aiAutoLabel()">AI Label</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ LEADS ════════ -->
+    <div class="view" id="view-leads">
+      <div class="sec-head">
+        <div class="sec-title">Lead Finder</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="nav('apify')" title="Apify Scraper — find leads on Google Maps">Scrape with Apify</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportLeadsCSV()">Export CSV</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+        <input class="inp" id="lead-q" placeholder="Search name, city, email..." style="flex:1;min-width:180px" oninput="renderLeads()"/>
+        <select class="inp" style="width:auto" id="lead-st" onchange="renderLeads()"><option value="all">All status</option><option>Neu</option><option>Kontaktiert</option><option>Qualifiziert</option><option>Abgelehnt</option></select>
+        <select class="inp" style="width:auto" id="lead-src" onchange="renderLeads()"><option value="all">All sources</option><option>Apify</option><option>Gmail</option><option>Manual</option></select>
+        <span id="lead-cnt" style="font-size:12px;color:var(--muted)">0 leads</span>
+      </div>
+      <div class="card tbl-wrap">
+        <table><thead><tr>
+          <th><input type="checkbox" id="sel-all" onchange="selAllLeads(this.checked)"/></th>
+          <th>Company</th><th>City</th><th>Email</th><th>Category</th><th>★</th><th>Source</th><th>Status</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="leads-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ════════ COMPOSER ════════ -->
+    <div class="view" id="view-composer">
+      <div class="sec-head">
+        <div class="sec-title">HTML Email Composer</div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="loadTpl()">Load Template</button>
+          <button class="btn btn-ghost btn-sm" onclick="saveTpl()">Save Template</button>
+        </div>
+      </div>
+      <div class="composer-grid">
+        <!-- LEFT: editor -->
+        <div class="card" style="overflow:hidden">
+          <div class="composer-toolbar">
+            <button class="tool-btn" onclick="fmt('bold')"><b>B</b></button>
+            <button class="tool-btn" onclick="fmt('italic')"><i>I</i></button>
+            <button class="tool-btn" onclick="fmt('underline')"><u>U</u></button>
+            <button class="tool-btn" onclick="fmtLink()">🔗</button>
+            <button class="tool-btn" onclick="fmtH2()">H2</button>
+            <button class="tool-btn" onclick="fmtHR()">—</button>
+            <button class="tool-btn" onclick="fmtUL()">≡</button>
+            <div style="flex:1"></div>
+            <button class="tool-btn" id="prev-toggle" onclick="togglePreview()">Preview</button>
+          </div>
+          <div style="padding:12px 14px;border-bottom:1px solid var(--bdr);background:var(--surf2)">
+            <div class="grid2" style="gap:10px;margin-bottom:10px">
+              <div><div class="inp-label">To</div><input class="inp" id="c-to" placeholder="{{email}}"/></div>
+              <div><div class="inp-label">From</div><input class="inp" id="c-from" value="info@cyclewash.de"/></div>
+            </div>
+            <div class="inp-label">Subject</div>
+            <input class="inp" id="c-subject" placeholder="Einladung: cycleWASH Pro Platinum – Live-Demo {{date}} in {{city}}"/>
+            <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--muted)">Insert token:</span>
+              <span class="token-chip" onclick="insertTok('{{name}}')">{{name}}</span>
+              <span class="token-chip" onclick="insertTok('{{company}}')">{{company}}</span>
+              <span class="token-chip" onclick="insertTok('{{city}}')">{{city}}</span>
+              <span class="token-chip" onclick="insertTok('{{date}}')">{{date}}</span>
+              <span class="token-chip" onclick="insertTok('{{product}}')">{{product}}</span>
+              <span class="token-chip" onclick="insertTok('{{category}}')">{{category}}</span>
+              <span class="token-chip" onclick="insertTok('{{rating}}')">{{rating}}</span>
+            </div>
+          </div>
+          <div id="editor-wrap">
+            <div class="composer-editor" id="c-editor" contenteditable="true" data-placeholder="Write your HTML email here…"></div>
+          </div>
+          <div id="preview-wrap" style="display:none;padding:16px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Preview for:
+              <select class="inp" style="width:auto;padding:2px 8px;font-size:11px;margin-left:6px" id="prev-lead-sel" onchange="updatePreview()"><option value="">— lead —</option></select>
+            </div>
+            <div class="preview-pane" id="prev-pane">Preview will appear here</div>
+          </div>
+          <div style="padding:12px 14px;border-top:1px solid var(--bdr);display:flex;gap:8px;flex-wrap:wrap;background:var(--surf2)">
+            <button class="btn btn-ghost btn-sm" onclick="saveDraft()">📧 Save as Gmail Draft</button>
+            <button class="btn btn-primary btn-sm" onclick="addToCampaign()">+ Add to Campaign</button>
+            <button class="btn btn-ghost btn-sm" onclick="exportHtml()">↓ Export .html</button>
+          </div>
+        </div>
+        <!-- RIGHT: AI assist + templates -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card card-pad">
+            <div class="ai-badge">✦ AI Draft Assistant</div>
+            <div class="inp-label" style="margin-top:6px">Lead</div>
+            <select class="inp" id="ai-lead-sel" style="margin-bottom:10px"><option value="">Select lead…</option></select>
+            <div class="inp-label">Output language</div>
+            <select class="inp" id="ai-lang" style="margin-bottom:10px">
+              <option value="de">Deutsch</option><option value="en">English</option>
+              <option value="fr">Français</option><option value="es">Español</option>
+              <option value="it">Italiano</option><option value="nl">Nederlands</option>
+            </select>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="aiDraft()" id="ai-draft-btn">✨ Generate Opening</button>
+            <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:6px" onclick="aiBulk()" id="ai-bulk-btn">⚡ Personalise All Leads</button>
+            <div id="ai-prog" style="display:none;margin-top:10px">
+              <div id="ai-prog-lbl" style="font-size:11px;color:var(--muted);margin-bottom:4px">Processing…</div>
+              <div class="progress-wrap"><div class="progress-fill green" id="ai-prog-bar" style="width:0"></div></div>
+            </div>
+            <div class="ai-result-box" id="ai-result"></div>
+            <button class="btn btn-ghost btn-sm" id="ai-insert-btn" onclick="insertAIText()" style="display:none;width:100%;justify-content:center;margin-top:8px">↑ Insert into email</button>
+          </div>
+          <div class="card card-pad">
+            <div class="card-title" style="margin-bottom:12px">Template Library</div>
+            <div id="tpl-list"></div>
+            <div style="margin-top:10px">
+              <input class="inp" id="tpl-name-inp" placeholder="Template name…" style="margin-bottom:6px"/>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center" onclick="saveTpl()">Save</button>
+                <button class="btn btn-ghost btn-sm" onclick="importHtml()">Import .html</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ APIFY SCRAPER ════════ -->
+    <div class="view" id="view-apify">
+      <div class="sec-head"><div class="sec-title">Apify Lead Scraper</div><span class="pill pill-purple">compass/crawler-google-places</span></div>
+      <div class="grid2" style="align-items:start">
+        <div>
+          <div class="card card-pad" style="margin-bottom:14px">
+            <div class="inp-label">Cities (comma-separated)</div>
+            <input class="inp" id="ap-cities" placeholder="Frankfurt, Köln, Düsseldorf" style="margin-bottom:12px"/>
+            <div class="inp-label">Search terms</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px" id="ap-terms-wrap"></div>
+            <div style="display:flex;gap:8px;margin-bottom:12px">
+              <input class="inp" id="ap-new-term" placeholder="Add term…" onkeydown="if(event.key==='Enter')addTerm()"/>
+              <button class="btn btn-ghost btn-sm" onclick="addTerm()">Add</button>
+            </div>
+            <div class="grid2" style="gap:10px;margin-bottom:14px">
+              <div><div class="inp-label">Max per search</div><input class="inp" type="number" id="ap-max" value="15" min="1" max="100"/></div>
+              <div><div class="inp-label">Min rating ★</div><input class="inp" type="number" id="ap-stars" value="3.5" step="0.5" min="0" max="5"/></div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" id="ap-run-btn" onclick="runApify()">▶ Scrape Leads</button>
+            <div class="log-box" id="ap-log" style="display:none"></div>
+          </div>
+          <div class="card card-pad" style="font-size:12px;color:var(--muted)">
+            ℹ️ Runs <code>compass/crawler-google-places</code>. Fields extracted: <code>name · website · email · phone · category · rating · address</code>. Results deduplicated by name+city before saving to <code>leads.json</code>.
+          </div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">Results</div><span id="ap-result-cnt" class="pill pill-green" style="display:none">0 new</span></div>
+          <div id="ap-results">
+            <div class="empty"><h3>Run a scrape</h3><p>Results appear here after scraping.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ GMAIL SCRAPER ════════ -->
+    <div class="view" id="view-gm-scraper">
+      <div class="sec-head">
+        <div class="sec-title">Gmail Inbox Scraper</div>
+        <button class="btn btn-green btn-sm" id="gm-auth-btn" onclick="connectGmail()">Connect Gmail</button>
+      </div>
+      <div id="gm-status-bar" style="margin-bottom:14px"></div>
+      <div class="grid2" style="align-items:start">
+        <div class="card card-pad">
+          <div class="inp-label">Search query</div>
+          <input class="inp" id="gm-query" placeholder="from:@domain.com subject:demo after:2025/01/01" style="margin-bottom:6px"/>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:12px">Examples: <code>from:@acme.com</code> · <code>subject:interested</code> · <code>after:2025/06/01</code></div>
+          <div class="inp-label">Max messages</div>
+          <input class="inp" type="number" id="gm-max" value="100" min="1" max="500" style="margin-bottom:14px"/>
+          <button class="btn btn-primary" style="width:100%;justify-content:center" id="gm-scrape-btn" onclick="runGmailScrape()" disabled>▶ Scrape Inbox</button>
+          <div class="log-box" id="gm-log" style="display:none;margin-top:10px"></div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">Extracted Leads</div><button class="btn btn-green btn-sm" id="gm-import-btn" onclick="importGmailLeads()" style="display:none">Import All</button></div>
+          <div id="gm-results">
+            <div class="empty"><h3>Connect Gmail first</h3><p>Then run a query to extract contacts.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ WARMUP ════════ -->
+    <div class="view" id="view-warmup">
+      <div class="sec-head"><div class="sec-title">Email Warmup</div><span class="pill pill-blue">Slow-ramp active</span></div>
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="card card-pad" style="text-align:center">
+          <div class="inp-label" style="margin-bottom:12px">Overall Deliverability Score</div>
+          <div class="warmup-ring-wrap">
+            <svg width="110" height="110" viewBox="0 0 110 110">
+              <circle cx="55" cy="55" r="46" fill="none" stroke="var(--surf2)" stroke-width="11"/>
+              <circle cx="55" cy="55" r="46" fill="none" stroke="var(--grn)" stroke-width="11" stroke-dasharray="289" stroke-dashoffset="43" stroke-linecap="round" transform="rotate(-90 55 55)"/>
+            </svg>
+            <div class="warmup-score">85</div>
+          </div>
+          <div style="font-size:12px;color:var(--muted)">Inbox placement: <b style="color:var(--grn)">89%</b></div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-title" style="margin-bottom:14px">Ramp Schedule</div>
+          <div class="stat-row"><span>Today's sends</span><span style="font-weight:700;color:var(--grn)">12</span></div>
+          <div class="stat-row"><span>Daily target</span><span>30</span></div>
+          <div class="stat-row"><span>Ramp-up day</span><span>Day 14</span></div>
+          <div class="stat-row"><span>Network peers</span><span style="color:var(--grn)">2,847</span></div>
+          <div class="progress-wrap" style="margin-top:12px"><div class="progress-fill green" style="width:40%"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">12 / 30 sends today</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--bdr);font-family:var(--head);font-size:14px;font-weight:700">Sending Accounts</div>
+        <div id="warmup-accts"></div>
+      </div>
+    </div>
+
+    <!-- ════════ ANALYTICS ════════ -->
+    <div class="view" id="view-analytics">
+      <div class="sec-head">
+        <div class="sec-title">Analytics</div>
+        <select class="inp" style="width:140px" id="ana-range" onchange="renderAnalytics()">
+          <option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option>
+        </select>
+      </div>
+      <div class="kpi-grid" id="kpi-ana"></div>
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="card card-pad">
+          <div class="card-title" style="margin-bottom:14px">Email Performance</div>
+          <div class="bar-chart" id="ana-chart"></div>
+          <div class="chart-labels" id="ana-chart-lbl"></div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-title" style="margin-bottom:14px">Pipeline</div>
+          <div id="ana-pipeline-stats"></div>
+        </div>
+      </div>
+      <div class="card card-pad">
+        <div class="card-title" style="margin-bottom:14px">Campaign Breakdown</div>
+        <div id="ana-breakdown"></div>
+      </div>
+    </div>
+
+    <!-- ════════ INBOX TESTER ════════ -->
+    <div class="view" id="view-inbox-test">
+      <div class="sec-head"><div class="sec-title">Inbox Placement Tester</div></div>
+      <div class="grid2" style="align-items:start">
+        <div class="card card-pad">
+          <div class="inp-label">Test subject</div>
+          <input class="inp" id="tst-subj" placeholder="Subject line to analyse" style="margin-bottom:10px"/>
+          <div class="inp-label">Email body snippet</div>
+          <textarea class="inp" id="tst-body" rows="5" placeholder="Paste email body…"></textarea>
+          <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:14px" onclick="runTest()">▶ Run Placement Test</button>
+        </div>
+        <div class="card card-pad">
+          <div class="card-title" style="margin-bottom:16px">Results</div>
+          <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
+            <div class="score-ring score-high" id="tst-score">92</div>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--grn)">Low spam risk</div>
+              <div style="font-size:11px;color:var(--muted);margin-top:3px">Score: 92/100 — Safe to send</div>
+            </div>
+          </div>
+          <div id="tst-checks"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ CRM ════════ -->
+    <div class="view" id="view-crm">
+      <div class="sec-head"><div class="sec-title">CRM Pipeline</div><button class="btn btn-primary btn-sm" onclick="openDealModal()">+ Add Deal</button></div>
+      <div class="kanban" id="kanban-board"></div>
+    </div>
+
+    <!-- ════════ EMAIL ACCOUNTS ════════ -->
+    <div class="view" id="view-accounts">
+      <div class="sec-head"><div class="sec-title">Email Accounts</div><button class="btn btn-primary btn-sm" onclick="addAccount()">+ Add Account</button></div>
+      <div class="grid2" id="accts-grid"></div>
+    </div>
+
+    <!-- ════════ CYCLEWASH ════════ -->
+    <div class="view" id="view-cyclewash">
+      <div class="cw-header">
+        <div style="font-size:9px;font-weight:800;color:var(--grn);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px">CW Cleaning Solutions GmbH · HRB 93480 · Köln</div>
+        <div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--grn)">cycleWASH Sales Workspace</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:2px">Belfortstrasse 8, 50668 Köln · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d2bbbcb4bd92b1abb1beb7a5b3a1bafcb6b7">[email&#160;protected]</a> · Pro Platinum €38k · Mini Platinum €27.5k</div>
+      </div>
+      <div class="kpi-grid" id="kpi-cw"></div>
+      <div class="grid2" style="margin-bottom:16px">
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">Events 2026</div><span class="pill pill-green">10 events</span></div>
+          <div id="cw-events-list"></div>
+        </div>
+        <div class="card card-pad">
+          <div class="card-head"><div class="card-title">Draft Creator</div><span class="pill pill-blue">Gmail API</span></div>
+          <div class="inp-label">Filter by event</div>
+          <select class="inp" id="cw-ev-sel" style="margin-bottom:10px" onchange="cwUpdateCount()"></select>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <div style="font-family:var(--head);font-size:36px;font-weight:800" id="cw-draft-count">0</div>
+            <div style="font-size:12px;color:var(--muted)">leads ready to draft</div>
+          </div>
+          <div id="cw-draft-prog" style="display:none;margin-bottom:12px">
+            <div id="cw-prog-lbl" style="font-size:11px;color:var(--muted);margin-bottom:4px">Creating drafts…</div>
+            <div class="progress-wrap"><div class="progress-fill" id="cw-prog-bar" style="width:0"></div></div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" id="cw-draft-btn" onclick="cwRunDrafts()">▶ Create Drafts</button>
+            <button class="btn btn-danger btn-sm" id="cw-stop-btn" onclick="cwStop()" style="display:none">⏹ Stop</button>
+          </div>
+          <div id="cw-draft-log" style="display:none;max-height:180px;overflow-y:auto;margin-top:12px;font-size:11px"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-family:var(--head);font-size:14px;font-weight:700">CycleWASH Leads</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost btn-sm" onclick="nav('apify')" title="Apify Scraper — find leads on Google Maps">Scrape more</button>
+            <button class="btn btn-ghost btn-sm" onclick="exportLeadsCSV()">Export</button>
+          </div>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Company</th><th>City</th><th>Email</th><th>Type</th><th>Event</th><th>Status</th><th></th></tr></thead>
+          <tbody id="cw-leads-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ════════ SETTINGS ════════ -->
+    <div class="view" id="view-settings">
+      <div class="sec-title" style="margin-bottom:16px">Settings</div>
+      <div class="stabs" id="stabs">
+        <button class="stab on" data-stab="apify">Apify</button>
+        <button class="stab" data-stab="gmail">Gmail</button>
+        <button class="stab" data-stab="company">Company</button>
+        <button class="stab" data-stab="products">Products</button>
+        <button class="stab" data-stab="templates">Templates</button>
+        <button class="stab" data-stab="ui">Interface</button>
+      </div>
+      <div class="card">
+        <div class="stab-panel on" id="stab-apify" style="padding:20px">
+          <div class="grid2">
+            <div>
+              <div class="inp-label">Apify API Token</div>
+              <input class="inp" type="password" id="s-apify-token" placeholder="apify_api_xxxxxxxx" style="margin-bottom:12px;font-family:var(--mono)"/>
+              <div class="inp-label">Actor ID</div>
+              <input class="inp" id="s-apify-actor" value="compass/crawler-google-places" style="font-family:var(--mono)"/>
+            </div>
+            <div>
+              <div class="inp-label">Default search terms</div>
+              <textarea class="inp" id="s-apify-terms" rows="3" style="margin-bottom:12px">Fahrradgeschäft,Fahrradverleih,E-Bike Händler</textarea>
+              <div class="grid2" style="gap:10px">
+                <div><div class="inp-label">Max results</div><input class="inp" type="number" id="s-apify-max" value="15"/></div>
+                <div><div class="inp-label">Min stars</div><input class="inp" type="number" id="s-apify-stars" value="3.5" step="0.5"/></div>
+              </div>
+            </div>
+          </div>
+          <div style="background:var(--blu-lt);border:1px solid var(--blu-md);border-radius:8px;padding:12px;font-size:12px;color:var(--ink2);margin-top:14px">💡 ~$0.004 per result. Token stored in server .env. <a href="https://console.apify.com" target="_blank">Get token →</a></div>
+        </div>
+        <div class="stab-panel" id="stab-gmail" style="padding:20px">
+          <div class="grid2">
+            <div>
+              <div class="inp-label">Google Client ID</div>
+              <input class="inp" id="s-g-id" placeholder="xxxxx.apps.googleusercontent.com" style="margin-bottom:12px;font-family:var(--mono)"/>
+              <div class="inp-label">Google Client Secret</div>
+              <input class="inp" type="password" id="s-g-secret" placeholder="GOCSPX-…" style="font-family:var(--mono)"/>
+            </div>
+            <div>
+              <div class="inp-label">Sender email</div>
+              <input class="inp" type="email" id="s-g-from" value="info@cyclewash.de" style="margin-bottom:12px"/>
+              <div class="inp-label">Daily send limit</div>
+              <input class="inp" type="number" id="s-g-limit" value="50"/>
+            </div>
+          </div>
+          <div style="background:var(--amb-lt);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:12px;font-size:12px;color:var(--ink2);margin-top:14px">
+            ⚠️ Create OAuth2 credentials at <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a>. Redirect URI: <code>http://localhost:3000/api/gmail/callback</code>
+          </div>
+        </div>
+        <div class="stab-panel" id="stab-company" style="padding:20px">
+          <div class="grid2" style="gap:12px">
+            <div><div class="inp-label">Company Name</div><input class="inp" id="s-co-name" value="CW Cleaning Solutions GmbH"/></div>
+            <div><div class="inp-label">Address</div><input class="inp" id="s-co-addr" value="Belfortstrasse 8 | 50668 Köln"/></div>
+            <div><div class="inp-label">Phone</div><input class="inp" id="s-co-tel" value="+49221-650-605-32"/></div>
+            <div><div class="inp-label">Mobile</div><input class="inp" id="s-co-mob" value="+49163-573-8161"/></div>
+            <div><div class="inp-label">Email</div><input class="inp" id="s-co-email" value="info@cyclewash.de"/></div>
+            <div><div class="inp-label">Website</div><input class="inp" id="s-co-web" value="www.cyclewash.de"/></div>
+          </div>
+          <div style="margin-top:12px"><div class="inp-label">Tagline</div><input class="inp" id="s-co-tagline" value='cycleWASH, "Fahrrad waschen im Vorbeigehen"'/></div>
+          <div style="margin-top:10px"><div class="inp-label">Registration</div><input class="inp" id="s-co-reg" value="Sitz: Köln · HRB-Nr. 93480 · Ust.-ID: DE316636197"/></div>
+          <div class="sig-preview" id="sig-prev" style="margin-top:12px"></div>
+        </div>
+        <div class="stab-panel" id="stab-products" style="padding:20px">
+          <div class="grid2" style="gap:12px">
+            <div><div class="inp-label">Pro Platinum price (net)</div><input class="inp" id="s-pro" value="38.000"/></div>
+            <div><div class="inp-label">Mini Platinum price (net)</div><input class="inp" id="s-mini" value="27.500"/></div>
+            <div><div class="inp-label">Offer valid until</div><input class="inp" id="s-offer" value="30. April 2026"/></div>
+            <div><div class="inp-label">Delivery (weeks)</div><input class="inp" type="number" id="s-deliv" value="8"/></div>
+          </div>
+        </div>
+        <div class="stab-panel" id="stab-templates" style="padding:20px">
+          <div class="inp-label">Default subject template</div>
+          <input class="inp" id="s-subj-tpl" value="Einladung: cycleWASH Pro Platinum – Live-Demo {{date}} in {{city}}" style="margin-bottom:14px"/>
+          <div class="grid2" style="gap:12px">
+            <div><div class="inp-label">Opening: rental/tour</div><textarea class="inp" id="s-intro-rental" rows="3">als Verleih- und Tourbetrieb wissen Sie: Fahrräder kehren von jeder Tour verschmutzt zurück.</textarea></div>
+            <div><div class="inp-label">Opening: e-bike dealer</div><textarea class="inp" id="s-intro-ebike" rows="3">E-Bikes im Wert von mehreren Tausend Euro verdienen eine ebenso hochwertige Pflege.</textarea></div>
+            <div><div class="inp-label">Opening: workshop</div><textarea class="inp" id="s-intro-workshop" rows="3">In einer professionellen Werkstatt ist Sauberkeit nicht nur Optik.</textarea></div>
+            <div><div class="inp-label">Opening: standard dealer</div><textarea class="inp" id="s-intro-dealer" rows="3">Ein sauberes Fahrrad ist das stärkste Verkaufsargument – bei der Übergabe und im Showroom.</textarea></div>
+          </div>
+        </div>
+        <div class="stab-panel" id="stab-ui" style="padding:20px">
+          <div class="inp-label">Interface language</div>
+          <select class="inp" id="s-lang" style="max-width:200px;margin-bottom:16px" onchange="setLang(this.value)">
+            <option value="en">English</option><option value="de">Deutsch</option><option value="fr">Français</option>
+            <option value="es">Español</option><option value="it">Italiano</option><option value="nl">Nederlands</option>
+          </select>
+          <div style="background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:12px;font-size:12px;color:var(--muted)">
+            Settings saved to <code>localStorage</code>. Lead data persists to Docker volume (<code>/app/data/</code>).
+          </div>
+          <div style="margin-top:12px"><button class="btn btn-danger btn-sm" onclick="if(confirm('Clear?'))localStorage.clear()&&toast('Cleared')">Clear localStorage</button></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+        <button class="btn btn-ghost" onclick="renderSettings()">Reset</button>
+      </div>
+    </div>
+
+    <!-- ════════ HELP ════════ -->
+    <div class="view" id="view-help">
+      <div class="sec-head"><div class="sec-title">Help & Tutorials</div>
+        <div style="display:flex;gap:8px">
+          <input class="inp" id="help-search" placeholder="Search tutorials..." style="width:220px" oninput="searchHelp()" />
+        </div>
+      </div>
+
+      <!-- QUICK START CARDS -->
+      <div style="margin-bottom:24px">
+        <div class="card-title" style="margin-bottom:12px">🚀 Quick Start</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+          <div class="card card-pad" onclick="showHelpArticle('quickstart')" style="cursor:pointer;border:2px solid var(--blu-lt)">
+            <div style="font-size:24px;margin-bottom:8px">1️⃣</div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:4px">Connect & Configure</div>
+            <div style="font-size:12px;color:var(--muted)">Add your API keys, connect Gmail, set up your sender account</div>
+          </div>
+          <div class="card card-pad" onclick="showHelpArticle('scrape')" style="cursor:pointer;border:2px solid var(--blu-lt)">
+            <div style="font-size:24px;margin-bottom:8px">2️⃣</div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:4px">Find Leads</div>
+            <div style="font-size:12px;color:var(--muted)">Scrape Google Maps or import from Gmail to build your lead list</div>
+          </div>
+          <div class="card card-pad" onclick="showHelpArticle('campaign')" style="cursor:pointer;border:2px solid var(--blu-lt)">
+            <div style="font-size:24px;margin-bottom:8px">3️⃣</div>
+            <div style="font-weight:700;font-size:14px;margin-bottom:4px">Launch Campaign</div>
+            <div style="font-size:12px;color:var(--muted)">Compose AI-personalised emails and send your first campaign</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARTICLE LIST + READER -->
+      <div style="display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start">
+        <!-- Nav -->
+        <div class="card" style="overflow:hidden">
+          <div style="padding:12px 14px;border-bottom:1px solid var(--bdr);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Articles</div>
+          <div id="help-article-list" style="max-height:500px;overflow-y:auto"></div>
+        </div>
+        <!-- Reader -->
+        <div class="card card-pad" id="help-reader" style="min-height:400px">
+          <div style="text-align:center;padding:40px 20px;color:var(--muted)">
+            <div style="font-size:40px;margin-bottom:12px">📖</div>
+            <div style="font-size:15px;font-weight:600">Select an article to read</div>
+            <div style="font-size:13px;margin-top:6px">Or click a Quick Start card above</div>
+          </div>
+        </div>
+      </div>
+    >
