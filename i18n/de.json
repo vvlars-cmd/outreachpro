@@ -14,7 +14,6 @@
   "nav_crm": "CRM",
   "nav_accounts": "E-Mail Konten",
   "nav_inbox_test": "Posteingang-Test",
-  "nav_cyclewash": "CycleWASH",
   "nav_settings": "Einstellungen",
   "nav_help": "Hilfe",
   "btn_new_campaign": "Neue Kampagne",
@@ -182,5 +181,6 @@
   "error_no_email": "Keine E-Mail-Adresse",
   "error_connect_gmail": "Zuerst Gmail verbinden",
   "success_imported": "Erfolgreich importiert",
-  "success_exported": "Erfolgreich exportiert"
+  "success_exported": "Erfolgreich exportiert",
+  "nav_workspace": "Workspace"
 }
