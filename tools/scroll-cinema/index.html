@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ScrollCinema v2 — Apple-Style Scroll Animator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,100;0,9..144,300;0,9..144,700;1,9..144,100;1,9..144,300&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;--surf:#eeece6;--surf2:#e5e2da;--bdr:#dddad0;--bdr2:#ccc9be;
+  --ink:#1a1612;--ink2:#555;--muted:#888;
+  --acc:#c8420a;--acc2:#a33308;--grn:#1a6b3a;--blu:#1a3a6b;
+  --head:'Fraunces',serif;--mono:'DM Mono',monospace;
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--mono);font-size:14px;line-height:1.65;min-height:100vh;overflow-x:hidden}
+
+header{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;border-bottom:1px solid var(--bdr);background:rgba(247,245,240,.96);backdrop-filter:blur(16px)}
+.logo{font-family:var(--head);font-size:22px;font-weight:300;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+.logo em{color:var(--acc);font-style:italic}
+.logo-v{font-size:11px;letter-spacing:1px;color:var(--acc);background:rgba(200,66,10,.1);border:1px solid rgba(200,66,10,.25);padding:2px 8px;border-radius:2px;font-family:var(--mono);font-style:normal}
+.header-right{display:flex;align-items:center;gap:20px}
+.pill{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)}
+.pill-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.tabs{position:sticky;top:53px;z-index:100;display:flex;background:var(--bg);border-bottom:1px solid var(--bdr);overflow-x:auto}
+.tab{padding:14px 22px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;border:none;background:transparent;color:var(--muted);cursor:pointer;border-right:1px solid var(--bdr);transition:all .2s;position:relative;white-space:nowrap;flex-shrink:0}
+.tab:hover{color:var(--ink);background:var(--surf)}
+.tab.on{color:var(--acc);background:rgba(200,66,10,.04)}
+.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--acc)}
+.tab-logo{font-family:var(--head);font-size:16px;font-weight:300;font-style:italic;letter-spacing:-.3px;text-transform:none;padding:12px 24px;border-right:2px solid var(--bdr)}
+
+.panel{display:none;min-height:calc(100vh - 110px)}
+.panel.on{display:block}
+.pad{padding:32px}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;border:1px solid var(--acc);background:transparent;color:var(--acc);cursor:pointer;transition:all .2s;border-radius:2px}
+.btn:hover{background:var(--acc);color:#fff}
+.btn.fill{background:var(--acc);color:#fff}
+.btn.fill:hover{background:var(--acc2)}
+.btn.ghost{border-color:var(--bdr);color:var(--ink2)}
+.btn.ghost:hover{border-color:var(--ink);color:var(--ink);background:transparent}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+
+input[type=range]{-webkit-appearance:none;width:100%;height:2px;background:linear-gradient(to right,var(--acc) var(--pct,0%),var(--bdr) var(--pct,0%));outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--acc);cursor:pointer}
+select,input[type=text],input[type=number],textarea{width:100%;background:var(--bg);border:1px solid var(--bdr);color:var(--ink);font-family:var(--mono);font-size:13px;padding:10px 12px;outline:none;border-radius:0;appearance:none;-webkit-appearance:none}
+select:focus,input:focus,textarea:focus{border-color:var(--acc)}
+label.lbl{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr)}
+.card{background:var(--surf);border:1px solid var(--bdr);padding:20px}
+
+.stat{background:var(--surf);padding:18px 20px}
+.stat-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.stat-val{font-family:var(--head);font-size:28px;font-weight:300;color:var(--acc);line-height:1}
+.stat-unit{font-size:12px;color:var(--muted);margin-left:3px}
+
+.sec{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--bdr);padding-bottom:8px;margin:28px 0 16px}
+.sec:first-child{margin-top:0}
+
+.drop-zone{border:1.5px dashed var(--bdr2);border-radius:4px;padding:56px 32px;text-align:center;cursor:pointer;transition:all .3s;background:var(--surf)}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--acc);background:rgba(200,66,10,.02)}
+.drop-title{font-family:var(--head);font-size:34px;font-weight:100;font-style:italic;margin:12px 0 8px;color:var(--ink)}
+.drop-sub{font-size:12px;letter-spacing:1.5px;color:var(--muted);margin-bottom:24px}
+
+.frame-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:4px;max-height:280px;overflow-y:auto;border:1px solid var(--bdr);padding:6px;background:var(--surf);margin:16px 0}
+.frame-thumb{aspect-ratio:16/9;background:var(--bdr);border-radius:2px;overflow:hidden;position:relative;cursor:pointer;transition:transform .15s}
+.frame-thumb:hover{transform:scale(1.06);z-index:2}
+.frame-thumb img{width:100%;height:100%;object-fit:cover}
+.frame-num{position:absolute;bottom:2px;left:4px;font-size:10px;color:rgba(255,255,255,.7);text-shadow:0 1px 3px rgba(0,0,0,.5)}
+
+.prog-wrap{height:3px;background:var(--bdr);border-radius:2px;overflow:hidden;margin:8px 0}
+.prog-fill{height:100%;background:var(--acc);border-radius:2px;transition:width .1s}
+
+.easing-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.ec{background:var(--surf);border:1px solid var(--bdr);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.ec:hover,.ec.on{border-color:var(--acc);background:rgba(200,66,10,.04)}
+.ec canvas{display:block;margin:0 auto 6px;width:52px;height:52px}
+.ec-lbl{font-size:10px;letter-spacing:.5px;color:var(--muted)}
+.ec.on .ec-lbl{color:var(--acc)}
+
+.preview-wrap{position:relative;background:#000;border:1px solid var(--bdr);overflow:hidden;aspect-ratio:16/9}
+.preview-canvas{width:100%;height:100%;display:block}
+.scrub-bar{height:40px;background:var(--surf);border:1px solid var(--bdr);border-top:none;display:flex;align-items:center;padding:0 14px;gap:14px}
+.scrub-track{flex:1;height:4px;background:var(--bdr);border-radius:2px;cursor:pointer;position:relative}
+.scrub-fill{height:100%;background:var(--acc);border-radius:2px;pointer-events:none}
+.scrub-handle{position:absolute;top:50%;width:12px;height:12px;background:var(--acc);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 3px rgba(200,66,10,.2)}
+.scrub-lbl{font-size:11px;color:var(--muted);min-width:56px;text-align:right}
+.play-btn{width:36px;height:36px;border-radius:50%;border:1px solid var(--acc);background:transparent;color:var(--acc);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.play-btn:hover{background:var(--acc);color:#fff}
+.spd-btn{font-size:11px;color:var(--muted);cursor:pointer;border:1px solid var(--bdr);padding:4px 10px;background:transparent;font-family:var(--mono);transition:all .15s}
+.spd-btn:hover,.spd-btn.on{border-color:var(--acc);color:var(--acc)}
+
+.layer-list{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.layer-row{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--bdr);padding:10px 14px;cursor:pointer;transition:all .15s}
+.layer-row:hover{border-color:var(--bdr2)}
+.layer-row.sel{border-color:var(--acc);background:rgba(200,66,10,.04)}
+.layer-type{font-size:10px;letter-spacing:1px;background:var(--bdr);padding:2px 8px;border-radius:2px;color:var(--ink2)}
+.layer-txt{flex:1;font-size:13px;color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.layer-del{cursor:pointer;color:var(--muted);font-size:14px;padding:0 4px}
+.layer-del:hover{color:#c0392b}
+
+.fmt-tabs{display:flex;border-bottom:1px solid var(--bdr);margin-bottom:20px}
+.fmt-tab{padding:10px 20px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;border:none;background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;border-bottom:2px solid transparent}
+.fmt-tab:hover{color:var(--ink)}
+.fmt-tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+.fmt-panel{display:none}
+.fmt-panel.on{display:block}
+
+.code-wrap{position:relative;background:#1a1714;border:1px solid var(--bdr);border-left:2px solid var(--acc)}
+.code-block{padding:20px 24px;font-size:12px;line-height:1.8;overflow:auto;max-height:420px;color:#d4cfbf;white-space:pre;font-family:var(--mono)}
+.code-copy{position:absolute;top:10px;right:10px}
+
+.demo-container{position:relative;height:calc(100vh - 110px);overflow-y:auto;overflow-x:hidden;background:#000}
+.demo-container::-webkit-scrollbar{width:4px}
+.demo-container::-webkit-scrollbar-thumb{background:var(--acc)}
+.demo-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
+.demo-hud{position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;gap:20px;background:rgba(247,245,240,.9);border:1px solid var(--bdr);padding:8px 20px;backdrop-filter:blur(8px);z-index:10}
+.hud-item{text-align:center}
+.hud-val{font-family:var(--head);font-size:20px;font-weight:300;color:var(--acc);line-height:1}
+.hud-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:2px}
+
+.hint{background:rgba(200,66,10,.05);border:1px solid rgba(200,66,10,.15);padding:14px 18px;font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:20px}
+.hint strong{color:var(--acc)}
+.callout{display:flex;gap:12px;padding:14px 18px;margin:16px 0;font-size:13px;line-height:1.6}
+.tip{background:rgba(26,107,58,.06);border:1px solid rgba(26,107,58,.2)}
+.warn{background:rgba(200,66,10,.06);border:1px solid rgba(200,66,10,.2)}
+.info{background:rgba(26,58,107,.06);border:1px solid rgba(26,58,107,.2)}
+.callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr);margin:20px 0}
+.feat{background:var(--surf);padding:26px 22px;transition:background .2s}
+.feat:hover{background:var(--bg)}
+.feat-icon{font-size:26px;margin-bottom:10px}
+.feat-title{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:5px}
+.feat-desc{font-size:12px;color:var(--muted);line-height:1.6}
+.badge-new{display:inline-block;font-size:9px;letter-spacing:1px;background:var(--acc);color:#fff;padding:1px 6px;border-radius:2px;margin-left:6px;vertical-align:middle}
+
+.flow{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:20px 0}
+.flow-step{display:flex;flex-direction:column;align-items:center;text-align:center}
+.flow-icon{width:52px;height:52px;background:var(--surf);border:1px solid var(--bdr);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:6px}
+.flow-lbl{font-size:10px;letter-spacing:.5px;color:var(--muted);max-width:70px;line-height:1.4}
+.flow-arr{font-size:18px;color:var(--bdr2);margin:0 8px 22px}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--bg);border:1px solid var(--acc);padding:12px 20px;font-size:12px;letter-spacing:1px;z-index:9999;transform:translateY(60px);opacity:0;transition:all .3s cubic-bezier(.16,1,.3,1);pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* HELP STYLES */
+.help-layout{display:flex;min-height:calc(100vh - 110px)}
+.help-nav{width:210px;flex-shrink:0;position:sticky;top:110px;align-self:flex-start;height:calc(100vh - 110px);overflow-y:auto;background:var(--surf);border-right:1px solid var(--bdr);padding:20px 0}
+.help-nav::-webkit-scrollbar{width:3px}
+.help-nav-sec{padding:14px 18px 4px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--bdr);margin-top:6px}
+.help-nav-sec:first-child{border-top:none;margin-top:0}
+.help-nav a{display:block;padding:7px 18px;font-size:12px;color:var(--ink2);text-decoration:none;transition:all .15s;border-left:2px solid transparent;cursor:pointer}
+.help-nav a:hover{color:var(--ink);background:rgba(0,0,0,.03)}
+.help-nav a.act{color:var(--acc);border-left-color:var(--acc);background:rgba(200,66,10,.05)}
+.help-content{flex:1;padding:48px 56px 120px;max-width:840px;overflow-y:auto;height:calc(100vh - 110px)}
+.help-content::-webkit-scrollbar{width:4px}
+.h-sec{margin-bottom:64px;scroll-margin-top:20px}
+.h-eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:12px}
+.h-title{font-family:var(--head);font-size:38px;font-weight:100;color:var(--ink);line-height:1.1;margin-bottom:14px}
+.h-title em{font-style:italic;color:var(--acc)}
+.h-lead{font-size:15px;color:var(--ink2);line-height:1.75;margin-bottom:24px;max-width:600px}
+.h2{font-family:var(--head);font-size:26px;font-weight:300;color:var(--ink);margin:32px 0 10px;line-height:1.2}
+.h3{font-size:14px;font-weight:600;color:var(--ink);margin:24px 0 8px;letter-spacing:.3px}
+.hp{font-size:14px;color:var(--ink2);line-height:1.75;margin-bottom:12px}
+.hcode{font-family:var(--mono);font-size:12px;background:var(--surf2);padding:1px 6px;border-radius:2px;color:var(--acc)}
+.hpre{background:#1a1714;border:1px solid var(--bdr);border-left:2px solid var(--acc);padding:16px 20px;font-size:12px;line-height:1.8;color:#d4cfbf;overflow-x:auto;margin:14px 0;font-family:var(--mono);white-space:pre}
+.hul{padding-left:20px;margin:10px 0 14px;color:var(--ink2);font-size:14px;line-height:2}
+.hol{padding-left:20px;margin:10px 0 14px;color:var(--ink2);font-size:14px;line-height:2}
+.htable{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0}
+.htable th{padding:9px 14px;text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:var(--surf);border-bottom:1px solid var(--bdr)}
+.htable td{padding:10px 14px;border-bottom:1px solid var(--bdr);vertical-align:top;color:var(--ink2);line-height:1.6}
+.htable tr:last-child td{border-bottom:none}
+.htable tr:hover td{background:rgba(200,66,10,.02)}
+.htable .prop{color:var(--acc);font-family:var(--mono);font-size:12px}
+.htable .type{color:var(--grn);font-family:var(--mono);font-size:12px}
+.htable .def{color:var(--muted);font-family:var(--mono);font-size:12px}
+.step-list{display:flex;flex-direction:column;gap:0;margin:20px 0}
+.step-item{display:grid;grid-template-columns:48px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid var(--bdr)}
+.step-item:last-child{border-bottom:none}
+.step-num{font-family:var(--head);font-size:44px;font-weight:100;color:var(--bdr2);line-height:1;font-style:italic}
+.step-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.step-body{font-size:13px;color:var(--ink2);line-height:1.7}
+.step-tag{display:inline-flex;align-items:center;gap:5px;background:var(--surf);border:1px solid var(--bdr);border-radius:3px;padding:3px 10px;font-size:11px;color:var(--acc);margin-top:10px;font-family:var(--mono)}
+.ex-box{background:var(--surf);border:1px solid var(--bdr);border-radius:3px;padding:20px 24px;margin:16px 0}
+.ex-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.reading-bar{position:fixed;top:110px;left:210px;right:0;height:2px;background:var(--bdr);z-index:50}
+.reading-fill{height:100%;background:var(--acc);width:0%;transition:width .1s}
+
+@media(max-width:768px){
+  .pad{padding:20px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .help-layout{flex-direction:column}
+  .help-nav{width:100%;position:relative;height:auto}
+  .help-content{padding:24px}
+}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Scroll<em>Cinema</em> <span class="logo-v">v2</span></div>
+  <div class="header-right">
+    <div class="pill"><span class="pill-dot"></span>Apple-style scroll animator</div>
+    <a href="https://github.com/vvlars-cmd/outreachpro" target="_blank" style="font-size:11px;color:var(--muted);text-decoration:none;letter-spacing:1px">GitHub ↗</a>
+  </div>
+</header>
+
+<div style="height:53px"></div>
+
+<div class="tabs" id="tabs">
+  <button class="tab tab-logo on" data-tab="intro">ScrollCinema</button>
+  <button class="tab" data-tab="import">01 — Import</button>
+  <button class="tab" data-tab="configure">02 — Configure</button>
+  <button class="tab" data-tab="layers">03 — Text Layers</button>
+  <button class="tab" data-tab="preview">04 — Preview</button>
+  <button class="tab" data-tab="export">05 — Export</button>
+  <button class="tab" data-tab="live">06 — Live Demo</button>
+  <button class="tab" data-tab="help">Help &amp; Tutorials</button>
+</div>
+
+<!-- ═══ INTRO ═══ -->
+<div id="panel-intro" class="panel on">
+<div class="pad" style="max-width:960px">
+  <div style="padding:48px 0 32px">
+    <div style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:16px">ScrollCinema v2</div>
+    <h1 style="font-family:var(--head);font-size:clamp(40px,5vw,68px);font-weight:100;line-height:1.05;color:var(--ink);margin-bottom:18px">Turn any video into<br/><em style="color:var(--acc);font-style:italic">the Apple scroll effect</em></h1>
+    <p style="font-size:16px;color:var(--ink2);max-width:540px;line-height:1.7;margin-bottom:36px">Upload frames. Configure physics. Add animated text layers with keyframe easing. Export production-ready code for Vanilla JS, React, Vue, or Next.js — in under 5 minutes.</p>
+    <div class="btn-row">
+      <button class="btn fill" data-goto="import">Start Animating →</button>
+      <button class="btn ghost" id="demo-quick-btn">⊕ Try Demo Frames</button>
+      <button class="btn ghost" data-goto="help">Read the Guide</button>
+    </div>
+  </div>
+
+  <div class="sec">How it works</div>
+  <div class="flow">
+    <div class="flow-step"><div class="flow-icon">🎬</div><div class="flow-lbl">Video or frames</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step"><div class="flow-icon">⬆</div><div class="flow-lbl">Drop or extract</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step"><div class="flow-icon">⚙</div><div class="flow-lbl">Configure physics</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step"><div class="flow-icon">✦</div><div class="flow-lbl">Add text layers</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step"><div class="flow-icon">👁</div><div class="flow-lbl">Preview live</div></div>
+    <div class="flow-arr">→</div>
+    <div class="flow-step"><div class="flow-icon">⬇</div><div class="flow-lbl">Export code</div></div>
+  </div>
+
+  <div class="sec">What's new in v2</div>
+  <div class="feat-grid">
+    <div class="feat"><div class="feat-icon">🎬</div><div class="feat-title">Video → Frames <span class="badge-new">NEW</span></div><div class="feat-desc">Drop an MP4/WebM directly. Frames extracted client-side — no FFmpeg, no server.</div></div>
+    <div class="feat"><div class="feat-icon">✦</div><div class="feat-title">Keyframe Text Layers <span class="badge-new">NEW</span></div><div class="feat-desc">Headlines, subtitles, counters that fade in at exact frame positions — just like Apple.</div></div>
+    <div class="feat"><div class="feat-icon">〜</div><div class="feat-title">9 Easing Curves <span class="badge-new">NEW</span></div><div class="feat-desc">Spring, Elastic, Bounce, Expo — with visual curve previews before you apply.</div></div>
+    <div class="feat"><div class="feat-icon">📐</div><div class="feat-title">Scrub Timeline</div><div class="feat-desc">Drag playhead, see frame thumbnails, set layer in/out points visually.</div></div>
+    <div class="feat"><div class="feat-icon">🎭</div><div class="feat-title">Blend Modes <span class="badge-new">NEW</span></div><div class="feat-desc">Screen, multiply, overlay on the canvas — colour grade without re-exporting.</div></div>
+    <div class="feat"><div class="feat-icon">⚡</div><div class="feat-title">Progressive Loading <span class="badge-new">NEW</span></div><div class="feat-desc">First + last frame load first. Animation starts immediately, fills in as user scrolls.</div></div>
+    <div class="feat"><div class="feat-icon">🔢</div><div class="feat-title">Count-up Numbers <span class="badge-new">NEW</span></div><div class="feat-desc">Numbers that count from 0→N as you scroll. Exactly Apple's battery life counter.</div></div>
+    <div class="feat"><div class="feat-icon">♿</div><div class="feat-title">Reduced Motion Safe <span class="badge-new">NEW</span></div><div class="feat-desc">All exports respect prefers-reduced-motion. Falls back to static image.</div></div>
+    <div class="feat"><div class="feat-icon">📦</div><div class="feat-title">4 Export Formats</div><div class="feat-desc">HTML snippet, Vanilla JS module, React/Next.js component, Vue 3 SFC.</div></div>
+  </div>
+
+  <div class="callout tip" style="margin-top:24px">
+    <span class="callout-icon">💡</span>
+    <div><strong>Apple does this.</strong> The iPhone 16, MacBook Pro, and AirPods Pro pages all use this exact technique — a sticky canvas drawing frame images as the user scrolls. This tool generates the same pattern, production-ready, in minutes. <a href="#" onclick="goTab('help');return false" style="color:var(--acc)">Read the full tutorial →</a></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ IMPORT ═══ -->
+<div id="panel-import" class="panel">
+<div class="pad">
+  <div class="hint"><strong>Two ways to import:</strong> Drop a video file (MP4/WebM) and ScrollCinema extracts frames client-side — or import a folder of pre-extracted PNG/JPG frames. Nothing leaves your machine.</div>
+
+  <div class="sec">Option A — Drop a video (auto-extracts frames)</div>
+  <div class="drop-zone" id="video-drop" onclick="document.getElementById('video-input').click()">
+    <div style="font-size:36px;opacity:.3;margin-bottom:12px">🎬</div>
+    <div class="drop-title">Drop your video here</div>
+    <div class="drop-sub">MP4 · WebM · MOV — processed entirely in your browser</div>
+    <button class="btn" onclick="event.stopPropagation();document.getElementById('video-input').click()">Choose Video</button>
+  </div>
+  <input type="file" id="video-input" accept="video/*" style="display:none"/>
+  <div id="video-opts" style="display:none;margin-top:16px">
+    <div class="grid3">
+      <div><label class="lbl">Extract FPS</label><select id="extract-fps"><option value="12">12 fps</option><option value="24" selected>24 fps</option><option value="30">30 fps</option></select></div>
+      <div><label class="lbl">Max Frames</label><select id="extract-max"><option value="60">60</option><option value="120" selected>120</option><option value="200">200</option><option value="0">All</option></select></div>
+      <div><label class="lbl">Width</label><select id="extract-size"><option value="1280" selected>1280px</option><option value="1920">1920px</option><option value="original">Original</option></select></div>
+    </div>
+    <div id="extract-progress" style="display:none;margin-top:12px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px"><span id="extract-status">Extracting…</span><span id="extract-pct">0%</span></div>
+      <div class="prog-wrap"><div class="prog-fill" id="ep-fill"></div></div>
+    </div>
+    <button class="btn fill" id="extract-btn" style="margin-top:12px" onclick="extractFrames()">Extract Frames →</button>
+  </div>
+
+  <div class="sec" style="margin-top:28px">Option B — Import frame images</div>
+  <div class="drop-zone" id="frame-drop" onclick="document.getElementById('frame-input').click()">
+    <div style="font-size:36px;opacity:.3;margin-bottom:12px">🖼</div>
+    <div class="drop-title">Drop your frames here</div>
+    <div class="drop-sub">PNG · JPG · WebP · Sequential images</div>
+    <button class="btn" onclick="event.stopPropagation();document.getElementById('frame-input').click()">Choose Files</button>
+    <p style="margin-top:10px;font-size:12px;color:var(--muted)">Files sort by name — use zero-padded names (frame001.png, frame002.png…)</p>
+  </div>
+  <input type="file" id="frame-input" multiple accept="image/png,image/jpeg,image/webp" style="display:none"/>
+  <div id="load-prog" style="display:none;margin-top:12px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px"><span>Loading…</span><span id="load-pct">0%</span></div>
+    <div class="prog-wrap"><div class="prog-fill" id="lp-fill"></div></div>
+  </div>
+
+  <div id="frame-info" style="display:none;margin-top:24px">
+    <div class="grid4" style="margin-bottom:16px">
+      <div class="stat"><div class="stat-lbl">Frames</div><div class="stat-val" id="si-frames">0</div></div>
+      <div class="stat"><div class="stat-lbl">Resolution</div><div class="stat-val" id="si-res" style="font-size:18px">—</div></div>
+      <div class="stat"><div class="stat-lbl">Memory</div><div class="stat-val" id="si-mem">0<span class="stat-unit">MB</span></div></div>
+      <div class="stat"><div class="stat-lbl">Duration</div><div class="stat-val" id="si-dur">0<span class="stat-unit">s</span></div></div>
+    </div>
+    <div class="frame-grid" id="frame-grid"></div>
+    <div class="btn-row"><button class="btn fill" data-goto="configure">Configure →</button><button class="btn ghost" onclick="resetFrames()">✕ Clear</button></div>
+  </div>
+
+  <div style="margin-top:28px;border-top:1px solid var(--bdr);padding-top:20px">
+    <div class="sec" style="margin-top:0">No files? Generate demo frames</div>
+    <div class="grid2">
+      <button class="btn ghost" onclick="genDemo('gradient')">⊕ Gradient Morph (90 frames)</button>
+      <button class="btn ghost" onclick="genDemo('orbit')">⊕ Product Orbit (120 frames)</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ CONFIGURE ═══ -->
+<div id="panel-configure" class="panel">
+<div class="pad">
+  <div id="cfg-empty" style="text-align:center;padding:80px;color:var(--muted)">← Import frames first</div>
+  <div id="cfg-body" style="display:none">
+    <div class="sec">Scroll Physics</div>
+    <div class="grid2">
+      <div class="card"><label class="lbl">Scroll per frame <span style="color:var(--acc)" id="d-spf">12px</span></label>
+        <input type="range" id="spf" min="4" max="80" value="12" style="--pct:11%" oninput="onSpf(this)"/>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px"><span>4px fast</span><span>80px cinematic</span></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--muted)">Total scroll: <strong style="color:var(--acc)" id="d-total">—</strong></div>
+      </div>
+      <div class="card"><label class="lbl">Start offset <span style="color:var(--acc)" id="d-off">0%</span></label>
+        <input type="range" id="off" min="0" max="80" value="0" style="--pct:0%" oninput="onOff(this)"/>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px">% of scroll before animation begins</div>
+      </div>
+    </div>
+
+    <div class="sec">Easing Curve</div>
+    <div class="easing-grid" id="easing-grid"></div>
+
+    <div class="sec">Canvas & Display</div>
+    <div class="grid2">
+      <div class="card"><label class="lbl">Width</label>
+        <select id="w-sel" onchange="onDims()"><option value="100vw" selected>100vw — full viewport</option><option value="1280px">1280px</option><option value="1440px">1440px</option></select></div>
+      <div class="card"><label class="lbl">Height</label>
+        <select id="h-sel" onchange="onDims()"><option value="100vh" selected>100vh — full viewport</option><option value="600px">600px</option><option value="auto">Auto (aspect ratio)</option></select></div>
+      <div class="card"><label class="lbl">Object fit</label>
+        <select id="fit-sel"><option value="cover" selected>Cover (fill, crop)</option><option value="contain">Contain (letterbox)</option><option value="fill">Stretch</option></select></div>
+      <div class="card"><label class="lbl">Background</label>
+        <div style="display:flex;gap:8px">
+          <input type="color" id="bg-col" value="#000000" style="width:40px;height:38px;border:1px solid var(--bdr);padding:2px;cursor:pointer"/>
+          <input type="text" id="bg-txt" value="#000000" style="flex:1" oninput="document.getElementById('bg-col').value=this.value"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">Blend Mode</div>
+    <div class="card">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="none" checked/> none</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="screen"/> screen</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="multiply"/> multiply</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="overlay"/> overlay</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="color-dodge"/> color-dodge</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="hard-light"/> hard-light</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="difference"/> difference</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--ink2);text-transform:none;letter-spacing:0"><input type="radio" name="blend" value="exclusion"/> exclusion</label>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:20px">
+      <button class="btn fill" data-goto="layers">Add Text Layers →</button>
+      <button class="btn ghost" data-goto="preview">Skip to Preview →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ LAYERS ═══ -->
+<div id="panel-layers" class="panel">
+<div class="pad">
+  <div id="ly-empty" style="text-align:center;padding:80px;color:var(--muted)">← Import frames first</div>
+  <div id="ly-body" style="display:none">
+    <div class="hint"><strong>Keyframe text layers</strong> animate over the canvas as the user scrolls — headlines, subtitles, counters, and badges that appear and disappear at exact frame positions.</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="sec" style="margin:0;border:none;padding:0">Layers</div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="addLayer('headline')">+ Headline</button>
+        <button class="btn ghost" onclick="addLayer('subtitle')">+ Subtitle</button>
+        <button class="btn ghost" onclick="addLayer('counter')">+ Counter</button>
+        <button class="btn ghost" onclick="addLayer('badge')">+ Badge</button>
+      </div>
+    </div>
+    <div id="layer-list" class="layer-list">
+      <div style="text-align:center;padding:28px;color:var(--muted);font-size:12px;border:1px dashed var(--bdr)">No layers yet</div>
+    </div>
+    <div id="ly-editor" style="display:none;margin-top:16px">
+      <div class="sec">Edit selected layer</div>
+      <div class="grid2">
+        <div class="card"><label class="lbl">Text</label><input type="text" id="le-txt" oninput="setLP('text',this.value)"/></div>
+        <div class="card"><label class="lbl">Animation</label>
+          <select id="le-anim" onchange="setLP('anim',this.value)">
+            <option value="fade">Fade in/out</option>
+            <option value="slide-up">Slide up + fade</option>
+            <option value="slide-left">Slide left + fade</option>
+            <option value="scale">Scale in</option>
+            <option value="blur">Blur in</option>
+            <option value="count">Count up (numbers only)</option>
+          </select>
+        </div>
+        <div class="card"><label class="lbl">Appear at frame <span style="color:var(--acc)" id="le-in-d">0</span></label>
+          <input type="range" id="le-in" min="0" value="0" style="--pct:0%" oninput="setLP('inFrame',+this.value);setRng(this);document.getElementById('le-in-d').textContent=this.value"/></div>
+        <div class="card"><label class="lbl">Disappear at frame <span style="color:var(--acc)" id="le-out-d">end</span></label>
+          <input type="range" id="le-out" min="0" value="0" style="--pct:100%" oninput="setLP('outFrame',+this.value);setRng(this);document.getElementById('le-out-d').textContent=this.value||'end'"/></div>
+        <div class="card"><label class="lbl">Position</label>
+          <select id="le-pos" onchange="setLP('pos',this.value)">
+            <option value="bottom-left">Bottom left</option>
+            <option value="bottom-center">Bottom center</option>
+            <option value="center">Center</option>
+            <option value="top-left">Top left</option>
+            <option value="top-right">Top right</option>
+            <option value="top-center">Top center</option>
+          </select>
+        </div>
+        <div class="card"><label class="lbl">Font size</label>
+          <select id="le-size" onchange="setLP('size',this.value)">
+            <option value="clamp(14px,1.5vw,20px)">Small</option>
+            <option value="clamp(20px,2.5vw,32px)">Medium</option>
+            <option value="clamp(28px,4vw,56px)" selected>Large</option>
+            <option value="clamp(40px,6vw,80px)">Hero</option>
+            <option value="clamp(56px,8vw,120px)">Display</option>
+          </select>
+        </div>
+        <div class="card"><label class="lbl">Count to (for counter type)</label>
+          <input type="number" id="le-ct" value="100" oninput="setLP('countTo',+this.value)"/></div>
+        <div class="card"><label class="lbl">Color</label>
+          <input type="text" id="le-color" value="#ffffff" oninput="setLP('color',this.value)"/></div>
+      </div>
+    </div>
+    <div class="btn-row" style="margin-top:20px"><button class="btn fill" data-goto="preview">Preview →</button></div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ PREVIEW ═══ -->
+<div id="panel-preview" class="panel">
+<div class="pad">
+  <div id="pv-empty" style="text-align:center;padding:80px;color:var(--muted)">← Import frames first</div>
+  <div id="pv-body" style="display:none">
+    <div class="preview-wrap" id="pv-wrap">
+      <canvas id="pv-canvas" class="preview-canvas"></canvas>
+      <div id="pv-overlay" style="position:absolute;inset:0;pointer-events:none"></div>
+      <div id="pv-placeholder" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted)">
+        <div style="font-family:var(--head);font-size:48px;opacity:.15">⬡</div>
+      </div>
+    </div>
+    <div class="scrub-bar">
+      <button class="play-btn" id="play-btn" onclick="togglePlay()">▶</button>
+      <div class="scrub-track" id="scrub-track">
+        <div class="scrub-fill" id="scrub-fill" style="width:0%"></div>
+        <div class="scrub-handle" id="scrub-handle" style="left:0%"></div>
+      </div>
+      <div class="scrub-lbl"><span id="s-cur">0</span> / <span id="s-tot">0</span></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--bdr);margin-top:2px">
+      <span style="font-size:11px;color:var(--muted)">Speed:</span>
+      <button class="spd-btn" data-s="0.25" onclick="setSpd(0.25)">0.25×</button>
+      <button class="spd-btn" data-s="0.5" onclick="setSpd(0.5)">0.5×</button>
+      <button class="spd-btn on" data-s="1" onclick="setSpd(1)">1×</button>
+      <button class="spd-btn" data-s="2" onclick="setSpd(2)">2×</button>
+      <span style="flex:1"></span>
+      <span style="font-size:11px;color:var(--muted)">Frame <strong style="color:var(--acc)" id="pv-fidx">0</strong> of <strong id="pv-ftot">0</strong></span>
+    </div>
+    <div class="btn-row" style="margin-top:12px">
+      <button class="btn fill" data-goto="export">Export Code →</button>
+      <button class="btn ghost" data-goto="live">Full Demo →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ EXPORT ═══ -->
+<div id="panel-export" class="panel">
+<div class="pad">
+  <div id="ex-empty" style="text-align:center;padding:80px;color:var(--muted)">← Import frames first</div>
+  <div id="ex-body" style="display:none">
+    <div class="hint"><strong>Your config is baked in.</strong> Every export includes frame count, scroll speed, easing, dimensions, text layers, and progressive loading — drop it straight into your project.</div>
+    <div class="callout info"><span class="callout-icon">⚡</span><div><strong>Progressive loading:</strong> exported code loads frame 1 and frame N first so the animation starts immediately, then fills the rest in background while the user reads your page.</div></div>
+    <div class="fmt-tabs" id="fmt-tabs">
+      <button class="fmt-tab on" data-fmt="html">HTML Snippet</button>
+      <button class="fmt-tab" data-fmt="vanilla">Vanilla JS</button>
+      <button class="fmt-tab" data-fmt="react">React / Next.js</button>
+      <button class="fmt-tab" data-fmt="vue">Vue 3</button>
+    </div>
+    <div id="fmt-html" class="fmt-panel on">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px">Self-contained HTML. Paste anywhere. Put frames in a <code style="background:var(--surf2);padding:1px 5px;font-size:12px">/frames/</code> folder.</p>
+      <div class="code-wrap"><div class="code-block" id="code-html">—</div><button class="btn ghost code-copy" onclick="copyCode('html')">Copy</button></div>
+      <div class="btn-row" style="margin-top:12px"><button class="btn" onclick="dlCode('html','scroll-cinema.html')">⬇ Download .html</button></div>
+    </div>
+    <div id="fmt-vanilla" class="fmt-panel">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px">ES Module. <code style="background:var(--surf2);padding:1px 5px;font-size:12px">import {ScrollCinema} from './scroll-cinema.js'</code></p>
+      <div class="code-wrap"><div class="code-block" id="code-vanilla">—</div><button class="btn ghost code-copy" onclick="copyCode('vanilla')">Copy</button></div>
+      <div class="btn-row" style="margin-top:12px"><button class="btn" onclick="dlCode('vanilla','scroll-cinema.js')">⬇ Download .js</button></div>
+    </div>
+    <div id="fmt-react" class="fmt-panel">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px">React + Next.js App Router. Add <code style="background:var(--surf2);padding:1px 5px;font-size:12px">'use client'</code> for Next.js.</p>
+      <div class="code-wrap"><div class="code-block" id="code-react">—</div><button class="btn ghost code-copy" onclick="copyCode('react')">Copy</button></div>
+      <div class="btn-row" style="margin-top:12px"><button class="btn" onclick="dlCode('react','ScrollCinema.jsx')">⬇ Download .jsx</button></div>
+    </div>
+    <div id="fmt-vue" class="fmt-panel">
+      <p style="font-size:13px;color:var(--ink2);margin-bottom:12px">Vue 3 SFC with Composition API. Works with Nuxt 3.</p>
+      <div class="code-wrap"><div class="code-block" id="code-vue">—</div><button class="btn ghost code-copy" onclick="copyCode('vue')">Copy</button></div>
+      <div class="btn-row" style="margin-top:12px"><button class="btn" onclick="dlCode('vue','ScrollCinema.vue')">⬇ Download .vue</button></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══ LIVE ═══ -->
+<div id="panel-live" class="panel" style="padding:0">
+  <div id="live-empty" style="display:flex;align-items:center;justify-content:center;height:calc(100vh - 110px);flex-direction:column;gap:12px">
+    <div style="font-size:56px;opacity:.15">⬡</div>
+    <p style="font-size:12px;color:var(--muted);letter-spacing:1px">Import frames first</p>
+    <button class="btn" data-goto="import">← Import Frames</button>
+  </div>
+  <div id="live-body" style="display:none">
+    <div class="demo-container" id="demo-scroll">
+      <div class="demo-sticky">
+        <canvas id="demo-canvas" style="width:100%;height:100%;display:block;background:#000"></canvas>
+        <div id="demo-layers" style="position:absolute;inset:0;pointer-events:none"></div>
+        <div class="demo-hud">
+          <div class="hud-item"><div class="hud-val" id="hud-f">0</div><div class="hud-lbl">Frame</div></div>
+          <div class="hud-item"><div class="hud-val" id="hud-p">0%</div><div class="hud-lbl">Progress</div></div>
+          <div class="hud-item"><div class="hud-val" id="hud-fps">60</div><div class="hud-lbl">FPS</div></div>
+        </div>
+      </div>
+      <div id="demo-space"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HELP ═══ -->
+<div id="panel-help" class="panel" style="padding:0">
+  <div class="reading-bar"><div class="reading-fill" id="reading-fill"></div></div>
+  <div class="help-layout">
+
+    <!-- Sidebar nav -->
+    <nav class="help-nav" id="help-nav">
+      <div class="help-nav-sec" style="border-top:none;margin-top:0">Getting Started</div>
+      <a onclick="hScroll('h-intro')">Introduction</a>
+      <a onclick="hScroll('h-quickstart')">5-minute quickstart</a>
+      <a onclick="hScroll('h-concept')">How it works</a>
+      <div class="help-nav-sec">Features</div>
+      <a onclick="hScroll('h-import')">01 — Importing frames</a>
+      <a onclick="hScroll('h-video')">— Video extraction</a>
+      <a onclick="hScroll('h-configure')">02 — Configure</a>
+      <a onclick="hScroll('h-easing')">— Easing curves</a>
+      <a onclick="hScroll('h-blend')">— Blend modes</a>
+      <a onclick="hScroll('h-layers')">03 — Text layers</a>
+      <a onclick="hScroll('h-counter')">— Count-up numbers</a>
+      <a onclick="hScroll('h-preview')">04 — Preview &amp; scrub</a>
+      <a onclick="hScroll('h-export')">05 — Exporting code</a>
+      <a onclick="hScroll('h-live')">06 — Live demo</a>
+      <div class="help-nav-sec">Integration</div>
+      <a onclick="hScroll('h-html')">HTML snippet</a>
+      <a onclick="hScroll('h-vanilla')">Vanilla JS module</a>
+      <a onclick="hScroll('h-react')">React / Next.js</a>
+      <a onclick="hScroll('h-vue')">Vue 3 / Nuxt</a>
+      <div class="help-nav-sec">Reference</div>
+      <a onclick="hScroll('h-perf')">Performance tips</a>
+      <a onclick="hScroll('h-ffmpeg')">Extracting with FFmpeg</a>
+      <a onclick="hScroll('h-trouble')">Troubleshooting</a>
+    </nav>
+
+    <!-- Content -->
+    <div class="help-content" id="help-content">
+
+      <!-- INTRO -->
+      <div class="h-sec" id="h-intro">
+        <div class="h-eyebrow">Documentation</div>
+        <h1 class="h-title">ScrollCinema <em>v2</em></h1>
+        <p class="h-lead">A browser tool for turning image-frame sequences into cinematic, scroll-driven animations — no build tools, no dependencies, no server required. Open the file, drop your frames, click Export.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px">
+          <button class="btn fill" onclick="goTab('import')">Start Animating →</button>
+          <button class="btn ghost" onclick="hScroll('h-quickstart')">5-min quickstart ↓</button>
+        </div>
+        <div class="callout tip" style="margin-top:24px">
+          <span class="callout-icon">🍎</span>
+          <div><strong>This is exactly how Apple does it.</strong> Visit <em>apple.com/iphone</em> in Chrome DevTools. You'll see a sticky canvas element, hundreds of PNG frames preloaded, and a scroll event mapping position to frame index. ScrollCinema generates that same pattern in minutes.</div>
+        </div>
+      </div>
+
+      <!-- QUICKSTART -->
+      <div class="h-sec" id="h-quickstart">
+        <div class="h-eyebrow">Getting Started</div>
+        <h2 class="h2">5-minute quickstart</h2>
+        <p class="hp">No video yet? Start with demo frames to understand the tool, then replace with your real content.</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Generate or import frames</div>
+              <div class="step-body">Click <strong>01 — Import</strong> tab. Either drop your MP4 video (frames extract automatically in your browser) or drag a folder of PNG/JPG files. No files? Click <strong>Generate Demo Frames</strong> to create 90 synthetic frames instantly.</div>
+              <div class="step-tag">⏱ Takes 5–30 seconds depending on frame count</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Configure scroll speed and easing</div>
+              <div class="step-body">Go to <strong>02 — Configure</strong>. Set <em>Scroll per frame</em> — this is how many pixels of scroll advance the animation by one frame. 12px = fast, 40px = slow and cinematic. Pick an easing curve: <strong>Spring</strong> or <strong>Expo Out</strong> are closest to what Apple uses.</div>
+              <div class="step-tag">💡 Apple typically uses 20–30px/frame with ease-in-out</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Add text layers (optional)</div>
+              <div class="step-body">Go to <strong>03 — Text Layers</strong>. Add a Headline that slides in at frame 20, and a Subtitle that fades in at frame 40. Drag the in/out sliders to place them exactly. Use <strong>Counter</strong> type to count up a number (like Apple's battery hours or camera megapixels).</div>
+              <div class="step-tag">✦ This is what makes it feel like a real Apple product page</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div>
+              <div class="step-title">Scrub and preview</div>
+              <div class="step-body">Go to <strong>04 — Preview</strong>. Drag the scrubber to scrub through the animation. Hit play to watch it at speed. Check your text layers appear and disappear at the right moments.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div>
+              <div class="step-title">Export and drop into your project</div>
+              <div class="step-body">Go to <strong>05 — Export</strong>. Pick your format: <strong>HTML Snippet</strong> if you want a self-contained file, <strong>React</strong> for Next.js / Vite, <strong>Vue</strong> for Nuxt. Copy or download. Put your frames in a <span class="hcode">/frames/</span> folder and you're live.</div>
+              <div class="step-tag">📦 Vanilla JS · React · Vue 3 · Self-contained HTML</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONCEPT -->
+      <div class="h-sec" id="h-concept">
+        <div class="h-eyebrow">Concept</div>
+        <h2 class="h2">How scroll animations work</h2>
+        <p class="hp">The technique uses a <strong>sticky canvas</strong> inside a tall scroll container. As the user scrolls, JavaScript maps the scroll position to a frame index and draws that image onto the canvas — 60 times per second.</p>
+        <div class="hpre">// The core formula — everything else is decoration
+const scrollProgress = window.scrollY / totalScrollHeight  // 0 → 1
+const easedProgress  = applyEasing(scrollProgress)         // curved 0 → 1
+const frameIndex     = Math.round(easedProgress * (frameCount - 1))
+canvas.getContext('2d').drawImage(images[frameIndex], 0, 0)</div>
+        <p class="hp"><strong>scrollPerFrame</strong> controls how many pixels of scroll = one frame. Lower = faster animation, fewer frames visible at once. Higher = slower, more deliberate, cinematic feel.</p>
+        <div class="callout info"><span class="callout-icon">💡</span><div><strong>Why canvas instead of img src swapping?</strong> Drawing to a canvas takes ~0.1ms. Changing an img src causes the browser to decode a new image each time, which causes jank at 60fps. Canvas is the correct approach for smooth frame-by-frame animation.</div></div>
+        <h3 class="h3">The sticky container pattern</h3>
+        <div class="hpre">&lt;div style="position:relative; height:3000px"&gt;     &lt;!-- tall scroll container --&gt;
+  &lt;div style="position:sticky; top:0; height:100vh"&gt; &lt;!-- stays on screen --&gt;
+    &lt;canvas id="sc"&gt;&lt;/canvas&gt;                         &lt;!-- draws each frame --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+        <p class="hp">The container height determines how much total scroll the animation gets. ScrollCinema calculates this as <span class="hcode">frameCount × scrollPerFrame</span>.</p>
+      </div>
+
+      <!-- IMPORT -->
+      <div class="h-sec" id="h-import">
+        <div class="h-eyebrow">Feature 01</div>
+        <h2 class="h2">Importing frames</h2>
+        <p class="hp">ScrollCinema accepts images two ways: as individual files (PNG/JPG/WebP), or extracted from a video directly in your browser.</p>
+        <h3 class="h3">Importing image files</h3>
+        <p class="hp">Drag a folder of images into the import zone, or click <strong>Choose Files</strong>. Files are sorted alphabetically — zero-padded names are essential:</p>
+        <div class="ex-box">
+          <div class="ex-label">Good naming — sorts correctly</div>
+          <div class="hpre">frame001.png  frame002.png  frame003.png  …  frame120.png</div>
+          <div class="ex-label" style="margin-top:12px">Bad naming — sorts wrong (frame10 before frame2)</div>
+          <div class="hpre">frame1.png  frame2.png  frame10.png  frame11.png  …</div>
+        </div>
+        <p class="hp">After loading, you'll see a frame strip, resolution, estimated memory usage, and duration at 24fps. Click any thumbnail to jump to that frame in the Preview tab.</p>
+        <div class="callout warn"><span class="callout-icon">⚠</span><div><strong>Memory tip:</strong> 120 frames at 1920×1080 ≈ 950MB in RAM. For most use cases, 1280px wide and 60–90 frames is ideal. Use JPEG at 80% quality to reduce file sizes.</div></div>
+      </div>
+
+      <!-- VIDEO EXTRACTION -->
+      <div class="h-sec" id="h-video">
+        <div class="h-eyebrow">Feature 01 — Video</div>
+        <h2 class="h2">Video extraction (browser-side)</h2>
+        <p class="hp">Drop an MP4 or WebM video and ScrollCinema extracts frames directly in your browser — no FFmpeg, no upload, nothing leaves your machine.</p>
+        <div class="step-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div>
+              <div class="step-title">Drop your video</div>
+              <div class="step-body">Drag an MP4, WebM, or MOV file onto the video drop zone. The extraction controls appear below.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div>
+              <div class="step-title">Set extraction options</div>
+              <div class="step-body">
+                <strong>FPS:</strong> 24fps is standard. Use 12fps for lighter output, 30fps for ultra-smooth.<br/>
+                <strong>Max frames:</strong> Caps the total extracted. 120 frames is ideal for most use cases.<br/>
+                <strong>Width:</strong> Frames are resized to this width (maintaining aspect ratio). 1280px is recommended.
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div>
+              <div class="step-title">Click Extract Frames</div>
+              <div class="step-body">A progress bar shows each frame being extracted. For a 5-second clip at 24fps, expect 120 frames in 10–20 seconds depending on your machine.</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout tip"><span class="callout-icon">💡</span><div><strong>Best source videos:</strong> Short clips (3–8 seconds), loopable product animations, 3D renders, or phone/laptop reveal animations. Export from Blender, After Effects, or Cinema 4D as MP4 H.264.</div></div>
+      </div>
+
+      <!-- CONFIGURE -->
+      <div class="h-sec" id="h-configure">
+        <div class="h-eyebrow">Feature 02</div>
+        <h2 class="h2">Configuring scroll physics</h2>
+        <p class="hp">These settings control how the animation feels when the user scrolls.</p>
+        <table class="htable">
+          <tr><th>Setting</th><th>What it does</th><th>Typical value</th></tr>
+          <tr><td class="prop">scrollPerFrame</td><td>Pixels of scroll that advance one frame</td><td class="def">12–40px</td></tr>
+          <tr><td class="prop">startOffset</td><td>% of total scroll height before animation begins</td><td class="def">0–20%</td></tr>
+          <tr><td class="prop">easing</td><td>Curve mapping scroll position to frame progress</td><td class="def">ease-in-out</td></tr>
+          <tr><td class="prop">fit</td><td>How frames fill the canvas (cover/contain/fill)</td><td class="def">cover</td></tr>
+          <tr><td class="prop">bgColor</td><td>Background colour behind the canvas</td><td class="def">#000000</td></tr>
+        </table>
+        <div class="ex-box">
+          <div class="ex-label">Example: iPhone-style slow reveal</div>
+          <p style="font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:8px">This produces a deliberate, weighty feel where each frame gets maximum user attention:</p>
+          <div class="hpre">scrollPerFrame: 30   // slow — 30px per frame
+startOffset: 10      // 10% padding before animation starts
+easing: 'spring'     // organic, slightly elastic feel</div>
+        </div>
+        <div class="ex-box">
+          <div class="ex-label">Example: Fast product flythrough</div>
+          <p style="font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:8px">Fast scroll mapping for a snappy 360° product rotation:</p>
+          <div class="hpre">scrollPerFrame: 8    // fast — 8px per frame
+startOffset: 0       // starts immediately
+easing: 'linear'     // consistent speed, no curve</div>
+        </div>
+      </div>
+
+      <!-- EASING -->
+      <div class="h-sec" id="h-easing">
+        <div class="h-eyebrow">Feature 02 — Easing</div>
+        <h2 class="h2">Easing curves explained</h2>
+        <p class="hp">Easing controls how the frame index maps to scroll progress. The visual curve previews in the Configure tab show exactly what each curve looks like.</p>
+        <table class="htable">
+          <tr><th>Curve</th><th>Behaviour</th><th>Best for</th></tr>
+          <tr><td class="prop">linear</td><td>Constant speed, 1:1 scroll-to-frame</td><td>Product rotations, data viz</td></tr>
+          <tr><td class="prop">ease-in</td><td>Starts slow, accelerates</td><td>Revealing content that "arrives"</td></tr>
+          <tr><td class="prop">ease-out</td><td>Starts fast, decelerates</td><td>Elements settling into position</td></tr>
+          <tr><td class="prop">ease-in-out</td><td>Slow → fast → slow</td><td>General purpose, most natural</td></tr>
+          <tr><td class="prop">expo</td><td>Near-zero then explosive acceleration</td><td>Launch-style reveals</td></tr>
+          <tr><td class="prop">spring</td><td>Slight overshoot then settle</td><td>Organic, Apple-like feel ★</td></tr>
+          <tr><td class="prop">elastic</td><td>Oscillates past end before settling</td><td>Playful, bouncy UI</td></tr>
+          <tr><td class="prop">bounce</td><td>Multiple bounces at end</td><td>Heavy objects landing</td></tr>
+          <tr><td class="prop">stepped</td><td>Jumps in 10% increments, no smoothing</td><td>Intentional choppiness / glitch</td></tr>
+        </table>
+        <div class="callout tip"><span class="callout-icon">🍎</span><div><strong>Apple uses Spring.</strong> It provides a tiny overshoot that feels organic and intentional — like the animation has mass. This is the curve you'll see on apple.com product pages.</div></div>
+      </div>
+
+      <!-- BLEND MODES -->
+      <div class="h-sec" id="h-blend">
+        <div class="h-eyebrow">Feature 02 — Blend Modes</div>
+        <h2 class="h2">Blend modes</h2>
+        <p class="hp">Blend modes apply a compositing operation to the canvas drawing, changing how frames are rendered visually — without touching your source images.</p>
+        <table class="htable">
+          <tr><th>Mode</th><th>Effect</th><th>Use case</th></tr>
+          <tr><td class="prop">none</td><td>Normal drawing — no compositing</td><td>Default for all use cases</td></tr>
+          <tr><td class="prop">screen</td><td>Brightens — dark areas become transparent</td><td>Light leaks, glow effects, smoke on dark bg</td></tr>
+          <tr><td class="prop">multiply</td><td>Darkens — light areas become transparent</td><td>Texture overlays on light backgrounds</td></tr>
+          <tr><td class="prop">overlay</td><td>High contrast — darks darker, lights lighter</td><td>Dramatic cinematic look</td></tr>
+          <tr><td class="prop">color-dodge</td><td>Extreme brightening of highlights</td><td>Sci-fi / neon glow aesthetics</td></tr>
+          <tr><td class="prop">difference</td><td>Inverts based on difference between layers</td><td>Abstract / glitch effects</td></tr>
+        </table>
+        <div class="callout info"><span class="callout-icon">💡</span><div>Blend modes are applied to the entire canvas. They work best on frames with black or white backgrounds. A 3D render on black with <strong>screen</strong> mode will make the background invisible, leaving only the object.</div></div>
+      </div>
+
+      <!-- TEXT LAYERS -->
+      <div class="h-sec" id="h-layers">
+        <div class="h-eyebrow">Feature 03</div>
+        <h2 class="h2">Text layers</h2>
+        <p class="hp">Text layers are animated overlays that appear and disappear at specific frame positions — positioned over the canvas just like Apple's product copy.</p>
+        <h3 class="h3">Layer types</h3>
+        <table class="htable">
+          <tr><th>Type</th><th>What it does</th></tr>
+          <tr><td class="prop">Headline</td><td>Large italic serif text (Fraunces font). The main message per scene.</td></tr>
+          <tr><td class="prop">Subtitle</td><td>Smaller supporting text, slightly transparent. Appears below the headline.</td></tr>
+          <tr><td class="prop">Counter</td><td>A number that counts up from 0 to your target value as the user scrolls through the layer's frame range.</td></tr>
+          <tr><td class="prop">Badge</td><td>Small uppercase label with accent background. For tags like "NEW" or "PRO".</td></tr>
+        </table>
+        <h3 class="h3">Animation types</h3>
+        <table class="htable">
+          <tr><th>Animation</th><th>Behaviour</th></tr>
+          <tr><td class="prop">fade</td><td>Fades in over the first 5% of its frame range, fades out over the last 5%</td></tr>
+          <tr><td class="prop">slide-up</td><td>Translates up 24px while fading in — classic Apple copy animation</td></tr>
+          <tr><td class="prop">slide-left</td><td>Translates left while fading in</td></tr>
+          <tr><td class="prop">scale</td><td>Scales from 85% to 100% while fading in</td></tr>
+          <tr><td class="prop">blur</td><td>Unblurs from 12px to sharp while fading in — premium effect</td></tr>
+          <tr><td class="prop">count</td><td>Counts from 0 to countTo value. Use with the Counter layer type.</td></tr>
+        </table>
+        <div class="ex-box">
+          <div class="ex-label">Example: iPhone battery life reveal (Apple-style)</div>
+          <p style="font-size:13px;color:var(--ink2);margin-bottom:12px">Three layers timed to reveal across an 80-frame sequence:</p>
+          <div class="hpre">Layer 1 — Badge, "BATTERY LIFE", top-left,  frames 0 → 80,  fade
+Layer 2 — Counter, countTo: 29, center,    frames 15 → 65, count
+Layer 3 — Headline, "hours", center,       frames 20 → 65, slide-up
+Layer 4 — Subtitle, "All-day. Every day.", center, frames 30 → 65, fade</div>
+          <p style="font-size:12px;color:var(--muted);margin-top:8px">The number counts from 0 → 29 as the user scrolls, then the headline slides in beneath it.</p>
+        </div>
+      </div>
+
+      <!-- COUNTER -->
+      <div class="h-sec" id="h-counter">
+        <div class="h-eyebrow">Feature 03 — Counter</div>
+        <h2 class="h2">Count-up number layers</h2>
+        <p class="hp">The <strong>Counter</strong> layer type counts a number from 0 to your target value as the user scrolls through its frame range. This is the exact mechanic Apple uses for specs like "29 hours battery", "48MP camera", "3nm chip".</p>
+        <h3 class="h3">How to set one up</h3>
+        <ol class="hol">
+          <li>In the Layers tab, click <strong>+ Counter</strong></li>
+          <li>Set the text to your number target (e.g. <span class="hcode">29</span>)</li>
+          <li>Set animation to <strong>count</strong></li>
+          <li>Set <strong>Count to</strong> to your end value (e.g. <span class="hcode">29</span>)</li>
+          <li>Set in/out frames to control when the counting happens</li>
+          <li>Add a companion Headline layer with the unit (e.g. "hours") at the same position</li>
+        </ol>
+        <div class="callout tip"><span class="callout-icon">💡</span><div>Place the counter's in-frame about 10 frames before the headline's in-frame. This way the number starts counting before the caption appears — the user sees the number build up, then the context word slides in. Extremely satisfying.</div></div>
+        <div class="ex-box">
+          <div class="ex-label">Complete camera spec example</div>
+          <div class="hpre">Counter layer:  text="48", animation="count", countTo=48, pos="center"
+                in=10, out=60, size="clamp(56px,8vw,120px)"
+
+Headline layer: text="megapixel camera", animation="slide-up"
+                in=20, out=60, pos="center", size="clamp(18px,2vw,28px)"</div>
+        </div>
+      </div>
+
+      <!-- PREVIEW -->
+      <div class="h-sec" id="h-preview">
+        <div class="h-eyebrow">Feature 04</div>
+        <h2 class="h2">Preview &amp; scrubbing</h2>
+        <p class="hp">The preview tab shows your animation in a 16:9 canvas with a scrubber bar — drag it to any position to inspect the exact frame, check layer positions, and verify timing.</p>
+        <ul class="hul">
+          <li><strong>Scrubber:</strong> drag left/right to scrub through frames. Click anywhere on the track to jump.</li>
+          <li><strong>Play button:</strong> plays the animation at the selected speed (0.25× to 2×).</li>
+          <li><strong>Speed controls:</strong> 0.25× is useful for checking text layer fade-in timing precisely.</li>
+          <li><strong>Frame counter:</strong> shows current frame and total frame count in the top right.</li>
+          <li><strong>Text layers:</strong> your layers render live over the preview as you scrub — exactly as they'll appear on your page.</li>
+        </ul>
+        <div class="callout tip"><span class="callout-icon">💡</span><div>After adjusting layer in/out frames in the Layers tab, come back to Preview and scrub slowly through that range to check the fade timing. The fade duration is 5% of your total frame count — for 120 frames that's 6 frames of fade in, 6 frames of fade out.</div></div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="h-sec" id="h-export">
+        <div class="h-eyebrow">Feature 05</div>
+        <h2 class="h2">Exporting code</h2>
+        <p class="hp">The Export tab generates production-ready code with your exact configuration baked in. All exports include progressive frame loading and reduced-motion support.</p>
+        <h3 class="h3">Progressive loading</h3>
+        <p class="hp">All exported code loads frames in this order: frame 1 first (shown immediately), frame N last (preloaded), then all middle frames in sequence. This means the animation is visible and partially functional before all frames have loaded.</p>
+        <div class="ex-box">
+          <div class="ex-label">Progressive load order in exported code</div>
+          <div class="hpre">// Load order: first → last → fill middle
+const order = [0, frameCount-1, ...Array.from({length: frameCount-2}, (_,i) => i+1)]
+order.forEach(i => {
+  const img = new Image()
+  img.src = basePath + 'frame' + pad(i+1) + '.png'
+  img.onload = () => { images[i] = img }
+})</div>
+        </div>
+        <h3 class="h3">Reduced motion</h3>
+        <p class="hp">All exports include a check for <span class="hcode">prefers-reduced-motion: reduce</span>. If the user has enabled this accessibility setting, the scroll animation is disabled and the first frame is shown as a static image instead.</p>
+      </div>
+
+      <!-- LIVE DEMO -->
+      <div class="h-sec" id="h-live">
+        <div class="h-eyebrow">Feature 06</div>
+        <h2 class="h2">Live demo</h2>
+        <p class="hp">The Live Demo tab renders your animation in a full-height scroll container — exactly as it will appear on your website. Scroll up and down to experience it as a real user would.</p>
+        <ul class="hul">
+          <li>The HUD (top center) shows current frame, scroll progress %, and live FPS.</li>
+          <li>Text layers render exactly as configured in the Layers tab.</li>
+          <li>Blend modes are applied live.</li>
+          <li>Use this to verify the scroll speed feels right before exporting.</li>
+        </ul>
+      </div>
+
+      <!-- HTML INTEGRATION -->
+      <div class="h-sec" id="h-html">
+        <div class="h-eyebrow">Integration</div>
+        <h2 class="h2">HTML snippet</h2>
+        <p class="hp">The simplest integration — a self-contained snippet you paste into any HTML file. Put your frames in a <span class="hcode">/frames/</span> folder next to the HTML.</p>
+        <div class="hpre">project/
+├── index.html          ← paste the exported snippet here
+└── frames/
+    ├── frame001.png
+    ├── frame002.png
+    └── frame120.png</div>
+        <p class="hp">The snippet includes the wrapper div, sticky canvas, all JavaScript, and CSS — no external dependencies.</p>
+      </div>
+
+      <!-- VANILLA JS -->
+      <div class="h-sec" id="h-vanilla">
+        <div class="h-eyebrow">Integration</div>
+        <h2 class="h2">Vanilla JS module</h2>
+        <p class="hp">An ES module class that you import and instantiate. Works in any project without a framework.</p>
+        <div class="hpre">import { ScrollCinema } from './scroll-cinema.js'
+
+// Mount on a container element
+new ScrollCinema('#hero', {
+  frameCount: 120,
+  basePath: '/frames/',
+  scrollPerFrame: 24,
+  easing: 'spring',
+})</div>
+        <p class="hp">The container element needs a height (it's set to <span class="hcode">frameCount × scrollPerFrame</span> automatically). Place it anywhere in your page.</p>
+      </div>
+
+      <!-- REACT -->
+      <div class="h-sec" id="h-react">
+        <div class="h-eyebrow">Integration</div>
+        <h2 class="h2">React &amp; Next.js</h2>
+        <p class="hp">A React functional component using hooks. Works with Vite, CRA, and Next.js.</p>
+        <div class="hpre">import ScrollCinema from './ScrollCinema'
+
+// In your page component:
+export default function HeroSection() {
+  return (
+    &lt;main&gt;
+      &lt;ScrollCinema
+        frameCount={120}
+        basePath="/frames/"
+        scrollPerFrame={24}
+        easing="spring"
+        onProgress={({ idx, progress }) => console.log(progress)}
+      /&gt;
+    &lt;/main&gt;
+  )
+}</div>
+        <div class="callout warn"><span class="callout-icon">⚠</span><div><strong>Next.js App Router:</strong> Add <span class="hcode">'use client'</span> as the very first line of the component file. Scroll events require a browser environment and won't work in Server Components.</div></div>
+        <h3 class="h3">onProgress callback</h3>
+        <p class="hp">The React component accepts an <span class="hcode">onProgress</span> prop — a function called on every scroll event with <span class="hcode">{'{ idx, progress }'}</span>. Use this to sync other elements with the scroll animation:</p>
+        <div class="hpre">onProgress={({ progress }) => {
+  // Sync a sidebar indicator, trigger analytics, etc.
+  setScrollProgress(progress)
+}}</div>
+      </div>
+
+      <!-- VUE -->
+      <div class="h-sec" id="h-vue">
+        <div class="h-eyebrow">Integration</div>
+        <h2 class="h2">Vue 3 &amp; Nuxt</h2>
+        <p class="hp">A Vue 3 Single File Component using the Composition API. Works with Nuxt 3.</p>
+        <div class="hpre">&lt;!-- In your page or layout --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;ScrollCinema
+      :frame-count="120"
+      base-path="/frames/"
+      :scroll-per-frame="24"
+      easing="spring"
+      @progress="onProgress"
+    /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script setup&gt;
+import ScrollCinema from '~/components/ScrollCinema.vue'
+function onProgress({ idx, progress }) {
+  console.log('Frame:', idx, 'Progress:', progress)
+}
+&lt;/script&gt;</div>
+        <div class="callout info"><span class="callout-icon">💡</span><div><strong>Nuxt 3:</strong> Put the component in <span class="hcode">~/components/ScrollCinema.vue</span> and it auto-imports — no import statement needed in your page.</div></div>
+      </div>
+
+      <!-- PERFORMANCE -->
+      <div class="h-sec" id="h-perf">
+        <div class="h-eyebrow">Reference</div>
+        <h2 class="h2">Performance tips</h2>
+        <ul class="hul">
+          <li><strong>Use JPEG over PNG</strong> where possible — 80% quality JPEG is visually identical but 3–5× smaller. Your animation will load faster and use less RAM.</li>
+          <li><strong>1280px wide is the sweet spot</strong> — most viewport widths don't need 4K frames. 1280px at 80% JPEG quality per frame ≈ 40–80KB each.</li>
+          <li><strong>60–120 frames is enough</strong> — at 24fps that's 2.5–5 seconds of animation. More frames = more memory. Apple's iPhone page uses ~140 frames.</li>
+          <li><strong>Use requestAnimationFrame</strong> — all exported ScrollCinema code wraps the scroll handler in rAF. Never bind heavy logic directly to the scroll event.</li>
+          <li><strong>Passive scroll listener</strong> — all exported code uses <span class="hcode">{'{ passive: true }'}</span> on the scroll event. This prevents jank on mobile.</li>
+          <li><strong>Progressive loading</strong> — the exported code loads frame 1 and frame N first. The animation starts immediately. Don't show a loading spinner — let the user start scrolling.</li>
+          <li><strong>Test on mobile</strong> — scroll animations on iOS Safari behave differently. Momentum scrolling means many frames can be skipped in a single tick. ScrollCinema handles this correctly with rAF, but always test on a real device.</li>
+        </ul>
+        <h3 class="h3">Frame count × memory reference</h3>
+        <table class="htable">
+          <tr><th>Frames</th><th>Resolution</th><th>RAM (approx)</th><th>Suitable for</th></tr>
+          <tr><td>60</td><td>1280×720</td><td>~210MB</td><td>Fast flythrough, mobile-first</td></tr>
+          <tr><td>90</td><td>1280×720</td><td>~315MB</td><td>Standard product reveal</td></tr>
+          <tr><td>120</td><td>1280×720</td><td>~420MB</td><td>Extended cinematic sequence</td></tr>
+          <tr><td>120</td><td>1920×1080</td><td>~950MB</td><td>Desktop-only, high-end</td></tr>
+        </table>
+      </div>
+
+      <!-- FFMPEG -->
+      <div class="h-sec" id="h-ffmpeg">
+        <div class="h-eyebrow">Reference</div>
+        <h2 class="h2">Extracting frames with FFmpeg</h2>
+        <p class="hp">If you prefer to extract frames before importing (rather than using the browser extraction), FFmpeg is the industry standard tool.</p>
+        <div class="ex-box">
+          <div class="ex-label">Basic extraction — 24fps, all frames</div>
+          <div class="hpre">ffmpeg -i input.mp4 -vf fps=24 frames/frame%03d.png</div>
+        </div>
+        <div class="ex-box">
+          <div class="ex-label">JPEG output for smaller files (recommended)</div>
+          <div class="hpre">ffmpeg -i input.mp4 -vf fps=24,scale=1280:-1 -q:v 3 frames/frame%03d.jpg</div>
+        </div>
+        <div class="ex-box">
+          <div class="ex-label">Limit to 120 frames maximum</div>
+          <div class="hpre">ffmpeg -i input.mp4 -vf fps=24,scale=1280:-1 -frames:v 120 frames/frame%03d.jpg</div>
+        </div>
+        <div class="ex-box">
+          <div class="ex-label">Extract only a 5-second clip starting at 2s</div>
+          <div class="hpre">ffmpeg -ss 2 -t 5 -i input.mp4 -vf fps=24,scale=1280:-1 frames/frame%03d.jpg</div>
+        </div>
+        <p class="hp">No FFmpeg? Use <strong>EZGIF.com/video-to-jpg</strong> — upload your video, set frame rate, download the ZIP, and import directly into ScrollCinema.</p>
+      </div>
+
+      <!-- TROUBLESHOOTING -->
+      <div class="h-sec" id="h-trouble">
+        <div class="h-eyebrow">Reference</div>
+        <h2 class="h2">Troubleshooting</h2>
+        <h3 class="h3">Canvas stays blank after loading frames</h3>
+        <p class="hp">Usually a CORS issue when the exported file is opened via <span class="hcode">file://</span>. Run a local server instead:</p>
+        <div class="hpre">npx serve .        # or
+python3 -m http.server 8080</div>
+        <h3 class="h3">Animation plays out of order</h3>
+        <p class="hp">Frame files aren't zero-padded. Rename them with consistent 3-digit padding: <span class="hcode">frame001.png</span>, not <span class="hcode">frame1.png</span>.</p>
+        <h3 class="h3">Animation is choppy or drops frames</h3>
+        <ul class="hul">
+          <li>Wait for all frames to fully load before scrolling fast</li>
+          <li>Reduce frame resolution (1280px is enough)</li>
+          <li>Use JPEG instead of PNG</li>
+          <li>Test in Chrome — it has the best canvas performance</li>
+        </ul>
+        <h3 class="h3">React: "window is not defined"</h3>
+        <p class="hp">Add <span class="hcode">'use client'</span> as the first line of the component. Next.js App Router runs components server-side by default — scroll events need a browser.</p>
+        <h3 class="h3">Text layers don't appear</h3>
+        <p class="hp">Check the in-frame value in the Layers tab. If <span class="hcode">inFrame</span> is higher than your current preview position, the layer hasn't appeared yet. Scrub past that frame in the Preview tab.</p>
+        <h3 class="h3">Video extraction is very slow</h3>
+        <p class="hp">Browser-based extraction is CPU-intensive. For very long videos (over 60 seconds), use FFmpeg directly and import the resulting images instead. Set Max Frames to 120 in the extraction options.</p>
+        <h3 class="h3">Mobile scrolling feels different</h3>
+        <p class="hp">iOS Safari uses momentum scrolling. This means scroll events can fire at larger intervals, causing frames to be skipped. This is normal behaviour — the animation still plays correctly, it just may not show every single frame on fast swipes. To slow it down, increase <span class="hcode">scrollPerFrame</span>.</p>
+      </div>
+
+    </div><!-- /help-content -->
+  </div><!-- /help-layout -->
+</div><!-- /panel-help -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════
+// STATE
+// ═══════════════════
+var frames = [];
+var layers = [];
+var selLayer = -1;
+var videoFile = null;
+var cfg = {
+  spf: 12, offset: 0, easing: 'ease-in-out',
+  fit: 'cover', width: '100vw', height: '100vh',
+  bg: '#000000', blend: 'none'
+};
+
+// ═══════════════════
+// TABS
+// ═══════════════════
+function goTab(id) {
+  document.querySelectorAll('.tab').forEach(function(t) {
+    t.classList.toggle('on', t.dataset.tab === id);
+  });
+  document.querySelectorAll('.panel').forEach(function(p) {
+    p.classList.remove('on');
+  });
+  var panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('on');
+  if (id === 'configure') refreshCfg();
+  if (id === 'layers') refreshLy();
+  if (id === 'preview') refreshPv();
+  if (id === 'export') refreshEx();
+  if (id === 'live') refreshLive();
+}
+
+document.querySelectorAll('.tab').forEach(function(t) {
+  t.addEventListener('click', function() { goTab(t.dataset.tab); });
+});
+document.querySelectorAll('[data-goto]').forEach(function(b) {
+  b.addEventListener('click', function() { goTab(b.dataset.goto); });
+});
+document.getElementById('demo-quick-btn').addEventListener('click', function() {
+  genDemo('gradient');
+  goTab('import');
+});
+
+// ═══════════════════
+// HELP NAV
+// ═══════════════════
+function hScroll(id) {
+  var el = document.getElementById(id);
+  var content = document.getElementById('help-content');
+  if (el && content) {
+    content.scrollTo({ top: el.offsetTop - 24, behavior: 'smooth' });
+  }
+}
+
+(function setupHelpScroll() {
+  var content = document.getElementById('help-content');
+  var fill = document.getElementById('reading-fill');
+  if (!content || !fill) return;
+  content.addEventListener('scroll', function() {
+    var pct = content.scrollTop / (content.scrollHeight - content.clientHeight) * 100;
+    fill.style.width = pct + '%';
+    var secs = content.querySelectorAll('.h-sec[id]');
+    var current = null;
+    secs.forEach(function(s) {
+      if (s.offsetTop - content.scrollTop < 150) current = s.id;
+    });
+    if (current) {
+      document.querySelectorAll('.help-nav a').forEach(function(a) {
+        var onclick = a.getAttribute('onclick') || '';
+        a.classList.toggle('act', onclick.includes(current));
+      });
+    }
+  });
+})();
+
+// ═══════════════════
+// EASING
+// ═══════════════════
+var EASINGS = [
+  { id: 'linear',      label: 'Linear',      fn: function(t) { return t; } },
+  { id: 'ease-in',     label: 'Ease In',     fn: function(t) { return t*t; } },
+  { id: 'ease-out',    label: 'Ease Out',    fn: function(t) { return t*(2-t); } },
+  { id: 'ease-in-out', label: 'In-Out',      fn: function(t) { return t<.5?2*t*t:-1+(4-2*t)*t; } },
+  { id: 'expo',        label: 'Expo',        fn: function(t) { return t===1?1:1-Math.pow(2,-10*t); } },
+  { id: 'spring',      label: 'Spring',      fn: function(t) { return 1-Math.cos(t*Math.PI*(1+t*3))*Math.pow(2,-6*t); } },
+  { id: 'elastic',     label: 'Elastic',     fn: function(t) { return t===0?0:t===1?1:Math.pow(2,-10*t)*Math.sin((t-.075)*(2*Math.PI)/.3)+1; } },
+  { id: 'bounce',      label: 'Bounce',      fn: function(t) { if(t<1/2.75)return 7.5625*t*t;if(t<2/2.75){t-=1.5/2.75;return 7.5625*t*t+.75;}if(t<2.5/2.75){t-=2.25/2.75;return 7.5625*t*t+.9375;}t-=2.625/2.75;return 7.5625*t*t+.984375; } },
+  { id: 'stepped',     label: 'Stepped',     fn: function(t) { return Math.floor(t*10)/10; } }
+];
+
+function applyEasing(t) {
+  var e = EASINGS.find(function(e) { return e.id === cfg.easing; }) || EASINGS[3];
+  return Math.max(0, Math.min(1, e.fn(Math.max(0, Math.min(1, t)))));
+}
+
+function buildEasingCards() {
+  var grid = document.getElementById('easing-grid');
+  if (!grid) return;
+  grid.innerHTML = EASINGS.map(function(e) {
+    return '<div class="ec' + (e.id === cfg.easing ? ' on' : '') + '" data-eid="' + e.id + '" onclick="selEasing(\'' + e.id + '\')">' +
+      '<canvas width="52" height="52" id="ec-' + e.id + '"></canvas>' +
+      '<div class="ec-lbl">' + e.label + '</div></div>';
+  }).join('');
+  EASINGS.forEach(drawEC);
+}
+
+function drawEC(e) {
+  var c = document.getElementById('ec-' + e.id);
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  var w = 52, h = 52, p = 7;
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle = e.id === cfg.easing ? '#c8420a' : '#bbb';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (var i = 0; i <= 40; i++) {
+    var t = i/40;
+    var x = p + t*(w-p*2);
+    var y = h - p - e.fn(t)*(h-p*2);
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  ctx.strokeStyle = '#ddd'; ctx.lineWidth = .5;
+  ctx.beginPath();
+  ctx.moveTo(p,h-p); ctx.lineTo(w-p,h-p);
+  ctx.moveTo(p,h-p); ctx.lineTo(p,p);
+  ctx.stroke();
+}
+
+function selEasing(id) {
+  cfg.easing = id;
+  document.querySelectorAll('.ec').forEach(function(c) { c.classList.toggle('on', c.dataset.eid === id); });
+  EASINGS.forEach(drawEC);
+  toast('Easing: ' + (EASINGS.find(function(e){return e.id===id;})||{}).label);
+}
+
+// ═══════════════════
+// FILE IMPORT
+// ═══════════════════
+var vdrop = document.getElementById('video-drop');
+var vinput = document.getElementById('video-input');
+vdrop.addEventListener('dragover', function(e){e.preventDefault();vdrop.classList.add('drag-over');});
+vdrop.addEventListener('dragleave', function(){vdrop.classList.remove('drag-over');});
+vdrop.addEventListener('drop', function(e){e.preventDefault();vdrop.classList.remove('drag-over');handleVideo(e.dataTransfer.files[0]);});
+vinput.addEventListener('change', function(){handleVideo(vinput.files[0]);});
+
+function handleVideo(f) {
+  if (!f || !f.type.startsWith('video/')) { toast('Please drop a video file'); return; }
+  videoFile = f;
+  document.getElementById('video-opts').style.display = 'block';
+  toast('Video loaded: ' + f.name);
+}
+
+function extractFrames() {
+  if (!videoFile) { toast('No video loaded'); return; }
+  var fps = +document.getElementById('extract-fps').value;
+  var maxF = +document.getElementById('extract-max').value;
+  var tw = document.getElementById('extract-size').value;
+  var prog = document.getElementById('extract-progress');
+  var btn = document.getElementById('extract-btn');
+  prog.style.display = 'block'; btn.disabled = true;
+
+  var url = URL.createObjectURL(videoFile);
+  var video = document.createElement('video');
+  video.src = url; video.muted = true; video.preload = 'metadata';
+  video.onloadedmetadata = function() {
+    var dur = video.duration;
+    var interval = 1/fps;
+    var total = Math.min(maxF || 9999, Math.floor(dur/interval));
+    var oc = new OffscreenCanvas(100,100);
+    var ctx = oc.getContext('2d');
+    frames = [];
+    var i = 0;
+    function doFrame() {
+      if (i >= total) {
+        URL.revokeObjectURL(url);
+        prog.style.display = 'none'; btn.disabled = false;
+        showFI(); toast('Extracted ' + frames.length + ' frames');
+        return;
+      }
+      video.currentTime = i * interval;
+      video.onseeked = function() {
+        var w = tw === 'original' ? video.videoWidth : parseInt(tw);
+        var h = Math.round(video.videoHeight*(w/video.videoWidth));
+        oc.width = w; oc.height = h;
+        ctx.drawImage(video, 0, 0, w, h);
+        frames.push(oc.transferToImageBitmap());
+        oc.width = w;
+        var pct = Math.round(((i+1)/total)*100);
+        document.getElementById('extract-pct').textContent = pct + '%';
+        document.getElementById('ep-fill').style.width = pct + '%';
+        document.getElementById('extract-status').textContent = 'Frame ' + (i+1) + '/' + total;
+        i++;
+        setTimeout(doFrame, 0);
+      };
+    }
+    doFrame();
+  };
+}
+
+var fdrop = document.getElementById('frame-drop');
+var finput = document.getElementById('frame-input');
+fdrop.addEventListener('dragover', function(e){e.preventDefault();fdrop.classList.add('drag-over');});
+fdrop.addEventListener('dragleave', function(){fdrop.classList.remove('drag-over');});
+fdrop.addEventListener('drop', function(e){e.preventDefault();fdrop.classList.remove('drag-over');handleFiles([].slice.call(e.dataTransfer.files));});
+finput.addEventListener('change', function(){handleFiles([].slice.call(finput.files));});
+
+function handleFiles(files) {
+  var imgs = files.filter(function(f){return f.type.startsWith('image/');});
+  imgs.sort(function(a,b){return a.name.localeCompare(b.name,undefined,{numeric:true});});
+  if (!imgs.length) { toast('No image files'); return; }
+  frames = [];
+  document.getElementById('load-prog').style.display = 'block';
+  document.getElementById('frame-info').style.display = 'none';
+  var i = 0;
+  function next() {
+    if (i >= imgs.length) {
+      document.getElementById('load-prog').style.display = 'none';
+      showFI(); return;
+    }
+    createImageBitmap(imgs[i]).then(function(bmp) {
+      frames.push(bmp);
+      var pct = Math.round(((i+1)/imgs.length)*100);
+      document.getElementById('load-pct').textContent = pct + '%';
+      document.getElementById('lp-fill').style.width = pct + '%';
+      i++; setTimeout(next, 0);
+    });
+  }
+  next();
+}
+
+function showFI() {
+  document.getElementById('frame-info').style.display = 'block';
+  document.getElementById('si-frames').textContent = frames.length;
+  document.getElementById('si-res').textContent = frames[0].width + 'x' + frames[0].height;
+  document.getElementById('si-mem').innerHTML = Math.round(frames.length*frames[0].width*frames[0].height*4/1048576) + '<span class="stat-unit">MB</span>';
+  document.getElementById('si-dur').innerHTML = (frames.length/24).toFixed(1) + '<span class="stat-unit">s</span>';
+  var grid = document.getElementById('frame-grid'); grid.innerHTML = '';
+  var show = Math.min(frames.length, 100);
+  for (var i = 0; i < show; i++) {
+    (function(idx) {
+      var d = document.createElement('div'); d.className = 'frame-thumb';
+      var c = document.createElement('canvas'); c.width=160;c.height=90;
+      c.getContext('2d').drawImage(frames[idx],0,0,160,90);
+      var img = document.createElement('img'); img.src = c.toDataURL('image/jpeg',.6);
+      var n = document.createElement('span'); n.className='frame-num'; n.textContent = idx+1;
+      d.append(img,n);
+      d.onclick = function(){scrubTo(idx);goTab('preview');};
+      grid.appendChild(d);
+    })(i);
+  }
+  if (show < frames.length) {
+    var m = document.createElement('div');m.className='frame-thumb';m.style.cssText='display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted)';
+    m.textContent='+' + (frames.length-show);grid.appendChild(m);
+  }
+}
+
+function resetFrames() {
+  frames=[];layers=[];
+  document.getElementById('frame-info').style.display='none';
+  finput.value=''; toast('Cleared');
+}
+
+// ═══════════════════
+// DEMO FRAMES
+// ═══════════════════
+function genDemo(type) {
+  var count = type === 'orbit' ? 120 : 90;
+  var w = 1280, h = 720;
+  frames = [];
+  var i = 0;
+  function next() {
+    if (i >= count) { showFI(); toast(count + ' demo frames ready'); return; }
+    var t = i/(count-1);
+    var oc = new OffscreenCanvas(w,h);
+    var ctx = oc.getContext('2d');
+    if (type === 'gradient') {
+      var h1=200+t*120,h2=260+t*80,h3=40+t*60;
+      var g = ctx.createLinearGradient(0,0,w,h);
+      g.addColorStop(0,'hsl('+h1+',70%,'+(8+t*6)+'%)');
+      g.addColorStop(.5,'hsl('+h2+',60%,'+(12+t*8)+'%)');
+      g.addColorStop(1,'hsl('+h3+',80%,'+(15+t*10)+'%)');
+      ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+      var ox=w*(.2+t*.6),oy=h*(.5+Math.sin(t*Math.PI*2)*.2);
+      var orb=ctx.createRadialGradient(ox,oy,0,ox,oy,300);
+      orb.addColorStop(0,'hsla('+h3+',100%,70%,'+(0.6-t*.2)+')');
+      orb.addColorStop(1,'transparent');
+      ctx.fillStyle=orb;ctx.fillRect(0,0,w,h);
+    } else {
+      ctx.fillStyle='#050508';ctx.fillRect(0,0,w,h);
+      var cx=w/2,cy=h/2,angle=t*Math.PI*2;
+      var rx=220,ry=140;
+      ctx.save();
+      ctx.translate(cx+Math.cos(angle)*rx*.3,cy+Math.sin(angle)*ry*.3);
+      ctx.rotate(angle*.4);
+      var ph=160+Math.sin(t*Math.PI)*20,pw=ph*.45;
+      ctx.beginPath();
+      if (ctx.roundRect) { ctx.roundRect(-pw/2,-ph/2,pw,ph,pw*.15); }
+      else { ctx.rect(-pw/2,-ph/2,pw,ph); }
+      var shine=ctx.createLinearGradient(-pw/2,-ph/2,pw/2,ph/2);
+      shine.addColorStop(0,'hsl('+(220+t*60)+',60%,'+(40+t*20)+'%)');
+      shine.addColorStop(.5,'hsl('+(240+t*40)+',70%,'+(60+t*10)+'%)');
+      shine.addColorStop(1,'hsl('+(200+t*80)+',50%,'+(30+t*15)+'%)');
+      ctx.fillStyle=shine;ctx.fill();ctx.restore();
+      var glow=ctx.createRadialGradient(cx,cy,0,cx,cy,300);
+      glow.addColorStop(0,'hsla('+(220+t*60)+',80%,60%,.08)');
+      glow.addColorStop(1,'transparent');
+      ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);
+    }
+    ctx.font='bold 12px monospace';ctx.fillStyle='rgba(255,255,255,.1)';
+    ctx.fillText('frame '+(i+1)+'/'+count,16,h-16);
+    frames.push(oc.transferToImageBitmap());
+    i++; if(i%15===0){setTimeout(next,0);}else{next();}
+  }
+  next();
+}
+
+// ═══════════════════
+// CONFIGURE
+// ═══════════════════
+function refreshCfg() {
+  var has = frames.length>0;
+  document.getElementById('cfg-empty').style.display = has?'none':'block';
+  document.getElementById('cfg-body').style.display = has?'block':'none';
+  if(has){buildEasingCards();updTotal();}
+}
+function onSpf(el) {
+  cfg.spf=+el.value;
+  var pct=((el.value-4)/76)*100;
+  el.style.setProperty('--pct',pct+'%');
+  document.getElementById('d-spf').textContent=el.value+'px';
+  updTotal();
+}
+function onOff(el) {
+  cfg.offset=+el.value;
+  el.style.setProperty('--pct',(el.value/80*100)+'%');
+  document.getElementById('d-off').textContent=el.value+'%';
+}
+function updTotal() {
+  if(!frames.length)return;
+  document.getElementById('d-total').textContent=(frames.length*cfg.spf).toLocaleString()+'px';
+}
+function onDims() {
+  cfg.width=document.getElementById('w-sel').value;
+  cfg.height=document.getElementById('h-sel').value;
+}
+function setRng(el) {
+  var min=+el.min,max=+el.max,val=+el.value;
+  el.style.setProperty('--pct',((val-min)/(max-min)*100)+'%');
+}
+
+// ═══════════════════
+// TEXT LAYERS
+// ═══════════════════
+function refreshLy() {
+  var has=frames.length>0;
+  document.getElementById('ly-empty').style.display=has?'none':'block';
+  document.getElementById('ly-body').style.display=has?'block':'none';
+  if(has)renderLyList();
+}
+function addLayer(type) {
+  var def = {
+    headline:{text:'Your headline',size:'clamp(28px,4vw,56px)',weight:'300',color:'#ffffff',style:'italic'},
+    subtitle:{text:'Supporting text',size:'clamp(14px,1.5vw,20px)',weight:'400',color:'rgba(255,255,255,0.75)',style:'normal'},
+    counter:{text:'0',size:'clamp(40px,6vw,80px)',weight:'100',color:'#ffffff',style:'italic',countTo:100},
+    badge:{text:'NEW',size:'11px',weight:'700',color:'#ffffff',style:'normal',bg:'rgba(200,66,10,.85)'}
+  };
+  var d=def[type]||def.headline;
+  layers.push({id:Date.now(),type:type,text:d.text,size:d.size,weight:d.weight,
+    color:d.color,style:d.style,bg:d.bg||'transparent',
+    pos:'bottom-left',anim:'fade',inFrame:0,outFrame:frames.length,
+    visible:true,countTo:d.countTo||null});
+  renderLyList();selLy(layers.length-1);toast(type+' layer added');
+}
+function renderLyList() {
+  var list=document.getElementById('layer-list');
+  if(!layers.length){list.innerHTML='<div style="text-align:center;padding:28px;color:var(--muted);font-size:12px;border:1px dashed var(--bdr)">No layers yet</div>';return;}
+  list.innerHTML=layers.map(function(l,i){
+    return '<div class="layer-row'+(i===selLayer?' sel':'')+'" onclick="selLy('+i+')">' +
+      '<span class="layer-type">'+l.type+'</span>' +
+      '<span class="layer-txt">'+l.text+'</span>' +
+      '<span style="font-size:11px;color:var(--muted)">fr '+l.inFrame+'–'+l.outFrame+'</span>' +
+      '<span class="layer-del" onclick="event.stopPropagation();delLy('+i+')">✕</span>' +
+      '</div>';
+  }).join('');
+}
+function selLy(idx) {
+  selLayer=idx;renderLyList();
+  var l=layers[idx];if(!l)return;
+  document.getElementById('ly-editor').style.display='block';
+  document.getElementById('le-txt').value=l.text;
+  document.getElementById('le-anim').value=l.anim;
+  document.getElementById('le-pos').value=l.pos;
+  document.getElementById('le-size').value=l.size;
+  document.getElementById('le-color').value=l.color.startsWith('#')?l.color:'#ffffff';
+  if(l.countTo)document.getElementById('le-ct').value=l.countTo;
+  var inR=document.getElementById('le-in');inR.max=frames.length;inR.value=l.inFrame;setRng(inR);document.getElementById('le-in-d').textContent=l.inFrame;
+  var outR=document.getElementById('le-out');outR.max=frames.length;outR.value=l.outFrame;setRng(outR);document.getElementById('le-out-d').textContent=l.outFrame||'end';
+}
+function setLP(prop,val){if(selLayer<0||!layers[selLayer])return;layers[selLayer][prop]=val;renderLyList();}
+function delLy(idx){layers.splice(idx,1);selLayer=-1;document.getElementById('ly-editor').style.display='none';renderLyList();}
+
+function posCSS(pos) {
+  var m={
+    'bottom-left':'bottom:40px;left:48px;',
+    'bottom-center':'bottom:40px;left:50%;transform:translateX(-50%);text-align:center;',
+    'center':'top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;',
+    'top-left':'top:48px;left:48px;',
+    'top-right':'top:48px;right:48px;text-align:right;',
+    'top-center':'top:48px;left:50%;transform:translateX(-50%);text-align:center;'
+  };
+  return m[pos]||m['bottom-left'];
+}
+function layerStyle(l,progress) {
+  var n=frames.length,cur=Math.round(progress*(n-1));
+  var inF=l.inFrame,outF=l.outFrame||n;
+  var fd=Math.max(6,Math.round(n*.05));
+  var op=0,ty=0,sc=1,bl=0;
+  if(cur>=inF&&cur<=outF){
+    var fi=Math.min(1,(cur-inF)/fd);
+    var fo=cur>outF-fd?Math.min(1,(outF-cur)/fd):1;
+    op=Math.min(fi,fo);
+    if(l.anim==='slide-up')ty=(1-op)*28;
+    if(l.anim==='scale')sc=.85+op*.15;
+    if(l.anim==='blur')bl=(1-op)*12;
+  }
+  return {op:op,ty:ty,sc:sc,bl:bl};
+}
+function renderLayerOverlay(container, progress) {
+  container.innerHTML = layers.filter(function(l){return l.visible;}).map(function(l) {
+    var s=layerStyle(l,progress);
+    var n=frames.length,cur=Math.round(progress*(n-1));
+    var txt=l.text;
+    if(l.anim==='count'&&l.countTo){
+      txt=Math.round(s.op*l.countTo).toString();
+    }
+    var tf='translateY('+s.ty.toFixed(1)+'px) scale('+s.sc.toFixed(3)+')';
+    var flt=s.bl?'blur('+s.bl.toFixed(1)+'px)':'';
+    return '<div style="position:absolute;'+posCSS(l.pos)+'color:'+l.color+';background:'+(l.bg||'transparent')+';' +
+      'font-family:\'Fraunces\',serif;font-size:'+l.size+';font-weight:'+l.weight+';font-style:'+l.style+';' +
+      'text-shadow:0 2px 20px rgba(0,0,0,.8);padding:8px 16px;' +
+      'opacity:'+s.op.toFixed(3)+';transform:'+tf+';filter:'+flt+';will-change:opacity,transform">'+txt+'</div>';
+  }).join('');
+}
+
+// ═══════════════════
+// PREVIEW
+// ═══════════════════
+var pvCanvas, pvCtx, pvIdx=0, playing=false, playInt=null, playSpd=1;
+
+function refreshPv() {
+  var has=frames.length>0;
+  document.getElementById('pv-empty').style.display=has?'none':'block';
+  document.getElementById('pv-body').style.display=has?'block':'none';
+  if(!has)return;
+  pvCanvas=document.getElementById('pv-canvas');
+  pvCtx=pvCanvas.getContext('2d');
+  pvCanvas.width=frames[0].width;pvCanvas.height=frames[0].height;
+  document.getElementById('s-tot').textContent=frames.length;
+  document.getElementById('pv-ftot').textContent=frames.length;
+  document.getElementById('pv-placeholder').style.display='none';
+  scrubTo(0);
+  var track=document.getElementById('scrub-track');
+  track.onmousedown=function(e){
+    function mv(e){var r=track.getBoundingClientRect();var t=Math.max(0,Math.min(1,(e.clientX-r.left)/r.width));scrubTo(Math.round(t*(frames.length-1)));}
+    mv(e);
+    function up(){document.removeEventListener('mousemove',mv);document.removeEventListener('mouseup',up);}
+    document.addEventListener('mousemove',mv);document.addEventListener('mouseup',up);
+  };
+}
+function scrubTo(idx) {
+  if(!frames.length)return;
+  idx=Math.max(0,Math.min(frames.length-1,idx));pvIdx=idx;
+  var prog=frames.length>1?idx/(frames.length-1):0;
+  if(pvCtx){
+    pvCtx.clearRect(0,0,pvCanvas.width,pvCanvas.height);
+    var blend=document.querySelector('input[name="blend"]:checked');
+    pvCtx.globalCompositeOperation=(blend&&blend.value!=='none')?blend.value:'source-over';
+    pvCtx.drawImage(frames[idx],0,0);
+    pvCtx.globalCompositeOperation='source-over';
+  }
+  var pct=prog*100;
+  document.getElementById('scrub-fill').style.width=pct+'%';
+  document.getElementById('scrub-handle').style.left=pct+'%';
+  document.getElementById('s-cur').textContent=idx;
+  document.getElementById('pv-fidx').textContent=idx;
+  var ov=document.getElementById('pv-overlay');
+  if(ov)renderLayerOverlay(ov,prog);
+}
+function togglePlay() {
+  playing=!playing;
+  document.getElementById('play-btn').textContent=playing?'⏸':'▶';
+  if(playing){
+    var idx=pvIdx;
+    playInt=setInterval(function(){
+      idx=(idx+1)%frames.length;scrubTo(idx);
+      if(idx===frames.length-1){playing=false;document.getElementById('play-btn').textContent='▶';clearInterval(playInt);}
+    },1000/(24*playSpd));
+  } else { clearInterval(playInt); }
+}
+function setSpd(s) {
+  playSpd=s;
+  document.querySelectorAll('.spd-btn').forEach(function(b){b.classList.toggle('on',+b.dataset.s===s);});
+  if(playing){clearInterval(playInt);playing=false;togglePlay();}
+}
+
+// ═══════════════════
+// LIVE DEMO
+// ═══════════════════
+var demoRaf=null,lastFt=0,lastDi=-1;
+function refreshLive() {
+  var has=frames.length>0;
+  document.getElementById('live-empty').style.display=has?'flex':'flex';
+  document.getElementById('live-body').style.display=has?'block':'none';
+  document.getElementById('live-empty').style.display=has?'none':'flex';
+  if(!has)return;
+  var c=document.getElementById('demo-canvas');
+  c.width=frames[0].width;c.height=frames[0].height;
+  c.getContext('2d').drawImage(frames[0],0,0);lastDi=0;
+  document.getElementById('demo-space').style.height=(frames.length*cfg.spf+100)+'px';
+  var scroll=document.getElementById('demo-scroll');
+  scroll.onscroll=function(){if(demoRaf)cancelAnimationFrame(demoRaf);demoRaf=requestAnimationFrame(demoRender);};
+  scroll.scrollTop=0;
+}
+function demoRender() {
+  var scroll=document.getElementById('demo-scroll');
+  var c=document.getElementById('demo-canvas');
+  if(!scroll||!c||!frames.length)return;
+  var sy=scroll.scrollTop;
+  var prog=applyEasing(Math.max(0,Math.min(1,sy/(frames.length*cfg.spf))));
+  var idx=Math.round(prog*(frames.length-1));
+  if(idx!==lastDi){
+    var ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);
+    var blend=document.querySelector('input[name="blend"]:checked');
+    ctx.globalCompositeOperation=(blend&&blend.value!=='none')?blend.value:'source-over';
+    ctx.drawImage(frames[idx],0,0);ctx.globalCompositeOperation='source-over';lastDi=idx;
+  }
+  var now=performance.now();
+  var fps=lastFt?Math.min(60,Math.round(1000/(now-lastFt))):60;lastFt=now;
+  document.getElementById('hud-f').textContent=idx;
+  document.getElementById('hud-p').textContent=Math.round(prog*100)+'%';
+  document.getElementById('hud-fps').textContent=fps;
+  var ov=document.getElementById('demo-layers');
+  if(ov)renderLayerOverlay(ov,prog);
+}
+
+// ═══════════════════
+// EXPORT
+// ═══════════════════
+function refreshEx() {
+  var has=frames.length>0;
+  document.getElementById('ex-empty').style.display=has?'none':'block';
+  document.getElementById('ex-body').style.display=has?'block':'none';
+  if(!has)return;
+  genCodes();
+  document.querySelectorAll('.fmt-tab').forEach(function(t){
+    t.onclick=function(){
+      document.querySelectorAll('.fmt-tab').forEach(function(x){x.classList.remove('on');});
+      document.querySelectorAll('.fmt-panel').forEach(function(x){x.classList.remove('on');});
+      t.classList.add('on');
+      var p=document.getElementById('fmt-'+t.dataset.fmt);if(p)p.classList.add('on');
+    };
+  });
+}
+
+function easingFnStr() {
+  return 'function applyEasing(t){\n' +
+    '  var e="'+cfg.easing+'";\n' +
+    '  if(e==="ease-in")return t*t;\n' +
+    '  if(e==="ease-out")return t*(2-t);\n' +
+    '  if(e==="ease-in-out")return t<.5?2*t*t:-1+(4-2*t)*t;\n' +
+    '  if(e==="expo")return t===1?1:1-Math.pow(2,-10*t);\n' +
+    '  if(e==="spring")return 1-Math.cos(t*Math.PI*(1+t*3))*Math.pow(2,-6*t);\n' +
+    '  if(e==="stepped")return Math.floor(t*10)/10;\n' +
+    '  return t;\n}';
+}
+
+function genCodes() {
+  var n=frames.length,spf=cfg.spf,total=n*spf+200;
+  var efn=easingFnStr();
+
+  // HTML
+  document.getElementById('code-html').textContent =
+'<!-- ScrollCinema v2 | '+n+' frames | '+spf+'px/frame | '+cfg.easing+' -->\n' +
+'<!-- Place frames as /frames/frame001.png … frame'+String(n).padStart(3,'0')+'.png -->\n' +
+'<style>\n'+
+'.sc-wrap{position:relative;height:'+total+'px}\n'+
+'.sc-sticky{position:sticky;top:0;width:'+cfg.width+';height:'+cfg.height+';overflow:hidden;background:'+cfg.bg+'}\n'+
+'.sc-canvas{width:100%;height:100%;display:block}\n'+
+'@media(prefers-reduced-motion:reduce){.sc-wrap{height:auto}.sc-sticky{position:relative}}\n'+
+'</style>\n\n'+
+'<div class="sc-wrap">\n'+
+'  <div class="sc-sticky">\n'+
+'    <canvas class="sc-canvas" id="sc"></canvas>\n'+
+'  </div>\n'+
+'</div>\n\n'+
+'<script>\n'+
+'(function(){\n'+
+'  if(window.matchMedia("(prefers-reduced-motion:reduce)").matches)return;\n'+
+'  var N='+n+',SPF='+spf+';\n'+
+'  '+efn+'\n'+
+'  var imgs=[],raf=null,last=-1;\n'+
+'  var c=document.getElementById("sc"),ctx=c.getContext("2d");\n'+
+'  function pad(n){return String(n).padStart(3,"0");}\n'+
+'  var order=[0,N-1].concat(Array.from({length:N-2},function(_,i){return i+1;}));\n'+
+'  order.forEach(function(i){\n'+
+'    var img=new Image();\n'+
+'    img.src="/frames/frame"+pad(i+1)+".png";\n'+
+'    img.onload=function(){imgs[i]=img;if(i===0){c.width=img.naturalWidth;c.height=img.naturalHeight;ctx.drawImage(img,0,0);}}\n'+
+'  });\n'+
+'  window.addEventListener("scroll",function(){\n'+
+'    if(raf)cancelAnimationFrame(raf);\n'+
+'    raf=requestAnimationFrame(function(){\n'+
+'      var p=applyEasing(Math.max(0,Math.min(1,window.scrollY/(N*SPF))));\n'+
+'      var idx=Math.round(p*(N-1));\n'+
+'      if(idx!==last&&imgs[idx]){ctx.clearRect(0,0,c.width,c.height);ctx.drawImage(imgs[idx],0,0);last=idx;}\n'+
+'    });\n'+
+'  },{passive:true});\n'+
+'})();\n'+
+'<\/script>';
+
+  // VANILLA JS
+  document.getElementById('code-vanilla').textContent =
+'// ScrollCinema v2 — ES Module\n'+
+'// import {ScrollCinema} from "./scroll-cinema.js"\n'+
+'// new ScrollCinema("#container", {frameCount:'+n+', basePath:"/frames/"})\n\n'+
+'export class ScrollCinema{\n'+
+'  constructor(sel,opts){\n'+
+'    this.c=Object.assign({frameCount:'+n+',basePath:"/frames/",scrollPerFrame:'+spf+',easing:"'+cfg.easing+'",width:"'+cfg.width+'",height:"'+cfg.height+'",bg:"'+cfg.bg+'"},opts);\n'+
+'    this.imgs=[];this.last=-1;this.raf=null;\n'+
+'    var el=document.querySelector(sel);\n'+
+'    if(!el)return;\n'+
+'    if(window.matchMedia("(prefers-reduced-motion:reduce)").matches)return;\n'+
+'    el.style.cssText="position:relative;height:"+(this.c.frameCount*this.c.scrollPerFrame+200)+"px";\n'+
+'    var s=document.createElement("div");\n'+
+'    s.style.cssText="position:sticky;top:0;width:"+this.c.width+";height:"+this.c.height+";overflow:hidden;background:"+this.c.bg;\n'+
+'    el.appendChild(s);\n'+
+'    this.canvas=document.createElement("canvas");\n'+
+'    this.canvas.style.cssText="width:100%;height:100%;display:block";\n'+
+'    this.ctx=this.canvas.getContext("2d");\n'+
+'    s.appendChild(this.canvas);\n'+
+'    this._load();this._bind();\n'+
+'  }\n'+
+'  _pad(n){return String(n).padStart(3,"0");}\n'+
+'  '+efn.replace('function applyEasing','_easing')+'\n'+
+'  _load(){\n'+
+'    var self=this,N=self.c.frameCount;\n'+
+'    var order=[0,N-1].concat(Array.from({length:N-2},function(_,i){return i+1;}));\n'+
+'    order.forEach(function(i){\n'+
+'      var img=new Image();\n'+
+'      img.src=self.c.basePath+"frame"+self._pad(i+1)+".png";\n'+
+'      img.onload=function(){self.imgs[i]=img;if(i===0){self.canvas.width=img.naturalWidth;self.canvas.height=img.naturalHeight;self.ctx.drawImage(img,0,0);}}\n'+
+'    });\n'+
+'  }\n'+
+'  _bind(){\n'+
+'    var self=this;\n'+
+'    window.addEventListener("scroll",function(){\n'+
+'      if(self.raf)cancelAnimationFrame(self.raf);\n'+
+'      self.raf=requestAnimationFrame(function(){\n'+
+'        var p=self._easing(Math.max(0,Math.min(1,window.scrollY/(self.c.frameCount*self.c.scrollPerFrame))));\n'+
+'        var idx=Math.round(p*(self.c.frameCount-1));\n'+
+'        if(idx!==self.last&&self.imgs[idx]){self.ctx.clearRect(0,0,self.canvas.width,self.canvas.height);self.ctx.drawImage(self.imgs[idx],0,0);self.last=idx;}\n'+
+'      });\n'+
+'    },{passive:true});\n'+
+'  }\n'+
+'  destroy(){window.removeEventListener("scroll",this._bind);if(this.raf)cancelAnimationFrame(this.raf);}\n'+
+'}';
+
+  // REACT
+  document.getElementById('code-react').textContent =
+"// ScrollCinema v2 — React Component\n// 'use client' required for Next.js App Router\n'use client'\nimport{useRef,useEffect,useCallback}from 'react'\nexport default function ScrollCinema({\n  frameCount="+n+",basePath='/frames/',\n  scrollPerFrame="+spf+",easing='"+cfg.easing+"',\n  width='"+cfg.width+"',height='"+cfg.height+"',bgColor='"+cfg.bg+"',onProgress=null\n}){\n  const canvasRef=useRef(null)\n  const ease=useCallback(t=>{\n    if(easing==='ease-in')return t*t\n    if(easing==='ease-out')return t*(2-t)\n    if(easing==='ease-in-out')return t<.5?2*t*t:-1+(4-2*t)*t\n    if(easing==='expo')return t===1?1:1-Math.pow(2,-10*t)\n    if(easing==='spring')return 1-Math.cos(t*Math.PI*(1+t*3))*Math.pow(2,-6*t)\n    return t\n  },[easing])\n  useEffect(()=>{\n    if(typeof window==='undefined')return\n    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return\n    const canvas=canvasRef.current;if(!canvas)return\n    const ctx=canvas.getContext('2d')\n    const imgs=[];let last=-1,raf=null\n    const pad=n=>String(n).padStart(3,'0')\n    const order=[0,frameCount-1,...Array.from({length:frameCount-2},(_,i)=>i+1)]\n    order.forEach(i=>{\n      const img=new Image()\n      img.src=basePath+'frame'+pad(i+1)+'.png'\n      img.onload=()=>{imgs[i]=img;if(i===0){canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;ctx.drawImage(img,0,0)}}\n    })\n    const onScroll=()=>{\n      if(raf)cancelAnimationFrame(raf)\n      raf=requestAnimationFrame(()=>{\n        const p=ease(Math.max(0,Math.min(1,window.scrollY/(frameCount*scrollPerFrame))))\n        const idx=Math.round(p*(frameCount-1))\n        if(idx!==last&&imgs[idx]){ctx.clearRect(0,0,canvas.width,canvas.height);ctx.drawImage(imgs[idx],0,0);last=idx}\n        onProgress?.({idx,progress:p})\n      })\n    }\n    window.addEventListener('scroll',onScroll,{passive:true})\n    return()=>{window.removeEventListener('scroll',onScroll);if(raf)cancelAnimationFrame(raf)}\n  },[frameCount,basePath,scrollPerFrame,ease,onProgress])\n  return(\n    <div style={{position:'relative',height:frameCount*scrollPerFrame+200}}>\n      <div style={{position:'sticky',top:0,width,height,overflow:'hidden',background:bgColor}}>\n        <canvas ref={canvasRef} style={{width:'100%',height:'100%',display:'block'}}/>\n      </div>\n    </div>\n  )\n}";
+
+  // VUE
+  document.getElementById('code-vue').textContent =
+"<!-- ScrollCinema v2 — Vue 3 SFC -->\n<template>\n  <div :style=\"{position:'relative',height:frameCount*scrollPerFrame+200+'px'}\">\n    <div :style=\"{position:'sticky',top:0,width,height,overflow:'hidden',background:bgColor}\">\n      <canvas ref=\"canvas\" style=\"width:100%;height:100%;display:block\"/>\n    </div>\n  </div>\n</template>\n<script setup>\nimport{ref,onMounted,onUnmounted}from 'vue'\nconst props=defineProps({\n  frameCount:{type:Number,default:"+n+"},\n  basePath:{type:String,default:'/frames/'},\n  scrollPerFrame:{type:Number,default:"+spf+"},\n  easing:{type:String,default:'"+cfg.easing+"'},\n  width:{type:String,default:'"+cfg.width+"'},\n  height:{type:String,default:'"+cfg.height+"'},\n  bgColor:{type:String,default:'"+cfg.bg+"'},\n})\nconst emit=defineEmits(['progress'])\nconst canvas=ref(null)\nconst imgs=[]\nlet last=-1,raf=null\nfunction ease(t){\n  if(props.easing==='ease-in')return t*t\n  if(props.easing==='ease-out')return t*(2-t)\n  if(props.easing==='ease-in-out')return t<.5?2*t*t:-1+(4-2*t)*t\n  if(props.easing==='expo')return t===1?1:1-Math.pow(2,-10*t)\n  if(props.easing==='spring')return 1-Math.cos(t*Math.PI*(1+t*3))*Math.pow(2,-6*t)\n  return t\n}\nfunction onScroll(){\n  if(raf)cancelAnimationFrame(raf)\n  raf=requestAnimationFrame(()=>{\n    const p=ease(Math.max(0,Math.min(1,window.scrollY/(props.frameCount*props.scrollPerFrame))))\n    const idx=Math.round(p*(props.frameCount-1))\n    const ctx=canvas.value?.getContext('2d')\n    if(idx!==last&&imgs[idx]&&ctx){ctx.clearRect(0,0,canvas.value.width,canvas.value.height);ctx.drawImage(imgs[idx],0,0);last=idx}\n    emit('progress',{idx,progress:p})\n  })\n}\nonMounted(()=>{\n  if(window.matchMedia('(prefers-reduced-motion:reduce)').matches)return\n  const pad=n=>String(n).padStart(3,'0')\n  const order=[0,props.frameCount-1,...Array.from({length:props.frameCount-2},(_,i)=>i+1)]\n  order.forEach(i=>{\n    const img=new Image()\n    img.src=props.basePath+'frame'+pad(i+1)+'.png'\n    img.onload=()=>{imgs[i]=img;if(i===0){canvas.value.width=img.naturalWidth;canvas.value.height=img.naturalHeight;canvas.value.getContext('2d').drawImage(img,0,0)}}\n  })\n  window.addEventListener('scroll',onScroll,{passive:true})\n})\nonUnmounted(()=>{window.removeEventListener('scroll',onScroll);if(raf)cancelAnimationFrame(raf)})\n<\/script>";
+}
+
+function copyCode(fmt) {
+  var el=document.getElementById('code-'+fmt);
+  navigator.clipboard.writeText(el.textContent).then(function(){toast('Copied to clipboard');});
+}
+function dlCode(fmt,fn) {
+  var text=document.getElementById('code-'+fmt).textContent;
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([text],{type:'text/plain'}));
+  a.download=fn;a.click();URL.revokeObjectURL(a.href);
+  toast('Downloaded '+fn);
+}
+
+// ═══════════════════
+// TOAST
+// ═══════════════════
+function toast(msg) {
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2800);
+}
+
+// ═══════════════════
+// INIT
+// ═══════════════════
+window.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('bg-col').addEventListener('input',function(e){cfg.bg=e.target.value;document.getElementById('bg-txt').value=e.target.value;});
+  document.querySelectorAll('input[name="blend"]').forEach(function(r){r.addEventListener('change',function(e){cfg.blend=e.target.value;});});
+});
+</script>
+</body>
+</html>
