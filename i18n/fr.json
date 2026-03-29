@@ -14,7 +14,6 @@
   "nav_crm": "CRM",
   "nav_accounts": "Comptes e-mail",
   "nav_inbox_test": "Test de boîte de réception",
-  "nav_cyclewash": "CycleWASH",
   "nav_settings": "Paramètres",
   "nav_help": "Aide",
   "btn_new_campaign": "Nouvelle campagne",
@@ -155,5 +154,6 @@
   "btn_export_csv": "Exporter CSV",
   "btn_import_csv": "Importer CSV",
   "label_events": "Événements",
-  "label_date": "Date"
+  "label_date": "Date",
+  "nav_workspace": "Workspace"
 }
