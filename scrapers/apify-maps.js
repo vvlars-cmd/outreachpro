@@ -54,7 +54,7 @@ async function scrape({ city, searchTerms, maxPerSearch = 15, minStars = 3.5, to
     email: item.email || extractEmailFromText(item.description || '') || '',
     phone: item.phone || item.phoneNumber || '',
     website: cleanUrl(item.website || ''),
-    category: (item.categoryName || item.categories?.[0] || 'Fahrradhändler'),
+    category: (item.categoryName || item.categories?.[0] || 'Local Business'),
     rating: item.totalScore || item.rating || 0,
     reviewsCount: item.reviewsCount || item.reviewCount || 0,
     address: item.address || item.street || '',
