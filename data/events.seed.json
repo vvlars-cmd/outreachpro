@@ -1,82 +1,72 @@
 [
   {
-    "id": "e1",
-    "name": "Fahrradtag Jever",
-    "date": "29.03.2026",
-    "time": "11:00-18:00",
-    "city": "Jever",
-    "status": "Gebucht"
+    "id": "ev1",
+    "name": "Trade Show Berlin",
+    "city": "Berlin",
+    "date": "2026-04-15",
+    "leads": 12
   },
   {
-    "id": "e2",
-    "name": "Gruene Bruehl",
-    "date": "18.04.2026",
-    "time": "10:00-13:15",
-    "city": "Bruehl",
-    "status": "Gebucht"
+    "id": "ev2",
+    "name": "Industry Expo Hamburg",
+    "city": "Hamburg",
+    "date": "2026-05-03",
+    "leads": 8
   },
   {
-    "id": "e3",
-    "name": "Monheim am Rhein",
-    "date": "19.04.2026",
-    "time": "11:00-18:00",
-    "city": "Monheim am Rhein",
-    "status": "Gebucht"
+    "id": "ev3",
+    "name": "B2B Summit Frankfurt",
+    "city": "Frankfurt",
+    "date": "2026-05-22",
+    "leads": 15
   },
   {
-    "id": "e4",
-    "name": "Duesseldorf Radtour",
-    "date": "30.04.2026",
-    "time": "08:00-16:00",
-    "city": "Duesseldorf",
-    "status": "Anfrage"
+    "id": "ev4",
+    "name": "Sales Conference Munich",
+    "city": "Munich",
+    "date": "2026-06-10",
+    "leads": 9
   },
   {
-    "id": "e5",
-    "name": "Coesfeld",
-    "date": "30.04.2026",
-    "time": "16:00-20:00",
-    "city": "Coesfeld",
-    "status": "Gebucht"
+    "id": "ev5",
+    "name": "Tech Forum Düsseldorf",
+    "city": "Düsseldorf",
+    "date": "2026-06-28",
+    "leads": 11
   },
   {
-    "id": "e6",
-    "name": "Aachen",
-    "date": "09.05.2026",
-    "time": "11:00-16:00",
-    "city": "Aachen",
-    "status": "Gebucht"
+    "id": "ev6",
+    "name": "Startup Week Cologne",
+    "city": "Cologne",
+    "date": "2026-07-14",
+    "leads": 7
   },
   {
-    "id": "e7",
-    "name": "Arnsberg",
-    "date": "30.05.2026",
-    "time": "08:00-16:00",
-    "city": "Arnsberg",
-    "status": "Anfrage"
+    "id": "ev7",
+    "name": "Digital Summit Stuttgart",
+    "city": "Stuttgart",
+    "date": "2026-08-05",
+    "leads": 13
   },
   {
-    "id": "e8",
-    "name": "Heiligenhaus",
-    "date": "14.06.2026",
-    "time": "06:00-10:00",
-    "city": "Heiligenhaus",
-    "status": "Gebucht"
+    "id": "ev8",
+    "name": "Commerce Expo Leipzig",
+    "city": "Leipzig",
+    "date": "2026-08-20",
+    "leads": 6
   },
   {
-    "id": "e9",
-    "name": "Soest",
-    "date": "19.07.2026",
-    "time": "09:00-10:00",
-    "city": "Soest",
-    "status": "Gebucht"
+    "id": "ev9",
+    "name": "Innovation Day Hanover",
+    "city": "Hanover",
+    "date": "2026-09-08",
+    "leads": 10
   },
   {
-    "id": "e10",
-    "name": "Hamm",
-    "date": "19.07.2026",
-    "time": "09:00-10:00",
-    "city": "Hamm",
-    "status": "Gebucht"
+    "id": "ev10",
+    "name": "Autumn Trade Fair Dresden",
+    "city": "Dresden",
+    "date": "2026-09-25",
+    "leads": 8
   }
 ]
