@@ -226,7 +226,7 @@ tr:hover td{background:rgba(79,114,255,.03)}
 /* INBOX TESTER */
 .score-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:20px;font-weight:800;border:4px solid}
 .score-high{border-color:var(--grn);color:var(--grn)}.score-mid{border-color:var(--amb);color:var(--amb)}.score-low{border-color:var(--red);color:var(--red)}
-/* CYCLEWASH */
+/* WORKSPACE */
 .cw-header{background:linear-gradient(135deg,rgba(34,212,160,.1),rgba(34,212,160,.02));border:1px solid rgba(34,212,160,.2);border-radius:var(--r);padding:16px 20px;margin-bottom:20px}
 /* WARP */
 .warp-btn{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(79,114,255,.15),rgba(168,85,247,.1));border:1px solid var(--blu-md);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--blu);transition:all .2s}
@@ -309,11 +309,11 @@ body { font-size: 15px !important; }
   <div class="brand">
     <div class="brand-eye">AI Sales Platform</div>
     <div class="brand-name">Outreach<span>Pro</span></div>
-    <div class="brand-sub">Instantly.ai Clone + CycleWASH</div>
+    <div class="brand-sub">AI Sales Engagement Platform</div>
   </div>
-  <div class="ws-badge cw" onclick="nav('cyclewash')" title="CycleWASH — your active workspace">
+  <div class="ws-badge" onclick="nav('cyclewash')" title="Workspace">
     <div class="ws-eye">Active Workspace</div>
-    <div class="ws-name">cycleWASH</div>
+    <div class="ws-name">Workspace</div>
     <div class="ws-live"><div class="ws-dot"></div><span>LIVE</span></div>
   </div>
   <div class="nav-scroll">
@@ -376,9 +376,9 @@ body { font-size: 15px !important; }
       Email Accounts
     </button>
     <div class="nav-div"></div>
-    <button class="ni" data-view="cyclewash" onclick="nav('cyclewash')" title="CycleWASH — your active workspace">
+    <button class="ni" data-view="cyclewash" onclick="nav('cyclewash')" title="Workspace — your active workspace">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="5"/><path d="M4 7.5a3.5 3.5 0 017 0"/></svg>
-      CycleWASH
+      Workspace
     </button>
     <button class="ni" data-view="settings" onclick="nav('settings')" title="Settings — configure API keys and preferences">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="2"/><path d="M7.5 1v2M7.5 12v2M1 7.5h2M12 7.5h2M3 3l1.4 1.4M10.6 10.6L12 12M3 12l1.4-1.4M10.6 4.4L12 3"/></svg>
@@ -421,7 +421,7 @@ body { font-size: 15px !important; }
       <div class="kpi-grid" id="kpi-dash"></div>
       <div class="grid2" style="margin-bottom:16px">
         <div class="card card-pad">
-          <div class="card-head"><div class="card-title">Events 2026 — CycleWASH</div><button class="btn btn-ghost btn-sm" onclick="nav('cyclewash')" title="CycleWASH — your active workspace">View all →</button></div>
+          <div class="card-head"><div class="card-title">Events 2026</div><button class="btn btn-ghost btn-sm" onclick="nav('cyclewash')" title="Workspace — your active workspace">View all →</button></div>
           <div class="grid2" id="dash-events"></div>
         </div>
         <div class="card card-pad">
@@ -571,10 +571,10 @@ body { font-size: 15px !important; }
           <div style="padding:12px 14px;border-bottom:1px solid var(--bdr);background:var(--surf2)">
             <div class="grid2" style="gap:10px;margin-bottom:10px">
               <div><div class="inp-label">To</div><input class="inp" id="c-to" placeholder="{{email}}"/></div>
-              <div><div class="inp-label">From</div><input class="inp" id="c-from" value="info@cyclewash.de"/></div>
+              <div><div class="inp-label">From</div><input class="inp" id="c-from" placeholder="your@email.com"/></div>
             </div>
             <div class="inp-label">Subject</div>
-            <input class="inp" id="c-subject" placeholder="Einladung: cycleWASH Pro Platinum – Live-Demo {{date}} in {{city}}"/>
+            <input class="inp" id="c-subject" placeholder="{{product}} – Demo {{date}} in {{city}}"/>
             <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap">
               <span style="font-size:11px;color:var(--muted)">Insert token:</span>
               <span class="token-chip" onclick="insertTok('{{name}}')">{{name}}</span>
@@ -791,12 +791,12 @@ body { font-size: 15px !important; }
       <div class="grid2" id="accts-grid"></div>
     </div>
 
-    <!-- ════════ CYCLEWASH ════════ -->
+    <!-- ════════ WORKSPACE ════════ -->
     <div class="view" id="view-cyclewash">
       <div class="cw-header">
-        <div style="font-size:9px;font-weight:800;color:var(--grn);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px">CW Cleaning Solutions GmbH · HRB 93480 · Köln</div>
-        <div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--grn)">cycleWASH Sales Workspace</div>
-        <div style="font-size:12px;color:var(--ink2);margin-top:2px">Belfortstrasse 8, 50668 Köln · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d2bbbcb4bd92b1abb1beb7a5b3a1bafcb6b7">[email&#160;protected]</a> · Pro Platinum €38k · Mini Platinum €27.5k</div>
+        <div style="font-size:9px;font-weight:800;color:var(--grn);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px">Your Company · Workspace</div>
+        <div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--grn)">Sales Workspace</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:2px">Configure your workspace details in Settings → Workspace</div>
       </div>
       <div class="kpi-grid" id="kpi-cw"></div>
       <div class="grid2" style="margin-bottom:16px">
@@ -825,7 +825,7 @@ body { font-size: 15px !important; }
       </div>
       <div class="card">
         <div style="padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">
-          <div style="font-family:var(--head);font-size:14px;font-weight:700">CycleWASH Leads</div>
+          <div style="font-family:var(--head);font-size:14px;font-weight:700">Workspace Leads</div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-ghost btn-sm" onclick="nav('apify')" title="Apify Scraper — find leads on Google Maps">Scrape more</button>
             <button class="btn btn-ghost btn-sm" onclick="exportLeadsCSV()">Export</button>
@@ -860,7 +860,7 @@ body { font-size: 15px !important; }
             </div>
             <div>
               <div class="inp-label">Default search terms</div>
-              <textarea class="inp" id="s-apify-terms" rows="3" style="margin-bottom:12px">Fahrradgeschäft,Fahrradverleih,E-Bike Händler</textarea>
+              <textarea class="inp" id="s-apify-terms" rows="3" style="margin-bottom:12px">restaurant,hotel,dental clinic</textarea>
               <div class="grid2" style="gap:10px">
                 <div><div class="inp-label">Max results</div><input class="inp" type="number" id="s-apify-max" value="15"/></div>
                 <div><div class="inp-label">Min stars</div><input class="inp" type="number" id="s-apify-stars" value="3.5" step="0.5"/></div>
@@ -879,7 +879,7 @@ body { font-size: 15px !important; }
             </div>
             <div>
               <div class="inp-label">Sender email</div>
-              <input class="inp" type="email" id="s-g-from" value="info@cyclewash.de" style="margin-bottom:12px"/>
+              <input class="inp" type="email" id="s-g-from" placeholder="your@email.com" style="margin-bottom:12px"/>
               <div class="inp-label">Daily send limit</div>
               <input class="inp" type="number" id="s-g-limit" value="50"/>
             </div>
@@ -890,33 +890,33 @@ body { font-size: 15px !important; }
         </div>
         <div class="stab-panel" id="stab-company" style="padding:20px">
           <div class="grid2" style="gap:12px">
-            <div><div class="inp-label">Company Name</div><input class="inp" id="s-co-name" value="CW Cleaning Solutions GmbH"/></div>
-            <div><div class="inp-label">Address</div><input class="inp" id="s-co-addr" value="Belfortstrasse 8 | 50668 Köln"/></div>
+            <div><div class="inp-label">Company Name</div><input class="inp" id="s-co-name" placeholder="Your Company GmbH"/></div>
+            <div><div class="inp-label">Address</div><input class="inp" id="s-co-addr" placeholder="Your Street | City"/></div>
             <div><div class="inp-label">Phone</div><input class="inp" id="s-co-tel" value="+49221-650-605-32"/></div>
             <div><div class="inp-label">Mobile</div><input class="inp" id="s-co-mob" value="+49163-573-8161"/></div>
-            <div><div class="inp-label">Email</div><input class="inp" id="s-co-email" value="info@cyclewash.de"/></div>
-            <div><div class="inp-label">Website</div><input class="inp" id="s-co-web" value="www.cyclewash.de"/></div>
+            <div><div class="inp-label">Email</div><input class="inp" id="s-co-email" placeholder="your@email.com"/></div>
+            <div><div class="inp-label">Website</div><input class="inp" id="s-co-web" placeholder="www.yourcompany.com"/></div>
           </div>
-          <div style="margin-top:12px"><div class="inp-label">Tagline</div><input class="inp" id="s-co-tagline" value='cycleWASH, "Fahrrad waschen im Vorbeigehen"'/></div>
+          <div style="margin-top:12px"><div class="inp-label">Tagline</div><input class="inp" id="s-co-tagline" placeholder="Your tagline"/></div>
           <div style="margin-top:10px"><div class="inp-label">Registration</div><input class="inp" id="s-co-reg" value="Sitz: Köln · HRB-Nr. 93480 · Ust.-ID: DE316636197"/></div>
           <div class="sig-preview" id="sig-prev" style="margin-top:12px"></div>
         </div>
         <div class="stab-panel" id="stab-products" style="padding:20px">
           <div class="grid2" style="gap:12px">
-            <div><div class="inp-label">Pro Platinum price (net)</div><input class="inp" id="s-pro" value="38.000"/></div>
-            <div><div class="inp-label">Mini Platinum price (net)</div><input class="inp" id="s-mini" value="27.500"/></div>
+            <div><div class="inp-label">Product 1 price (net)</div><input class="inp" id="s-pro" placeholder="0.00"/></div>
+            <div><div class="inp-label">Product 2 price (net)</div><input class="inp" id="s-mini" placeholder="0.00"/></div>
             <div><div class="inp-label">Offer valid until</div><input class="inp" id="s-offer" value="30. April 2026"/></div>
             <div><div class="inp-label">Delivery (weeks)</div><input class="inp" type="number" id="s-deliv" value="8"/></div>
           </div>
         </div>
         <div class="stab-panel" id="stab-templates" style="padding:20px">
           <div class="inp-label">Default subject template</div>
-          <input class="inp" id="s-subj-tpl" value="Einladung: cycleWASH Pro Platinum – Live-Demo {{date}} in {{city}}" style="margin-bottom:14px"/>
+          <input class="inp" id="s-subj-tpl" placeholder="{{product}} – Demo {{date}} in {{city}}" style="margin-bottom:14px"/>
           <div class="grid2" style="gap:12px">
             <div><div class="inp-label">Opening: rental/tour</div><textarea class="inp" id="s-intro-rental" rows="3">als Verleih- und Tourbetrieb wissen Sie: Fahrräder kehren von jeder Tour verschmutzt zurück.</textarea></div>
-            <div><div class="inp-label">Opening: e-bike dealer</div><textarea class="inp" id="s-intro-ebike" rows="3">E-Bikes im Wert von mehreren Tausend Euro verdienen eine ebenso hochwertige Pflege.</textarea></div>
+            <div><div class="inp-label">Opening: e-bike dealer</div><textarea class="inp" id="s-intro-ebike" rows="3">Your business deserves professional-grade solutions tailored to your needs.</textarea></div>
             <div><div class="inp-label">Opening: workshop</div><textarea class="inp" id="s-intro-workshop" rows="3">In einer professionellen Werkstatt ist Sauberkeit nicht nur Optik.</textarea></div>
-            <div><div class="inp-label">Opening: standard dealer</div><textarea class="inp" id="s-intro-dealer" rows="3">Ein sauberes Fahrrad ist das stärkste Verkaufsargument – bei der Übergabe und im Showroom.</textarea></div>
+            <div><div class="inp-label">Opening: standard dealer</div><textarea class="inp" id="s-intro-dealer" rows="3">A professional first impression starts with the quality of your products and services.</textarea></div>
           </div>
         </div>
         <div class="stab-panel" id="stab-ui" style="padding:20px">
