@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
     // Decode CF-obfuscated emails back to plain text
     html = html.replace(/<a[^>]*__cf_email__[^>]*data-cfemail="([0-9a-f]+)"[^>]*>[^<]*<\/a>/g, (m, hex) => {
       try { const b=Buffer.from(hex,'hex'),k=b[0]; return [...b.slice(1)].map(c=>String.fromCharCode(c^k)).join(''); }
-      catch { return 'info@cyclewash.de'; }
+      catch { return 'info@example.com'; }
     });
 
     // ── SERVER INJECTION v2.5 ── i18n fix + all features ──
@@ -101,7 +101,7 @@ table td,table th{font-size:14px!important}
       'inbox-test': strings.nav_inbox_test || 'Inbox Tester',
       crm: strings.nav_crm || 'CRM Pipeline',
       accounts: strings.nav_accounts || 'Email Accounts',
-      cyclewash: 'CycleWASH',
+      cyclewash: 'Workspace',
       settings: strings.nav_settings || 'Settings',
       help: strings.nav_help || 'Help',
     };
@@ -184,7 +184,7 @@ table td,table th{font-size:14px!important}
       'inbox-test':'Inbox Tester — spam score checker',
       crm:'CRM Pipeline — track deals',
       accounts:'Email Accounts — manage senders',
-      cyclewash:'CycleWASH — your B2B workspace',
+      cyclewash:'Workspace — configure your company settings',
       settings:'Settings — API keys and config',
       help:'Help — tutorials and documentation',
     };
@@ -302,20 +302,20 @@ const leadsFile = path.join(__dirname, 'data', 'leads.seed.json');
 const leadsSeed = fs.existsSync(leadsFile)
   ? JSON.parse(fs.readFileSync(leadsFile, 'utf8')).slice(0, 25).map((l, i) => ({ id: `l${i+1}`, ...l }))
   : [
-    { id:'l1', name:'Fahrrad Jungmann', city:'Wilhelmshaven', email:'info@fahrrad-jungmann.de', category:'Fahrradhändler', rating:4.5, reviewsCount:38, status:'Neu', src:'CRM', website:'fahrrad-jungmann.de' },
-    { id:'l2', name:'Rad Sport Weber', city:'Brühl', email:'info@radsport-weber.de', category:'Fahrradhändler', rating:4.2, reviewsCount:55, status:'Neu', src:'CRM', website:'radsport-weber.de' },
-    { id:'l3', name:'Bike World Münster', city:'Münster', email:'info@bikeworld-ms.de', category:'Fahrradhändler', rating:4.7, reviewsCount:112, status:'Kontaktiert', src:'CRM', website:'bikeworld-ms.de' },
-    { id:'l4', name:'E-Bike Center Köln', city:'Köln', email:'info@ebike-center.de', category:'E-Bike Händler', rating:4.4, reviewsCount:89, status:'Neu', src:'CRM', website:'ebike-center.de' },
-    { id:'l5', name:'Zweirad Hoffmann', city:'Aachen', email:'info@zweirad-hoffmann.de', category:'Fahrradhändler', rating:4.6, reviewsCount:74, status:'Qualifiziert', src:'CRM', website:'zweirad-hoffmann.de' },
+    { id:'l1', name:'Acme Office Solutions', city:'Berlin', email:'info@acme-office-example.de', category:'Office Equipment', rating:4.5, reviewsCount:42, status:'New', src:'CRM', website:'acme-office-example.de' },
+    { id:'l2', name:'TechSupply GmbH', city:'Hamburg', email:'info@techsupply-example.de', category:'IT Equipment', rating:4.2, reviewsCount:67, status:'New', src:'CRM', website:'techsupply-example.de' },
+    { id:'l3', name:'Metro Business Center', city:'Frankfurt', email:'info@metro-biz-example.de', category:'Business Services', rating:4.7, reviewsCount:115, status:'Contacted', src:'CRM', website:'metro-biz-example.de' },
+    { id:'l4', name:'ProClean Services', city:'Munich', email:'info@proclean-example.de', category:'Facility Management', rating:4.4, reviewsCount:91, status:'New', src:'CRM', website:'proclean-example.de' },
+    { id:'l5', name:'Urban Workspace Co.', city:'Cologne', email:'info@urbanws-example.de', category:'Coworking', rating:4.6, reviewsCount:78, status:'Qualified', src:'CRM', website:'urbanws-example.de' },
   ];
 seedIfEmpty('leads.json', leadsSeed);
 seedIfEmpty('campaigns.json', [
-  { id:'c1', name:'CycleWASH Spring 2026 — NRW', status:'active', from:'info@cyclewash.de', daily:40, stopOnReply:true, leads:25, sent:18, opens:11, replies:3, bounced:0, openRate:61, replyRate:17, createdAt:'2026-03-15T09:00:00Z', subject:'CycleWASH Pro Platinum — Vorstellung für {{name}}' },
-  { id:'c2', name:'Events Follow-up — Jever & Brühl', status:'paused', from:'info@cyclewash.de', daily:25, stopOnReply:true, leads:8, sent:8, opens:5, replies:2, bounced:0, openRate:63, replyRate:25, createdAt:'2026-03-10T10:30:00Z', subject:'Nachfassung: CycleWASH Demo in {{city}}' },
+  { id:'c1', name:'Spring Outreach 2026', status:'active', from:'sales@example.com', daily:40, stopOnReply:true, leads:25, sent:18, opens:11, replies:3, bounced:0, openRate:61, replyRate:17, createdAt:'2026-03-15T09:00:00Z', subject:'{{product}} — Introduction for {{name}}' },
+  { id:'c2', name:'Events Follow-up', status:'paused', from:'sales@example.com', daily:25, stopOnReply:true, leads:8, sent:8, opens:5, replies:2, bounced:0, openRate:63, replyRate:25, createdAt:'2026-03-10T10:30:00Z', subject:'Follow-up: Demo in {{city}}' },
 ]);
 seedIfEmpty('templates.json', []);
 seedIfEmpty('email-accounts.json', [{
-  id: 'acc1', email: 'info@cyclewash.de', name: 'CW Cleaning Solutions GmbH',
+  id: 'acc1', email: 'sales@example.com', name: 'Your Company Name',
   connected: false, warmupEnabled: false, warmupDailyTarget: 30,
   dailySentToday: 0, reputation: 85
 }]);
@@ -326,8 +326,8 @@ const eventsSeed = fs.existsSync(eventsFile)
   ? JSON.parse(fs.readFileSync(eventsFile, 'utf8'))
   : [
     { id:'e1', name:'Bike Festival Jever', city:'Jever', date:'2026-04-12', leads:0 },
-    { id:'e2', name:'Fahrradmesse Brühl', city:'Brühl', date:'2026-05-03', leads:4 },
-    { id:'e3', name:'E-Bike Expo Düsseldorf', city:'Düsseldorf', date:'2026-05-17', leads:6 },
+    { id:'e2', name:'Industry Expo Hamburg', city:'Hamburg', date:'2026-05-03', leads:8 },
+    { id:'e3', name:'Digital Expo Düsseldorf', city:'Düsseldorf', date:'2026-05-17', leads:6 },
     { id:'e4', name:'Radmarkt Aachen', city:'Aachen', date:'2026-06-07', leads:3 },
     { id:'e5', name:'Bike Days Münster', city:'Münster', date:'2026-06-21', leads:5 },
   ];
@@ -341,15 +341,15 @@ seedIfEmpty('deals.json', {
   Won:[{id:'deal4',company:'Bike World Münster',value:27500,contact:'Hans Weber',email:'h.weber@bikeworld.de'}], Lost:[]
 });
 seedIfEmpty('inbox.json', [
-  {id:'msg1',from:'Karl Jungmann & Sohn',email:'info@fahrrad-jungmann.de',subject:'Re: CycleWASH Pro Platinum',preview:'Das klingt sehr interessant für uns...',body:'<p>Guten Tag,</p><p>vielen Dank! Das klingt sehr interessant. Können Sie mir mehr Details schicken?</p><p>MfG, Karl Jungmann</p>',ts:'2026-03-26T14:23:00Z',label:'interested',read:false},
+  {id:'msg1',from:'Karl Jungmann & Sohn',email:'info@fahrrad-jungmann.de',subject:'Re: Product Introduction',preview:'Das klingt sehr interessant für uns...',body:'<p>Guten Tag,</p><p>vielen Dank! Das klingt sehr interessant. Können Sie mir mehr Details schicken?</p><p>MfG, Karl Jungmann</p>',ts:'2026-03-26T14:23:00Z',label:'interested',read:false},
   {id:'msg2',from:'Zweirad Hoffmann',email:'info@zweirad-hoffmann.de',subject:'Re: Termin vereinbaren',preview:'Gerne Dienstag 7. April...',body:'<p>Sehr geehrte Damen und Herren,</p><p>gerne Dienstag, 7. April um 14:00 Uhr?</p><p>MfG, Stefan Hoffmann</p>',ts:'2026-03-24T16:45:00Z',label:'meeting',read:false},
-  {id:'msg3',from:'Rad Sport Weber',email:'info@radsport-weber.de',subject:'Re: CycleWASH',preview:'Derzeit kein Budget...',body:'<p>Hallo, derzeit kein Budget. Bitte melden Sie sich in Q4.</p><p>VG, M. Weber</p>',ts:'2026-03-25T10:11:00Z',label:'not_now',read:true},
+  {id:'msg3',from:'Rad Sport Weber',email:'info@radsport-weber.de',subject:'Re: Your Email',preview:'Derzeit kein Budget...',body:'<p>Hallo, derzeit kein Budget. Bitte melden Sie sich in Q4.</p><p>VG, M. Weber</p>',ts:'2026-03-25T10:11:00Z',label:'not_now',read:true},
 ]);
 seedIfEmpty('sequences.json', {
   c1:[
-    {id:'s1',subject:'CycleWASH Pro Platinum — Vorstellung für {{name}}',body:'<p>Guten Tag,</p><p>ich möchte Ihnen die CycleWASH Pro Platinum vorstellen — eine vollautomatische Fahrradwaschanlage für Fachhändler.</p><p>{{aiOpening}}</p><p>Hätten Sie 15 Minuten?</p><p>Mit freundlichen Grüßen,<br/>Sebastian Müller<br/>CW Cleaning Solutions GmbH</p>',delay:0,variant:'A'},
-    {id:'s2',subject:'Re: CycleWASH — kurze Nachfassung',body:'<p>Guten Tag,</p><p>kurze Nachfassung zu meiner E-Mail von letzter Woche. Darf ich Ihnen weitere Infos schicken?</p><p>Beste Grüße,<br/>Sebastian</p>',delay:3,variant:'A'},
-    {id:'s3',subject:'CycleWASH — Fallstudie: +22% Kundenzufriedenheit',body:'<p>Guten Tag,</p><p>als letzten Kontaktversuch teile ich eine Fallstudie: ein Händler steigerte die Kundenzufriedenheit um 22%.</p><p>Beste Grüße,<br/>Sebastian</p>',delay:7,variant:'A'},
+    {id:'s1',subject:'{{product}} — Introduction for {{name}}',body:'<p>Hi,</p><p>I wanted to introduce you to {{product}}.</p><p>{{aiOpening}}</p><p>Would you have 15 minutes for a quick call?</p><p>Best regards,<br/>{{sender}}</p>',delay:0,variant:'A'},
+    {id:'s2',subject:'Quick follow-up',body:'<p>Hi,</p><p>Just following up on my email from last week. Can I send over more details?</p><p>Best,<br/>{{sender}}</p>',delay:3,variant:'A'},
+    {id:'s3',subject:'Case study: +22% customer satisfaction',body:'<p>Hi,</p><p>As a final note — here is a case study showing a 22% increase in customer satisfaction.</p><p>Best,<br/>{{sender}}</p>',delay:7,variant:'A'},
   ]
 });
 
@@ -473,7 +473,7 @@ app.post('/api/accounts', (req, res) => {
 });
 
 // ════════════════════════════════════════════════════════════════════════════════
-// EVENTS (CycleWASH)
+// EVENTS
 // ════════════════════════════════════════════════════════════════════════════════
 app.get('/api/events', (req, res) => res.json(readJSON('events.json', [])));
 
@@ -482,7 +482,7 @@ app.get('/api/events', (req, res) => res.json(readJSON('events.json', [])));
 // ════════════════════════════════════════════════════════════════════════════════
 app.post('/api/apify/scrape', async (req, res) => {
   sseSetup(res);
-  const { cities = [], searchTerms = ['Fahrradgeschäft','E-Bike Händler'], maxPerSearch = 15, minStars = 3.5 } = req.body;
+  const { cities = [], searchTerms = ['restaurant','hotel','dental clinic'], maxPerSearch = 15, minStars = 3.5 } = req.body;
   const token = process.env.APIFY_TOKEN;
   if (!token) { sseSend(res, { type: 'error', msg: 'APIFY_TOKEN not set' }); return res.end(); }
 
@@ -914,7 +914,7 @@ app.post('/api/leads/import', upload.single('file'), (req, res) => {
 // ════════════════════════════════════════════════════════════════════════════════
 app.post('/api/ai/personalise/batch', async (req, res) => {
   sseSetup(res);
-  const { leadIds, language = 'de', productContext = 'cycleWASH bike washing machine' } = req.body;
+  const { leadIds, language = 'de', productContext = 'your product' } = req.body;
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) { sseSend(res, { type: 'error', msg: 'ANTHROPIC_API_KEY not set' }); return res.end(); }
 
