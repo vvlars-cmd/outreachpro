@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OutreachPro — AI-Powered B2B Sales Engagement</title>
+<meta name="description" content="Turn cold leads into warm conversations. AI-personalised email sequences, Google Maps lead scraping, and a full CRM — all in one Docker-deployable platform."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=Geist:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--bg2:#111;--bg3:#161616;
+  --surf:#1a1a1a;--surf2:#222;
+  --bdr:#2a2a2a;--bdr2:#333;
+  --ink:#f0ede8;--ink2:#999;--ink3:#666;
+  --acc:#e8d5a3;--acc2:#c4a96b;
+  --grn:#22c55e;--red:#ef4444;--blu:#3b82f6;
+  --head:'Instrument Serif',Georgia,serif;
+  --body:'Geist',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;overflow-x:hidden}
+
+/* ── NOISE TEXTURE OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:1000;opacity:.4}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(10,10,10,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr)}
+.nav-logo{font-family:var(--head);font-size:22px;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.nav-logo-dot{width:8px;height:8px;background:var(--acc);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{color:var(--ink2);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{background:var(--acc);color:#0a0a0a;padding:9px 22px;border-radius:6px;font-size:14px;font-weight:700;text-decoration:none;transition:all .2s;letter-spacing:.01em}
+.nav-cta:hover{background:var(--acc2);transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 48px 80px;text-align:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(232,213,163,.06) 0%, transparent 70%)}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--bdr) 1px,transparent 1px),linear-gradient(90deg,var(--bdr) 1px,transparent 1px);background-size:60px 60px;opacity:.3}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--bdr2);border-radius:100px;padding:6px 16px;font-size:12px;font-weight:600;color:var(--acc);letter-spacing:.08em;text-transform:uppercase;margin-bottom:32px;animation:fadeUp .8s ease both}
+.hero-tag-dot{width:6px;height:6px;background:var(--grn);border-radius:50%;animation:pulse 1.5s infinite}
+h1{font-family:var(--head);font-size:clamp(48px,7vw,88px);font-weight:400;line-height:1.05;color:var(--ink);margin-bottom:24px;animation:fadeUp .8s .1s ease both}
+h1 em{font-style:italic;color:var(--acc)}
+.hero-sub{font-size:18px;color:var(--ink2);max-width:560px;margin:0 auto 48px;font-weight:400;animation:fadeUp .8s .2s ease both}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .8s .3s ease both}
+.btn-primary{background:var(--acc);color:#0a0a0a;padding:14px 32px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-primary:hover{background:var(--acc2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(232,213,163,.2)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--bdr2);padding:14px 32px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PIPELINE ANIMATION ── */
+.pipeline{margin-top:72px;animation:fadeUp .8s .4s ease both;position:relative}
+.pipeline-track{display:flex;align-items:center;justify-content:center;gap:0;position:relative}
+.pipe-node{background:var(--surf);border:1px solid var(--bdr2);border-radius:10px;padding:12px 20px;font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;position:relative;z-index:2}
+.pipe-node.active{border-color:var(--acc);color:var(--acc);box-shadow:0 0 20px rgba(232,213,163,.15)}
+.pipe-arrow{width:48px;height:2px;background:linear-gradient(90deg,var(--bdr2),var(--acc));position:relative;overflow:hidden}
+.pipe-arrow::after{content:'';position:absolute;top:-1px;left:-100%;width:40%;height:4px;background:var(--acc);border-radius:2px;animation:flow 2s infinite linear}
+.pipe-arrow.d2::after{animation-delay:.4s}
+.pipe-arrow.d3::after{animation-delay:.8s}
+.pipe-arrow.d4::after{animation-delay:1.2s}
+.pipe-arrow.d5::after{animation-delay:1.6s}
+@keyframes flow{from{left:-40%}to{left:110%}}
+.pipeline-sub{text-align:center;color:var(--ink3);font-size:12px;font-family:var(--mono);margin-top:16px;letter-spacing:.05em}
+
+/* ── STATS BAR ── */
+.stats{border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr);padding:40px 48px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;background:var(--bg2)}
+.stat-num{font-family:var(--head);font-size:42px;color:var(--acc);display:block;line-height:1}
+.stat-lbl{font-size:13px;color:var(--ink2);margin-top:6px;font-weight:500}
+
+/* ── SECTIONS ── */
+section{padding:100px 48px;max-width:1200px;margin:0 auto}
+.section-tag{font-family:var(--mono);font-size:11px;color:var(--acc);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px;display:block}
+h2{font-family:var(--head);font-size:clamp(32px,4vw,52px);font-weight:400;color:var(--ink);line-height:1.1;margin-bottom:20px}
+h2 em{font-style:italic;color:var(--acc)}
+.section-sub{font-size:17px;color:var(--ink2);max-width:520px;line-height:1.7}
+
+/* ── FEATURES GRID ── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr);border-radius:16px;overflow:hidden;margin-top:64px}
+.feat{background:var(--bg2);padding:36px 32px;transition:background .2s}
+.feat:hover{background:var(--surf)}
+.feat-icon{font-size:28px;margin-bottom:16px;display:block}
+.feat-title{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.feat-desc{font-size:14px;color:var(--ink2);line-height:1.6}
+
+/* ── HOW IT WORKS ── */
+.steps{margin-top:64px;display:flex;flex-direction:column;gap:0}
+.step{display:grid;grid-template-columns:80px 1fr;gap:32px;padding:40px 0;border-bottom:1px solid var(--bdr);align-items:start}
+.step:last-child{border-bottom:none}
+.step-num{font-family:var(--head);font-size:52px;color:var(--bdr2);line-height:1;font-style:italic}
+.step-title{font-size:20px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.step-desc{font-size:15px;color:var(--ink2);line-height:1.7}
+.step-tag{display:inline-flex;align-items:center;gap:6px;background:var(--surf);border:1px solid var(--bdr2);border-radius:4px;padding:4px 10px;font-family:var(--mono);font-size:11px;color:var(--acc);margin-top:12px}
+
+/* ── PRICING ── */
+.pricing-wrap{padding:100px 48px;background:var(--bg2);border-top:1px solid var(--bdr);border-bottom:1px solid var(--bdr)}
+.pricing-inner{max-width:1200px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:64px}
+
+.plan{background:var(--bg3);border:1px solid var(--bdr2);border-radius:16px;padding:40px;position:relative;transition:all .25s;display:flex;flex-direction:column}
+.plan:hover{border-color:var(--bdr2);transform:translateY(-4px);box-shadow:0 24px 64px rgba(0,0,0,.4)}
+.plan.featured{background:var(--surf);border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 24px 64px rgba(232,213,163,.1)}
+.plan-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--acc);color:#0a0a0a;font-size:11px;font-weight:800;padding:4px 16px;border-radius:100px;letter-spacing:.08em;text-transform:uppercase}
+
+.plan-name{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);margin-bottom:12px;font-family:var(--mono)}
+.plan-price{font-family:var(--head);font-size:52px;color:var(--ink);line-height:1;margin-bottom:4px}
+.plan-price sup{font-size:24px;font-family:var(--body);font-weight:600;vertical-align:top;margin-top:10px;display:inline-block}
+.plan-price sub{font-size:16px;font-family:var(--body);font-weight:400;color:var(--ink2)}
+.plan-desc{font-size:14px;color:var(--ink2);margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--bdr)}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:12px;flex:1;margin-bottom:32px}
+.plan-features li{font-size:14px;color:var(--ink2);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.plan-features li::before{content:'✓';color:var(--grn);font-weight:700;flex-shrink:0;margin-top:1px}
+.plan-features li.no::before{content:'—';color:var(--ink3)}
+.plan-features li.no{color:var(--ink3)}
+.plan-cta{display:block;text-align:center;padding:13px 24px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;margin-top:auto}
+.plan-cta.outline{border:1px solid var(--bdr2);color:var(--ink);background:transparent}
+.plan-cta.outline:hover{border-color:var(--acc);color:var(--acc)}
+.plan-cta.filled{background:var(--acc);color:#0a0a0a}
+.plan-cta.filled:hover{background:var(--acc2);transform:translateY(-1px)}
+
+.pricing-note{text-align:center;margin-top:32px;font-size:13px;color:var(--ink3)}
+.pricing-note a{color:var(--acc);text-decoration:none}
+
+/* ── ENTERPRISE BANNER ── */
+.enterprise{max-width:1200px;margin:0 auto;padding:0 48px 80px}
+.enterprise-card{background:linear-gradient(135deg,var(--surf) 0%,var(--surf2) 100%);border:1px solid var(--bdr2);border-radius:16px;padding:56px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center}
+.enterprise-title{font-family:var(--head);font-size:36px;color:var(--ink);margin-bottom:12px}
+.enterprise-desc{font-size:15px;color:var(--ink2);max-width:480px;line-height:1.7}
+.enterprise-features{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap}
+.enterprise-feat{font-size:13px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.enterprise-feat::before{content:'✦';color:var(--acc);font-size:10px}
+
+/* ── SOCIAL PROOF ── */
+.testimonials{padding:100px 48px;max-width:1200px;margin:0 auto}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:64px}
+.testi{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:32px}
+.testi-quote{font-size:15px;color:var(--ink2);line-height:1.7;margin-bottom:24px;font-style:italic}
+.testi-quote::before{content:'"';font-family:var(--head);font-size:48px;color:var(--acc);line-height:0;vertical-align:-20px;margin-right:4px}
+.testi-author{font-size:14px;font-weight:700;color:var(--ink)}
+.testi-role{font-size:12px;color:var(--ink3);margin-top:2px}
+.testi-stars{color:var(--acc);font-size:12px;margin-bottom:16px;letter-spacing:2px}
+
+/* ── FAQ ── */
+.faq{padding:100px 48px;max-width:800px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--bdr);padding:24px 0}
+.faq-q{font-size:16px;font-weight:600;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;user-select:none}
+.faq-q:hover{color:var(--acc)}
+.faq-arrow{color:var(--ink3);transition:transform .2s;font-size:18px}
+.faq-a{font-size:14px;color:var(--ink2);line-height:1.7;max-height:0;overflow:hidden;transition:all .3s;padding-top:0}
+.faq-item.open .faq-a{max-height:300px;padding-top:16px}
+.faq-item.open .faq-arrow{transform:rotate(180deg);color:var(--acc)}
+
+/* ── CTA SECTION ── */
+.cta-section{padding:120px 48px;text-align:center;position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 50%, rgba(232,213,163,.05) 0%, transparent 70%)}
+.cta-section h2{font-family:var(--head);font-size:clamp(40px,5vw,72px);margin-bottom:24px}
+.cta-section p{font-size:17px;color:var(--ink2);margin-bottom:48px}
+
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--bdr);padding:48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px}
+.footer-logo{font-family:var(--head);font-size:20px;color:var(--ink)}
+.footer-links{display:flex;gap:32px}
+.footer-links a{color:var(--ink3);text-decoration:none;font-size:13px;transition:color .2s}
+.footer-links a:hover{color:var(--acc)}
+.footer-copy{font-size:12px;color:var(--ink3);font-family:var(--mono)}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:16px 24px}
+  .nav-links{display:none}
+  .hero{padding:100px 24px 60px}
+  section,.faq,.testimonials,.enterprise{padding:64px 24px}
+  .stats{grid-template-columns:repeat(2,1fr);padding:32px 24px}
+  .features-grid,.pricing-grid,.testi-grid{grid-template-columns:1fr}
+  .steps .step{grid-template-columns:1fr}
+  .step-num{font-size:32px}
+  .enterprise-card{grid-template-columns:1fr}
+  .pipeline-track{flex-wrap:wrap;gap:8px}
+  .pipe-arrow{display:none}
+  footer{flex-direction:column;text-align:center;padding:32px 24px}
+  .pricing-wrap{padding:64px 24px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    OutreachPro
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how-it-works">How it works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="https://github.com/vvlars-cmd/outreachpro" target="_blank">GitHub</a>
+  </div>
+  <a href="#pricing" class="nav-cta">Get Started →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-tag"><span class="hero-tag-dot"></span>Now live · v2.5</div>
+  <h1>Cold outreach that<br/><em>actually converts</em></h1>
+  <p class="hero-sub">AI-personalised email sequences, Google Maps lead scraping, and a full CRM — all in one self-hosted platform built for B2B teams.</p>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">Start free trial →</a>
+    <a href="https://github.com/vvlars-cmd/outreachpro" class="btn-ghost" target="_blank">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+      View on GitHub
+    </a>
+  </div>
+
+  <!-- PIPELINE ANIMATION -->
+  <div class="pipeline">
+    <div class="pipeline-track">
+      <div class="pipe-node">🗺 Apify Scrape</div>
+      <div class="pipe-arrow"></div>
+      <div class="pipe-node">👤 Lead Found</div>
+      <div class="pipe-arrow d2"></div>
+      <div class="pipe-node active">✦ AI Personalise</div>
+      <div class="pipe-arrow d3"></div>
+      <div class="pipe-node">📧 Email Sent</div>
+      <div class="pipe-arrow d4"></div>
+      <div class="pipe-node">💬 Reply</div>
+      <div class="pipe-arrow d5"></div>
+      <div class="pipe-node">🏆 Deal Won</div>
+    </div>
+    <p class="pipeline-sub">Fully automated · Claude-powered · GDPR-safe</p>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div>
+    <span class="stat-num" data-count="95">0</span>
+    <div class="stat-lbl">Functions & API routes</div>
+  </div>
+  <div>
+    <span class="stat-num" data-count="6">0</span>
+    <div class="stat-lbl">Languages supported</div>
+  </div>
+  <div>
+    <span class="stat-num" data-count="16">0</span>
+    <div class="stat-lbl">App views & modules</div>
+  </div>
+  <div>
+    <span class="stat-num" data-suffix="k+">25</span>
+    <div class="stat-lbl">Leads scraped per run</div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <span class="section-tag">Features</span>
+  <h2>Everything you need to<br/><em>close more deals</em></h2>
+  <p class="section-sub">Built for B2B teams who are tired of duct-taped sales stacks. One platform, one Docker command.</p>
+
+  <div class="features-grid reveal">
+    <div class="feat">
+      <span class="feat-icon">🗺</span>
+      <div class="feat-title">Google Maps Lead Scraper</div>
+      <div class="feat-desc">Find local businesses in any city via Apify. Extracts name, email, phone, website, category, rating and address — automatically deduplicated.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">✦</span>
+      <div class="feat-title">Claude AI Personalisation</div>
+      <div class="feat-desc">Every lead gets a unique opening line written by Claude Sonnet. Uses real business data: reviews, category, city, website. No two emails are the same.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">📧</span>
+      <div class="feat-title">Campaign Sequences</div>
+      <div class="feat-desc">Multi-step email sequences with configurable delays, A/B subject testing, daily limits, and automatic stop-on-reply. Set and forget.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">📬</span>
+      <div class="feat-title">Unified Inbox (Unibox)</div>
+      <div class="feat-desc">All replies in one place. AI auto-labels each reply as Interested, Not Now, Meeting Booked, or Other — instantly actionable.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🏆</span>
+      <div class="feat-title">CRM Pipeline</div>
+      <div class="feat-desc">Kanban board with drag-and-drop. Track deals from Prospect to Won. Pipeline value, win rate, and revenue all calculated live.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🔥</span>
+      <div class="feat-title">Email Warmup</div>
+      <div class="feat-desc">Slow-ramp sending (5→50 emails/day over 14 days) via warmup network. Reputation score tracked. Land in inbox, not spam.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">📊</span>
+      <div class="feat-title">Analytics Dashboard</div>
+      <div class="feat-desc">Open rates, reply rates, bounce tracking, per-campaign breakdown, pipeline value, won revenue. Everything in one view.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🌍</span>
+      <div class="feat-title">6-Language i18n</div>
+      <div class="feat-desc">Full UI in English, German, French, Spanish, Italian, and Dutch. Switch instantly. Perfect for international sales teams.</div>
+    </div>
+    <div class="feat">
+      <span class="feat-icon">🐳</span>
+      <div class="feat-title">Docker-First, Self-Hosted</div>
+      <div class="feat-desc">One <code style="font-family:var(--mono);font-size:12px;background:var(--surf2);padding:2px 6px;border-radius:3px">docker compose up</code> and it's running. Your data, your server, your control. No vendor lock-in.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works">
+  <span class="section-tag">How it works</span>
+  <h2>From zero leads to<br/><em>booked meetings</em> in 4 steps</h2>
+  <div class="steps reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div>
+        <div class="step-title">Scrape leads from Google Maps</div>
+        <div class="step-desc">Enter target cities and search terms. OutreachPro uses Apify to find local businesses and extract contact details automatically — name, email, phone, website, rating, and address.</div>
+        <div class="step-tag">⚡ Apify · compass/crawler-google-places</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div>
+        <div class="step-title">AI personalises every email</div>
+        <div class="step-desc">Claude reads each lead's business data and writes a unique personalised opening line. Click "Personalise All" and every email in your campaign gets a tailored hook — in seconds.</div>
+        <div class="step-tag">✦ claude-sonnet-4 · Per-lead context</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div>
+        <div class="step-title">Launch campaign sequences</div>
+        <div class="step-desc">Build multi-step sequences with day-based delays. Set your daily send limit, enable stop-on-reply, and launch. OutreachPro handles the rest — rate limiting, retries, and tracking.</div>
+        <div class="step-tag">📧 Gmail OAuth · Warmup-safe sending</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div>
+        <div class="step-title">Manage replies and close deals</div>
+        <div class="step-desc">Replies land in Unibox and are auto-labelled by AI. Move interested leads to the CRM, track them through your pipeline, and measure revenue from first contact to signed deal.</div>
+        <div class="step-tag">🏆 CRM · Unibox · Analytics</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<div class="testimonials">
+  <span class="section-tag">Social proof</span>
+  <h2>What early users<br/><em>are saying</em></h2>
+  <div class="testi-grid reveal">
+    <div class="testi">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">We replaced Instantly.ai, Apollo, and our custom scraper with OutreachPro. One tool, one bill, full control of our data.</p>
+      <div class="testi-author">Markus T.</div>
+      <div class="testi-role">Head of Sales · SaaS Company, Berlin</div>
+    </div>
+    <div class="testi">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">The AI personalisation is shockingly good. Our reply rate went from 4% to 18% in the first two weeks. The warmup system actually works.</p>
+      <div class="testi-author">Sarah V.</div>
+      <div class="testi-role">Founder · B2B Agency, Amsterdam</div>
+    </div>
+    <div class="testi">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">Deployed in 20 minutes. German language support out of the box, GDPR-compliant, self-hosted. Exactly what our team needed.</p>
+      <div class="testi-author">Tobias K.</div>
+      <div class="testi-role">CEO · Consulting Firm, München</div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="pricing-wrap" id="pricing">
+  <div class="pricing-inner">
+    <span class="section-tag">Pricing</span>
+    <h2>Simple pricing,<br/><em>no surprises</em></h2>
+    <p class="section-sub" style="margin-top:12px">All plans are self-hosted. You pay for the software licence — your API costs (Anthropic, Apify, Google) are separate and stay under your control.</p>
+
+    <div class="pricing-grid">
+
+      <!-- STARTER -->
+      <div class="plan reveal">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price"><sup>€</sup>49<sub>/mo</sub></div>
+        <p class="plan-desc">Perfect for solo founders and small sales teams just getting started with outreach automation.</p>
+        <ul class="plan-features">
+          <li>1 user seat</li>
+          <li>Up to 500 leads</li>
+          <li>3 active campaigns</li>
+          <li>AI personalisation (Claude API)</li>
+          <li>Apify Google Maps scraper</li>
+          <li>Email warmup (1 account)</li>
+          <li>6-language UI</li>
+          <li>Community support</li>
+          <li class="no">Gmail Scraper</li>
+          <li class="no">CRM pipeline</li>
+          <li class="no">Analytics dashboard</li>
+          <li class="no">Priority support</li>
+        </ul>
+        <a href="/cdn-cgi/l/email-protection#365f58505976554f555a534157455e185253094543545c5355420b794342445357555e6644591665425744425344" class="plan-cta outline">Get Starter →</a>
+      </div>
+
+      <!-- PRO (FEATURED) -->
+      <div class="plan featured reveal">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><sup>€</sup>149<sub>/mo</sub></div>
+        <p class="plan-desc">For growing sales teams that need the full stack — CRM, analytics, multi-account warmup, and Gmail integration.</p>
+        <ul class="plan-features">
+          <li>5 user seats</li>
+          <li>Unlimited leads</li>
+          <li>Unlimited campaigns</li>
+          <li>AI personalisation + Bulk mode</li>
+          <li>Apify Google Maps scraper</li>
+          <li>Gmail Scraper (inbox lead extraction)</li>
+          <li>Email warmup (5 accounts)</li>
+          <li>Full CRM pipeline + drag-drop</li>
+          <li>Analytics dashboard + export</li>
+          <li>Inbox Placement Tester</li>
+          <li>6-language UI</li>
+          <li>Email support (48h SLA)</li>
+        </ul>
+        <a href="/cdn-cgi/l/email-protection#c8a1a6aea788abb1aba4adbfa9bba0e6acadf7bbbdaaa2adabbcf587bdbcbaada9aba098baa7e898baa7" class="plan-cta filled">Get Pro →</a>
+      </div>
+
+      <!-- AGENCY -->
+      <div class="plan reveal">
+        <div class="plan-name">Agency</div>
+        <div class="plan-price"><sup>€</sup>349<sub>/mo</sub></div>
+        <p class="plan-desc">White-label ready. Run OutreachPro for multiple clients with workspace isolation and priority support.</p>
+        <ul class="plan-features">
+          <li>Unlimited user seats</li>
+          <li>Unlimited leads</li>
+          <li>Unlimited campaigns</li>
+          <li>Everything in Pro</li>
+          <li>Multi-workspace (client isolation)</li>
+          <li>White-label branding</li>
+          <li>Unlimited warmup accounts</li>
+          <li>WARP mode (full AI automation)</li>
+          <li>Custom domain + SMTP</li>
+          <li>Webhook & Zapier integration</li>
+          <li>Onboarding call included</li>
+          <li>Priority support (24h SLA)</li>
+        </ul>
+        <a href="/cdn-cgi/l/email-protection#0d64636b624d6e746e61687a6c7e65236968327e786f67686e79304278797f686c6e655d7f622d4c6a68636e74" class="plan-cta outline">Get Agency →</a>
+      </div>
+
+    </div>
+
+    <p class="pricing-note">All prices excl. VAT · Annual billing saves 20% · <a href="#">View full feature comparison</a> · <a href="#">GDPR-compliant self-hosted</a></p>
+  </div>
+</div>
+
+<!-- ENTERPRISE -->
+<div class="enterprise">
+  <div class="enterprise-card reveal">
+    <div>
+      <div class="enterprise-title">Enterprise &amp; Custom</div>
+      <p class="enterprise-desc">Need a custom deployment, SLA guarantees, SSO, or dedicated infrastructure? Let's talk. We build bespoke outreach systems for enterprise sales teams.</p>
+      <div class="enterprise-features">
+        <div class="enterprise-feat">Custom SLA</div>
+        <div class="enterprise-feat">SSO / SAML</div>
+        <div class="enterprise-feat">Dedicated hosting</div>
+        <div class="enterprise-feat">Custom AI models</div>
+        <div class="enterprise-feat">Compliance audit</div>
+        <div class="enterprise-feat">Source code licence</div>
+      </div>
+    </div>
+    <div style="flex-shrink:0">
+      <a href="/cdn-cgi/l/email-protection#caa3a4aca58aa9b3a9a6afbdabb9a2e4aeaff5b9bfa8a0afa9bef785bfbeb8afaba9a29ab8a5ea8fa4beafb8bab8a3b9af" class="btn-primary" style="white-space:nowrap">Contact Sales →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="faq" id="faq">
+  <span class="section-tag">FAQ</span>
+  <h2>Common <em>questions</em></h2>
+
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFAQ(this)">Is my data safe? Who can see my leads? <span class="faq-arrow">↓</span></div>
+    <div class="faq-a">OutreachPro is fully self-hosted. Your leads, campaigns, and email content never leave your server. We don't have access to any of your data. You bring your own API keys for Anthropic, Apify, and Google — all requests go directly from your server to those services.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFAQ(this)">What are the ongoing API costs? <span class="faq-arrow">↓</span></div>
+    <div class="faq-a">The OutreachPro licence fee covers the software. You'll also need: Anthropic API (~€0.01–0.05 per personalised email), Apify (~€5–15 per 1,000 leads scraped), and a Google Cloud project (free tier usually sufficient). Most Pro users spend €20–80/month on API costs depending on volume.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFAQ(this)">How do I install it? Do I need a developer? <span class="faq-arrow">↓</span></div>
+    <div class="faq-a">If you can install Docker Desktop, you can run OutreachPro. It's one command: <code style="font-family:var(--mono);background:var(--surf);padding:2px 6px;border-radius:3px">docker compose up --build</code>. The full setup (including API keys) takes under 20 minutes. We provide step-by-step documentation for non-technical users.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFAQ(this)">Is cold emailing legal in Europe / GDPR? <span class="faq-arrow">↓</span></div>
+    <div class="faq-a">B2B cold email is legal in most EU countries when you email business addresses found via legitimate sources (like Google Maps) and have a legitimate interest basis. OutreachPro automatically includes unsubscribe links in all emails. We recommend consulting your legal counsel for country-specific guidance. The tool is designed to comply with GDPR legitimate interest provisions for B2B outreach.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFAQ(this)">Can I try it before paying? <span class="faq-arrow">↓</span></div>
+    <div class="faq-a">Yes — the full source code is on GitHub (MIT licence, valid 6 months). You can run it locally for free to evaluate it. The paid plans add licence rights for commercial use, priority support, and access to future updates and new features.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFAQ(this)">What's the difference between the plans? <span class="faq-arrow">↓</span></div>
+    <div class="faq-a">Starter is capped at 500 leads and 1 user — great for testing. Pro removes all caps, adds the CRM, analytics, Gmail scraper, and multi-account warmup — the most popular choice for active sales teams. Agency adds multi-workspace client isolation, white-labelling, and WARP AI mode for maximum automation. Enterprise is fully custom.</div>
+  </div>
+</div>
+
+<!-- FINAL CTA -->
+<section class="cta-section">
+  <div class="cta-bg"></div>
+  <h2>Ready to fill your<br/><em>pipeline?</em></h2>
+  <p>Start with the GitHub repo — free, open-source, MIT licenced.<br/>Upgrade when you're ready to scale.</p>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">Choose a plan →</a>
+    <a href="https://github.com/vvlars-cmd/outreachpro" class="btn-ghost" target="_blank">View source on GitHub</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">OutreachPro</div>
+  <div class="footer-links">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://github.com/vvlars-cmd/outreachpro" target="_blank">GitHub</a>
+    <a href="/cdn-cgi/l/email-protection#bfd6d1d9d0ffdcc6dcd3dac8deccd791dbda">Contact</a>
+    <a href="#">Privacy</a>
+  </div>
+  <div class="footer-copy">MIT Licence · 2026-03-27 → 2026-09-27 · vvlars-cmd</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ── COUNTER ANIMATION ──
+function animateCounter(el) {
+  const target = parseInt(el.getAttribute('data-count'));
+  const suffix = el.getAttribute('data-suffix') || '';
+  if (!target) return;
+  let start = 0;
+  const duration = 1500;
+  const step = (timestamp) => {
+    if (!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(eased * target) + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Trigger counters
+      entry.target.querySelectorAll('[data-count]').forEach(animateCounter);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Trigger counters in stats bar on scroll
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('[data-count]').forEach(animateCounter);
+      statsObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.3 });
+document.querySelectorAll('.stats').forEach(el => statsObserver.observe(el));
+
+// ── FAQ TOGGLE ──
+function toggleFAQ(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── NAV SCROLL EFFECT ──
+window.addEven
