@@ -1,14 +1,14 @@
 # ── Dependencies ──
 node_modules/
 
-# ── Environment / Secrets ──
+# ── Secrets ──
 .env
 .env.local
 .env.production
 data/.gmail-token.json
 data/warmup-metrics.json
 
-# ── Private runtime data (leads, campaigns, deals contain business contacts) ──
+# ── ALL runtime data (contains live business data — never commit) ──
 data/leads.json
 data/campaigns.json
 data/deals.json
@@ -16,6 +16,7 @@ data/inbox.json
 data/sequences.json
 data/email-accounts.json
 data/templates.json
+data/events.json
 
 # ── Build artifacts ──
 *.bak
