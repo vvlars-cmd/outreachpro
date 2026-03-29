@@ -1,0 +1,19 @@
+<h2>Inbox Placement Tester</h2>
+<p>Test your email subject and body against spam filters before sending a campaign.</p>
+<h3>How It Works</h3>
+<p>Enter your subject line and email body snippet, then click <strong>Run Placement Test</strong>. The system analyses:</p>
+<ul>
+  <li>Spam trigger words in subject and body</li>
+  <li>SPF / DKIM / DMARC DNS record validity</li>
+  <li>Text-to-HTML ratio (too much HTML = spam risk)</li>
+  <li>Presence of an unsubscribe link</li>
+  <li>URL shorteners (avoid bit.ly etc.)</li>
+</ul>
+<h3>Score Interpretation</h3>
+<ul>
+  <li><strong>80–100</strong> — Low risk, safe to send</li>
+  <li><strong>60–79</strong> — Medium risk, review warnings</li>
+  <li><strong>Below 60</strong> — High risk, do not send until issues are fixed</li>
+</ul>
+<h3>Common Fixes</h3>
+<p>Remove words like "free", "guarantee", "buy now", "click here". Add an unsubscribe link. Configure DMARC record for your domain. Keep image-to-text ratio below 40%.</p>
