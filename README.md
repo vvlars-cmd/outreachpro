@@ -1,6 +1,6 @@
-# OutreachPro + CycleWASH
+# OutreachPro
 
-> AI-powered B2B sales engagement platform — Instantly.ai clone with CycleWASH workspace.
+> AI-powered B2B sales engagement platform — self-hosted Instantly.ai clone. Docker-first, Node.js, Claude AI, Apify, Gmail.
 
 ## 🚀 Quick Start
 
@@ -82,11 +82,11 @@ outreachpro-app/
 │   └── de/              # German help articles
 ├── data/
 │   ├── leads.json       # Lead database (Docker volume)
-│   ├── leads.seed.json  # 25 CycleWASH seed leads
+│   ├── leads.seed.json  # 25 sample leads
 │   ├── campaigns.json
 │   ├── templates.json
 │   ├── email-accounts.json
-│   └── events.seed.json # 10 CycleWASH events 2026
+│   └── events.seed.json # sample events
 └── scripts/
     ├── start.sh
     └── reset.sh
@@ -103,14 +103,10 @@ Apify scrape → leads.json → HTML Composer → AI personalise (claude-sonnet-
 
 Switch language in the topbar dropdown. All UI strings are loaded from `/api/i18n/:lang` (EN/DE/FR/ES/IT/NL). Language preference persists to `localStorage`.
 
-## 🏢 CycleWASH Workspace
+## 🏢 Custom Workspace
 
-Pre-configured B2B workspace for CW Cleaning Solutions GmbH:
+OutreachPro ships with a built-in workspace module you can configure for your own business. Set your company name, products, pricing, and events in **Settings → Workspace**.
 
-- **Products**: Pro Platinum €38,000 · Mini Platinum €27,500
-- **Events 2026**: 10 live demo events across Germany
-- **Seed leads**: 25 German bike dealers pre-loaded
-- **Draft Creator**: Generates personalised Gmail drafts per event
 
 ## 🐳 Docker Commands
 
@@ -156,4 +152,4 @@ curl http://localhost:3000/health
 
 ---
 
-Built with ❤️ — OutreachPro + CycleWASH
+Built with ❤️ by OutreachPro
