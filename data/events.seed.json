@@ -1,0 +1,82 @@
+[
+  {
+    "id": "e1",
+    "name": "Fahrradtag Jever",
+    "date": "29.03.2026",
+    "time": "11:00-18:00",
+    "city": "Jever",
+    "status": "Gebucht"
+  },
+  {
+    "id": "e2",
+    "name": "Gruene Bruehl",
+    "date": "18.04.2026",
+    "time": "10:00-13:15",
+    "city": "Bruehl",
+    "status": "Gebucht"
+  },
+  {
+    "id": "e3",
+    "name": "Monheim am Rhein",
+    "date": "19.04.2026",
+    "time": "11:00-18:00",
+    "city": "Monheim am Rhein",
+    "status": "Gebucht"
+  },
+  {
+    "id": "e4",
+    "name": "Duesseldorf Radtour",
+    "date": "30.04.2026",
+    "time": "08:00-16:00",
+    "city": "Duesseldorf",
+    "status": "Anfrage"
+  },
+  {
+    "id": "e5",
+    "name": "Coesfeld",
+    "date": "30.04.2026",
+    "time": "16:00-20:00",
+    "city": "Coesfeld",
+    "status": "Gebucht"
+  },
+  {
+    "id": "e6",
+    "name": "Aachen",
+    "date": "09.05.2026",
+    "time": "11:00-16:00",
+    "city": "Aachen",
+    "status": "Gebucht"
+  },
+  {
+    "id": "e7",
+    "name": "Arnsberg",
+    "date": "30.05.2026",
+    "time": "08:00-16:00",
+    "city": "Arnsberg",
+    "status": "Anfrage"
+  },
+  {
+    "id": "e8",
+    "name": "Heiligenhaus",
+    "date": "14.06.2026",
+    "time": "06:00-10:00",
+    "city": "Heiligenhaus",
+    "status": "Gebucht"
+  },
+  {
+    "id": "e9",
+    "name": "Soest",
+    "date": "19.07.2026",
+    "time": "09:00-10:00",
+    "city": "Soest",
+    "status": "Gebucht"
+  },
+  {
+    "id": "e10",
+    "name": "Hamm",
+    "date": "19.07.2026",
+    "time": "09:00-10:00",
+    "city": "Hamm",
+    "status": "Gebucht"
+  }
+]
