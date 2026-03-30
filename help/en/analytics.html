@@ -1,15 +1,29 @@
 <h2>Analytics Dashboard</h2>
-<p>Track outreach performance across all campaigns, with per-campaign and aggregate breakdowns.</p>
+<p>Track every dimension of your outreach performance — from raw send counts to actual won revenue — across all campaigns and workspaces.</p>
+
 <h3>Key Metrics</h3>
 <ul>
-  <li><strong>Open rate</strong> — percentage of sent emails opened (industry average: 20–30%)</li>
-  <li><strong>Reply rate</strong> — percentage that generated a reply (good: 5–10%, excellent: 10%+)</li>
-  <li><strong>Bounce rate</strong> — invalid addresses (keep below 2%)</li>
-  <li><strong>Pipeline value</strong> — qualified leads × product price</li>
+  <li><strong>Open rate</strong> — % of sent emails opened. Industry average: 22–28%. Above 35% = excellent subject lines.</li>
+  <li><strong>Reply rate</strong> — % that generated a reply. Good: 5–10%, excellent: 10%+. Below 3% = pause and rewrite copy.</li>
+  <li><strong>Bounce rate</strong> — invalid addresses or blocked sends. Keep below 2% to protect sender reputation.</li>
+  <li><strong>Pipeline value</strong> — sum of all active CRM deals not yet won or lost.</li>
+  <li><strong>Won revenue</strong> — deals marked Won in CRM. Tracks your actual closed business.</li>
+  <li><strong>Lead score avg</strong> — average score of your imported leads (0–100). Higher = better quality prospects.</li>
 </ul>
-<h3>Time Ranges</h3>
-<p>Use the dropdown to switch between 7-day, 30-day, and 90-day views. The bar chart shows weekly send/reply trends. Use this to spot which days generate the best replies.</p>
-<h3>Campaign Breakdown</h3>
-<p>The bottom table shows per-campaign performance. Campaigns with reply rates below 3% should be paused and the copy reviewed. Try a different subject line, shorter body, or more personalised opening.</p>
-<h3>Pipeline to Revenue</h3>
-<p>Qualified leads in CRM automatically contribute to Pipeline Value. When a deal is marked Won in CRM, it moves to Won Revenue. Track the conversion: Leads → Contacted → Qualified → Won.</p>
+
+<h3>A/B Test Results</h3>
+<p>The A/B Tests panel shows all active and completed subject line tests. When a test reaches its threshold (default: 50 sends), the winner is auto-promoted and shown here with the winning open rate.</p>
+
+<h3>Intent Signals</h3>
+<p>Leads flagged by the Intent Signal Detector appear in Analytics with their signal score. Signals above 40 are highlighted as hot leads. Click any signal to action it directly from the analytics view.</p>
+
+<h3>Workspace Breakdown</h3>
+<p>If you're running multiple white-label workspaces, each workspace shows its own analytics row. The master view shows aggregate totals across all clients.</p>
+
+<h3>Tips for Better Numbers</h3>
+<ul>
+  <li>Run the Domain Health checker before every new campaign. Poor SPF/DKIM = spam folder = zero opens.</li>
+  <li>Use the Lead Scorer before importing — top 20% of leads generate 80% of replies.</li>
+  <li>Always run A/B tests on subject lines. The winning subject can double open rates.</li>
+  <li>Check the Memory CRM for due follow-ups daily — re-engaged leads convert at 3× the rate of cold leads.</li>
+</ul>
