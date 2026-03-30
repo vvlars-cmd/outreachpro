@@ -1,0 +1,30 @@
+<h2>Workflow Automation</h2>
+<p>Workflows are rules that fire automatically when something happens. When a lead replies, their CRM deal moves to "Replied" automatically. When a buying signal hits 60+, their sequences stop automatically. No manual steps, no things falling through the cracks. Salesforce calls this "Flow" and includes it at $100+/user/month. It's built into OutreachPro.</p>
+
+<h3>Pre-Built Workflows</h3>
+<ul>
+  <li><strong>Reply received → move to Replied</strong> — CRM deal stage updates automatically when a lead replies to any email</li>
+  <li><strong>Meeting booked → move to Meeting</strong> — scheduler booking auto-advances the CRM stage</li>
+  <li><strong>Hot signal → stop sequences</strong> — when a lead scores 60+ on buying signals, all active sequences pause so you don't spam a hot lead</li>
+  <li><strong>Proposal stage → generate proposal</strong> — (disabled by default) auto-triggers proposal generation when a deal reaches Proposal stage</li>
+  <li><strong>Stale 14d → re-engagement</strong> — (disabled by default) queues a re-engagement campaign for deals with no activity in 14 days</li>
+</ul>
+
+<h3>Creating a Custom Workflow</h3>
+<ol>
+  <li>Go to <strong>Settings → Workflows</strong></li>
+  <li>Click <strong>New Workflow</strong></li>
+  <li>Set trigger: <code>email_replied</code>, <code>meeting_booked</code>, <code>signal_score_60</code>, <code>stage_changed_proposal</code>, or <code>deal_stale_14d</code></li>
+  <li>Set action: <code>move_crm_stage</code>, <code>stop_sequences</code>, <code>generate_proposal</code>, <code>log_activity</code>, or <code>enqueue_reengagement</code></li>
+  <li>Enable and save</li>
+</ol>
+
+<h3>Evaluating Workflows</h3>
+<p>Workflows are evaluated whenever OutreachPro processes an event. You can also trigger evaluation manually via the API for testing.</p>
+
+<h3>API</h3>
+<pre>GET    /api/workflows              → list all workflows
+POST   /api/workflows              → create {name, trigger, action, actionData}
+POST   /api/workflows/:id/toggle   → enable/disable
+POST   /api/workflows/evaluate     → {trigger, leadId?, dealId?} → run matching workflows
+DELETE /api/workflows/:id          → delete</pre>
