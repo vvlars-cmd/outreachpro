@@ -1,0 +1,74 @@
+<h2>Spintax + Liquid Syntax Engine</h2>
+<p>Send 500 emails that all look genuinely different — not because you have 500 templates, but because OutreachPro randomises words and phrases per send using Spintax, and conditionally changes whole paragraphs based on lead data using Liquid Syntax. The result: emails that never trigger spam filters for repetition, and copy that's always contextually relevant.</p>
+
+<h3>Spintax — Randomise Words Per Send</h3>
+<p>Wrap options in curly braces, separated by pipes. OutreachPro picks one randomly for each send:</p>
+<pre>{Hi|Hello|Guten Tag} {{name}},
+
+{I came across|I noticed|I spotted} your {shop|business|store} on Google —
+{really impressive|quite impressive|exceptional} to see {{{rating}}★|those {{rating}} stars|
+a {{rating}}-star rating} with {{reviews}} reviews.
+
+{I wanted to reach out|I'm getting in touch|I thought I'd connect} because...</pre>
+<p>This single template generates dozens of unique-sounding variations. No two recipients see identical text.</p>
+
+<h3>Liquid Syntax — Conditional Copy Based on Lead Data</h3>
+<p>Write different copy for different lead segments without managing multiple templates:</p>
+<pre>{% if rating > 4.5 %}
+Mit Ihrer herausragenden {{rating}}-Sterne-Bewertung haben Sie offensichtlich
+einen exzellenten Ruf aufgebaut. Für erstklassige Betriebe wie {{name}}...
+{% else %}
+Mit {{reviews}} Bewertungen wächst {{name}} sichtbar. Um Ihren Service
+auf das nächste Level zu heben...
+{% endif %}
+
+{% if reviews > 100 %}
+Ihre {{reviews}} Bewertungen zeigen, dass Sie eine loyale Stammkundschaft haben.
+{% else %}
+Ihr Wachstum bei Google spricht für Ihr Engagement.
+{% endif %}</pre>
+
+<h3>Available Variables in Liquid Conditions</h3>
+<ul>
+  <li><code>rating</code> — Google star rating (number, e.g. 4.5)</li>
+  <li><code>reviews</code> — review count (number, e.g. 342)</li>
+  <li><code>city</code> — lead's city (string)</li>
+  <li><code>name</code> — business name (string)</li>
+  <li><code>category</code> — business category (string)</li>
+</ul>
+
+<h3>Preview Before Sending</h3>
+<p>Go to <strong>Email Composer → Spintax Preview</strong>. OutreachPro generates 3 different rendered versions from your template — showing you the actual variety your sends will have. You can see exactly how conditional blocks resolve for each lead.</p>
+
+<h3>Combining Spintax + Liquid + AI Personalisation</h3>
+<p>For maximum uniqueness: use Spintax for intro variation, Liquid for segment-based copy, and the <code>{{aiOpening}}</code> token for a Claude-written personalised opening. Each email is: randomly varied phrasing + conditionally relevant copy + unique AI sentence. No spam filter has seen that combination before.</p>
+
+<h3>Use Case: CycleWASH Campaign Template</h3>
+<pre>Betreff: {Kurze Frage|Eine Frage|Schnelle Frage} zu {{name}} in {{city}}
+
+{Hallo|Guten Tag|Servus} {{name}},
+
+{{aiOpening}}
+
+{% if rating > 4.5 %}
+Als einer der bestbewerteten Fahrradhändler in {{city}} wissen Sie,
+dass exzellenter Service den Unterschied macht.
+{% else %}
+Mit Ihrer wachsenden Präsenz in {{city}} ist jetzt der richtige
+Zeitpunkt, Ihren Service auf das nächste Level zu heben.
+{% endif %}
+
+{Unser CycleWASH Pro|Die CycleWASH Pro-Anlage|Unser Flaggschiff CycleWASH Pro}
+{wäscht|reinigt|pflegt} ein Fahrrad in {3-4|unter 5|nur 4} Minuten —
+{80% schneller als|deutlich schneller als|eine Zeitersparnis von 80% gegenüber}
+der herkömmlichen Methode.
+
+{Darf ich Ihnen eine kurze Demo zeigen?|Hätten Sie 30 Minuten für eine Demo?}
+
+{Beste Grüße|Mit freundlichen Grüßen|Viele Grüße},
+[NAME]</pre>
+
+<h3>API</h3>
+<pre>POST /api/spintax/preview  → {text, lead} → {versions: [3 renders], unique: N}
+POST /api/spintax/render   → {text, lead} → {result: string}
+POST /api/spintax/batch    → {text, leads[]} → {results[{leadId, rendered}]}</pre>
