@@ -1,0 +1,33 @@
+<h2>Sales Playbooks</h2>
+<p>Battle cards for every common sales scenario — structured step-by-step guides for handling objections, opening cold calls, running demos, and closing deals. Salesforce Sales Enablement charges $150+/month for this. Built into OutreachPro.</p>
+
+<h3>Default Playbooks</h3>
+<ul>
+  <li><strong>Budget Objection</strong> — acknowledge, reframe to ROI, offer financing options</li>
+  <li><strong>Timing Objection</strong> — qualify, plant a seed, lock in a future date</li>
+  <li><strong>Competitor Objection</strong> — never badmouth, understand what they value, differentiate</li>
+  <li><strong>Cold Call Opener</strong> — permission-based open, hook with their reviews, bridge to problem</li>
+  <li><strong>Demo Closing</strong> — recap highlights, address hesitation, lock in next step</li>
+</ul>
+
+<h3>Using a Playbook</h3>
+<p>Each playbook has:</p>
+<ul>
+  <li><strong>Steps</strong> — the exact sequence of what to say, in order</li>
+  <li><strong>Talking points</strong> — supporting facts and proof points to have ready</li>
+  <li><strong>Key question</strong> — the one question that moves the conversation forward</li>
+</ul>
+<p>Access playbooks from the Call Script screen — when a lead's sentiment analysis detects an objection type, the matching playbook appears automatically.</p>
+
+<h3>Creating a Custom Playbook</h3>
+<ol>
+  <li>Go to <strong>Settings → Playbooks → New Playbook</strong></li>
+  <li>Set name, trigger keyword (maps to objection types), and category</li>
+  <li>Add steps, talking points, and the key question</li>
+  <li>Save — playbook appears automatically when the trigger is detected</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET  /api/playbooks              → list all playbooks
+POST /api/playbooks              → create playbook
+GET  /api/playbooks/:trigger     → get playbook by trigger (budget|timing|competitor|cold_call|post_demo)</pre>
