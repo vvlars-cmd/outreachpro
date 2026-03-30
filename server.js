@@ -7,10 +7,31 @@ const { execSync, exec } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const DATA_DIR = path.join(__dirname, 'data');
 
-// ── Ensure data dir exists ────────────────────────────────────────────────────
+// ── Vercel / serverless aware data directory ──────────────────────────────────
+// On Vercel: /tmp is writable (ephemeral per invocation). Locally: ./data
+const IS_VERCEL = process.env.VERCEL || process.env.VERCEL_ENV;
+const DATA_DIR = IS_VERCEL
+  ? '/tmp/outreachpro-data'
+  : (process.env.DATA_DIR || path.join(__dirname, 'data'));
+
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+
+// On Vercel cold start, seed essential data from bundled seed files
+if (IS_VERCEL) {
+  const seedFiles = ['events', 'leads'];
+  seedFiles.forEach(name => {
+    const dest = path.join(DATA_DIR, name + '.json');
+    if (!fs.existsSync(dest)) {
+      const src = path.join(__dirname, 'data', name + '.seed.json');
+      if (fs.existsSync(src)) {
+        try { fs.copyFileSync(src, dest); } catch(e) {}
+      } else {
+        fs.writeFileSync(dest, '[]');
+      }
+    }
+  });
+}
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 app.use(cors());
