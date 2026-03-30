@@ -1,0 +1,30 @@
+<h2>ICP Builder — Ideal Customer Profile</h2>
+<p>Define your ideal customer profile once and OutreachPro automatically finds and imports matching leads on a weekly schedule. No more manual scraping.</p>
+
+<h3>Setting Up Your ICP</h3>
+<ol>
+  <li>Go to <strong>Settings → ICP Builder</strong></li>
+  <li>Add your target cities (comma-separated)</li>
+  <li>Add search terms (what you'd type into Google Maps)</li>
+  <li>Set minimum rating (default: 4.0)</li>
+  <li>Set minimum reviews (default: 10)</li>
+  <li>Set max leads per run (default: 50)</li>
+  <li>Click <strong>Save ICP</strong></li>
+  <li>Click <strong>Run Now</strong> to test it immediately, or enable <strong>Weekly Auto-Run</strong></li>
+</ol>
+
+<h3>Example ICP — Bike Dealer</h3>
+<pre>Cities: Köln, Düsseldorf, Bonn, Aachen, Leverkusen, Wuppertal
+Terms: Fahrradhändler, E-Bike Händler, Fahrrad Service
+Min Rating: 4.0
+Min Reviews: 15
+Max per run: 50</pre>
+<p>This runs 6 cities × 3 terms = 18 scrape jobs, importing up to 50 top-scored leads per week. Over 4 weeks that's 200 pre-qualified leads automatically in your pipeline.</p>
+
+<h3>Auto-Import Logic</h3>
+<p>Only leads scoring above your threshold (default: 60/100) are imported. Leads already in your database (matched by name + city) are not duplicated. New leads land in the Lead Finder with status "new" and source "ICP auto-import".</p>
+
+<h3>API</h3>
+<pre>GET  /api/icp         → current ICP config
+POST /api/icp         → update ICP config
+POST /api/icp/run     → trigger immediate run</pre>
