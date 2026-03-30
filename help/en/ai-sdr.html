@@ -1,0 +1,42 @@
+<h2>AI SDR — Autonomous Outreach Mode</h2>
+<p>The AI SDR is OutreachPro's most powerful feature. Claude acts as a virtual Sales Development Representative — analysing your leads, deciding who to target, writing personalised emails, and (in autopilot mode) sending them automatically.</p>
+
+<h3>Two Modes</h3>
+<ul>
+  <li><strong>Suggest</strong> — Claude proposes targets and email copy. You review and approve before anything sends. Recommended for new users.</li>
+  <li><strong>Autopilot</strong> — Claude sends automatically up to your daily limit. No approval needed. Recommended once you've validated copy quality.</li>
+</ul>
+
+<h3>Setting Up AI SDR</h3>
+<ol>
+  <li>Go to <strong>Workspace → AI SDR</strong></li>
+  <li>Set daily limit (recommended: 10–20)</li>
+  <li>Set target stages (e.g. leads with status "new")</li>
+  <li>Set persona (e.g. "friendly professional", "direct and brief")</li>
+  <li>Set language (de, en, fr, etc.)</li>
+  <li>Click <strong>Save Config</strong></li>
+  <li>Click <strong>Run SDR</strong></li>
+</ol>
+
+<h3>What Claude Does</h3>
+<p>For each eligible lead, Claude:</p>
+<ol>
+  <li>Reads the lead's name, city, category, rating, review count, and website</li>
+  <li>Writes a personalised subject line (not a template — unique to that lead)</li>
+  <li>Writes a personalised opening line referencing their specific business details</li>
+  <li>Provides reasoning for why this lead was chosen</li>
+</ol>
+
+<h3>Example Output</h3>
+<pre>Lead: Fahrrad Müller, Köln, 4.8★, 342 reviews
+Subject: "Ihre 342 Bewertungen sagen alles, Herr Müller"
+Opening: "Mit 342 Google-Bewertungen und 4,8 Sternen haben Sie
+offensichtlich eine loyale Kundschaft aufgebaut. Genau für
+solche Betriebe haben wir den CycleWASH Pro entwickelt..."
+Reasoning: "High review count + excellent rating = growing
+business, strong social proof, likely investing in equipment"</pre>
+
+<h3>API</h3>
+<pre>GET  /api/ai-sdr/config  → current config
+POST /api/ai-sdr/config  → update config
+POST /api/ai-sdr/run     → run SDR session → {suggestions[]}</pre>
