@@ -1,0 +1,51 @@
+<h2>HubSpot Integration</h2>
+<p>Connect OutreachPro to HubSpot to sync leads as contacts, create deals automatically when meetings are booked, log outreach activity as notes, and keep your HubSpot pipeline up to date without manual data entry.</p>
+
+<h3>Getting Your HubSpot API Key</h3>
+<ol>
+  <li>Log in to HubSpot → Click your account name (top right) → <strong>Profile & Preferences</strong></li>
+  <li>Go to <strong>Integrations → Private Apps</strong></li>
+  <li>Click <strong>Create a private app</strong></li>
+  <li>Give it a name (e.g. "OutreachPro Sync")</li>
+  <li>Under <strong>Scopes</strong>, enable: <code>crm.objects.contacts.write</code>, <code>crm.objects.deals.write</code>, <code>crm.objects.notes.write</code>, <code>crm.objects.contacts.read</code>, <code>crm.objects.deals.read</code></li>
+  <li>Click <strong>Create app</strong> → copy the access token</li>
+  <li>In OutreachPro: Settings → CRM → HubSpot → paste token → <strong>Test Connection</strong></li>
+</ol>
+
+<h3>What Gets Synced</h3>
+<ul>
+  <li>Lead name → HubSpot Contact (firstname + lastname split automatically)</li>
+  <li>Lead email, phone, website → Contact properties</li>
+  <li>Lead city → Contact city property</li>
+  <li>Lead status → hs_lead_status = "NEW"</li>
+  <li>Company name → HubSpot Company (associated to contact)</li>
+</ul>
+
+<h3>Automatically Create Deals When Meetings Are Booked</h3>
+<p>When a lead books a meeting via the Meeting Scheduler, OutreachPro can automatically create a HubSpot deal in "Appointment Scheduled" stage. Configure this in <strong>Settings → Scheduler → On booking: Create HubSpot deal</strong>.</p>
+
+<h3>Log Outreach as HubSpot Notes</h3>
+<p>After sending a campaign email, OutreachPro can log it as a HubSpot note on the contact record — including subject, send time, and campaign name. Enable this in <strong>Settings → CRM → HubSpot → Log sent emails as notes</strong>.</p>
+
+<h3>HubSpot Deal Stages</h3>
+<p>OutreachPro maps its CRM stages to HubSpot deal stages automatically:</p>
+<pre>OutreachPro Stage → HubSpot Stage
+Contacted         → appointmentscheduled
+Replied           → qualifiedtobuy
+Meeting           → presentationscheduled
+Proposal          → decisionmakerboughtin
+Won               → closedwon
+Lost              → closedlost</pre>
+
+<h3>Use Case: CycleWASH Pipeline</h3>
+<p>Scrape 50 bike dealers with Apify → Score leads → Sync top 20 to HubSpot → Run OutreachPro campaign → When a dealer replies, automatically move their HubSpot contact to "Replied" stage → When they book a demo, auto-create a deal in "Appointment Scheduled" with €38,000 value.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/hubspot/config    → {apiKey, portalId}
+POST /api/crm/hubspot/test      → test connection
+GET  /api/crm/hubspot/contacts  → list contacts
+POST /api/crm/hubspot/contacts  → create contact
+GET  /api/crm/hubspot/deals     → list deals
+POST /api/crm/hubspot/deals     → create deal
+POST /api/crm/hubspot/notes     → add note to contact/deal
+POST /api/crm/hubspot/sync      → sync OutreachPro leads → HubSpot</pre>
