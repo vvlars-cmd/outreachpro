@@ -1,0 +1,45 @@
+<h2>Salesforce Integration</h2>
+<p>Connect OutreachPro to Salesforce to push scraped leads as Salesforce Leads, convert hot prospects into Opportunities, and run SOQL queries directly from OutreachPro. Supports both Username-Password OAuth2 (simplest for self-hosted) and direct access token.</p>
+
+<h3>Getting Salesforce Credentials</h3>
+<p>Use the <strong>Username-Password OAuth2 flow</strong> for self-hosted OutreachPro:</p>
+<ol>
+  <li>In Salesforce: <strong>Setup → App Manager → New Connected App</strong></li>
+  <li>Check <strong>Enable OAuth Settings</strong></li>
+  <li>Callback URL: <code>http://localhost:3000/api/crm/salesforce/callback</code></li>
+  <li>Selected OAuth Scopes: <code>api</code>, <code>refresh_token</code></li>
+  <li>Save → wait 10 minutes for propagation</li>
+  <li>Copy <strong>Consumer Key</strong> (= Client ID) and <strong>Consumer Secret</strong></li>
+  <li>Your password for the API: <code>your_sf_password + your_security_token</code> (concatenated, no space)</li>
+  <li>In OutreachPro: Settings → CRM → Salesforce → fill in all fields → Test</li>
+</ol>
+<p>Alternatively, if you already have an access token from Salesforce Workbench or Postman, you can enter it directly in the <strong>Access Token</strong> field along with your Instance URL.</p>
+
+<h3>Lead Data Mapping</h3>
+<pre>OutreachPro → Salesforce Lead
+name        → LastName + FirstName (split by space)
+email       → Email
+phone       → Phone
+city        → City
+website     → Website
+category    → Description (with rating + review count)
+source      → LeadSource = "OutreachPro"
+status      → Status = "Open - Not Contacted"</pre>
+
+<h3>SOQL Queries from OutreachPro</h3>
+<p>Run any SOQL query against your Salesforce org directly from OutreachPro's interface. Useful for pulling back converted leads, checking deal progress, or building reports. Go to <strong>CRM → Salesforce → Query</strong>.</p>
+<pre>-- Example queries:
+SELECT Id, Name, Email, Status FROM Lead WHERE Status = 'Working - Contacted'
+SELECT Id, Name, Amount, StageName FROM Opportunity WHERE StageName != 'Closed Lost'
+SELECT Id, Name, Account.Name FROM Contact WHERE CreatedDate = LAST_N_DAYS:30</pre>
+
+<h3>Use Case: Enterprise Sales Team</h3>
+<p>Your Salesforce is the system of record. Use OutreachPro for prospecting and outreach — it's faster, cheaper, and more personalised than Salesforce's native outreach tools. When a lead is qualified, sync them to Salesforce as a Lead. When they convert, create an Opportunity from OutreachPro's CRM Proposal generator and push it straight to Salesforce.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/salesforce/config       → {clientId, clientSecret, username, password, instanceUrl}
+POST /api/crm/salesforce/test         → test connection
+POST /api/crm/salesforce/leads        → create Salesforce Lead
+POST /api/crm/salesforce/opportunities → create Opportunity
+POST /api/crm/salesforce/query        → {query: "SELECT ..."} → SOQL results
+POST /api/crm/salesforce/sync         → sync leads → SF Leads</pre>
