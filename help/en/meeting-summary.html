@@ -1,0 +1,44 @@
+<h2>Meeting Summary & Follow-Up Drafter</h2>
+<p>Paste your meeting notes after any call or demo — Claude writes a structured summary, extracts next steps and objections, assesses deal health, and drafts a personalised follow-up email ready to send. Salesforce AI includes meeting summaries at $350+/user/month.</p>
+
+<h3>Using It After a Meeting</h3>
+<ol>
+  <li>Go to <strong>Lead → Log Activity → Meeting Notes</strong></li>
+  <li>Paste your raw notes — bullet points, messy sentences, keywords all work</li>
+  <li>Select language for the follow-up email</li>
+  <li>Click <strong>Summarise</strong></li>
+  <li>Review the AI-generated summary, next steps, and follow-up email</li>
+  <li>Copy the follow-up email → Gmail → send</li>
+</ol>
+
+<h3>What Claude Extracts</h3>
+<ul>
+  <li><strong>Summary</strong> — 2-sentence plain-English recap of the meeting</li>
+  <li><strong>Key points</strong> — the most important things discussed</li>
+  <li><strong>Next steps</strong> — specific actions agreed on, auto-queued in Memory CRM</li>
+  <li><strong>Objections</strong> — concerns raised that need addressing in follow-up</li>
+  <li><strong>Sentiment</strong> — positive / neutral / negative read on the conversation</li>
+  <li><strong>Deal health</strong> — hot / warm / cold / dead assessment</li>
+  <li><strong>Follow-up email</strong> — full draft referencing the discussion, with CTA</li>
+  <li><strong>Proposal recommended?</strong> — Claude flags if it's time to send a proposal</li>
+</ul>
+
+<h3>Example</h3>
+<pre>Raw notes: "Spoke with Max. Very interested. Budget ready Q2.
+           Mentioned they use a competitor but not happy with
+           support. Wants to see our Pro model. Call back 1 May."
+
+Summary: "Max at Fahrrad Müller is interested and has Q2 budget
+          approved, but is currently using a competitor they're
+          dissatisfied with."
+Next steps: ["Send Pro Platinum brochure", "Follow-up call May 1"]
+Objection: Competitor (dissatisfied — opening exists)
+Deal health: Hot
+Proposal recommended: true
+Memory CRM: Follow-up queued May 1</pre>
+
+<h3>API</h3>
+<pre>POST /api/meetings/summarise
+  Body: { leadId, notes, duration, language }
+  → { summary, keyPoints[], nextSteps[], objections[],
+      sentiment, dealHealth, followUpEmail, proposalRecommended }</pre>
