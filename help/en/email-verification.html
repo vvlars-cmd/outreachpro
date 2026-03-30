@@ -1,0 +1,40 @@
+<h2>Email Verification</h2>
+<p>Before OutreachPro sends a single email, it checks whether the address is actually deliverable. Invalid emails cause bounces. High bounce rates destroy sender reputation. This feature catches bad addresses before they do damage — saving you from the most preventable deliverability problem.</p>
+
+<h3>What Gets Checked</h3>
+<ul>
+  <li><strong>Format validation</strong> — does the address follow valid email syntax?</li>
+  <li><strong>Disposable domain detection</strong> — mailinator.com, tempmail.com, guerrillamail.com, and 17 others are automatically flagged as invalid</li>
+  <li><strong>Role-based detection</strong> — info@, support@, admin@, noreply@ addresses are flagged as low-priority. These route to inboxes monitored by multiple people and rarely generate replies</li>
+  <li><strong>MX record check</strong> — does the email's domain actually have mail servers? This catches domains that exist as websites but can't receive email</li>
+</ul>
+
+<h3>Risk Scores</h3>
+<ul>
+  <li><strong>Low risk (score 85+)</strong> — MX records found, not disposable, not role-based. Safe to send.</li>
+  <li><strong>Medium risk (score 40)</strong> — Role-based address. May send but expect lower reply rates. Consider finding the owner's direct email first.</li>
+  <li><strong>High risk (score 0–5)</strong> — Disposable domain, invalid format, or domain has no mail servers. Do not send.</li>
+</ul>
+
+<h3>Verifying Your Lead List</h3>
+<ol>
+  <li>Go to <strong>Lead Finder → Verify Emails</strong></li>
+  <li>Click <strong>Verify All Leads</strong></li>
+  <li>OutreachPro checks every lead with an email address (up to 100 at once)</li>
+  <li>Results appear in the lead list: ✓ valid, ⚠ medium risk, ✗ invalid</li>
+  <li>Filter to remove high-risk leads before sending any campaign</li>
+</ol>
+
+<h3>Before Every Campaign Send</h3>
+<p>Best practice: run verification before activating any new campaign. Go to <strong>Campaigns → [Campaign Name] → Verify Lead Emails</strong>. OutreachPro will flag how many leads in that campaign have risky emails, giving you the chance to remove them before they harm your sender score.</p>
+
+<h3>Why Bounce Rate Matters</h3>
+<p>Gmail and Outlook track bounce rates per sending domain. Above 2% bounces: deliverability warnings. Above 5%: your emails start going to spam for everyone — even people who want to receive them. One batch of unverified emails to 100 bad addresses can take weeks of warmup to recover from.</p>
+
+<h3>Finding Better Emails for Role-Based Addresses</h3>
+<p>When OutreachPro flags info@ or contact@ as medium-risk, use the Apify scraper to search for the specific owner: search Google Maps for the business name, then check their website's team/about page for a personal email. Direct emails to owners (max@fahrrad-mueller.de) convert at 5–10× the rate of generic addresses.</p>
+
+<h3>API</h3>
+<pre>POST /api/verify/email     → {email} → {valid, risk, score, reason, hasMx}
+POST /api/verify/bulk      → {emails[]} → {summary, results[]}
+POST /api/verify/leads     → verify all leads in DB, update emailRisk field</pre>
