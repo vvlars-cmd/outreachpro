@@ -1,155 +1,135 @@
-# OutreachPro
+# outreachpro
 
-> AI-powered B2B sales engagement platform — self-hosted Instantly.ai clone. Docker-first, Node.js, Claude AI, Apify, Gmail.
+> AI-powered B2B sales engagement platform. Self-hosted [Instantly.ai](https://instantly.ai) clone with Claude AI, Apify lead scraping, Gmail, CRM, and 6-language i18n.
 
-## 🚀 Quick Start
-
-```bash
-# 1. Clone and configure
-cp .env.example .env
-# Fill in .env with your API keys (see Environment Variables below)
-
-# 2. Run with Docker (recommended)
-docker compose up --build
-
-# 3. Open in browser
-open http://localhost:3000
-```
-
-## 📦 Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Runtime | Node 20 Alpine Docker |
-| Web server | Express.js :3000 |
-| Frontend | Single HTML app (Vanilla JS) |
-| AI | Anthropic claude-sonnet-4 |
-| Lead scraper | Apify `compass/crawler-google-places` |
-| Email | Gmail API via OAuth2 |
-| Storage | JSON files on Docker volume `/app/data` |
-| i18n | 6 languages (EN/DE/FR/ES/IT/NL) |
-
-## 🔑 Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `ANTHROPIC_API_KEY` | ✅ | AI personalisation + copilot |
-| `APIFY_TOKEN` | ✅ | Google Maps lead scraping |
-| `GOOGLE_CLIENT_ID` | ✅ | Gmail OAuth2 |
-| `GOOGLE_CLIENT_SECRET` | ✅ | Gmail OAuth2 |
-| `GOOGLE_REDIRECT_URI` | ✅ | `http://localhost:3000/api/gmail/callback` |
-| `PORT` | ❌ | Default: 3000 |
-
-## 🔐 Gmail OAuth2 Setup
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com)
-2. Create a project → Enable **Gmail API**
-3. OAuth2 Credentials → Web Application
-4. Add Authorized Redirect URI: `http://localhost:3000/api/gmail/callback`
-5. Copy Client ID + Secret to `.env`
-6. In OutreachPro: click **Connect Gmail** in the sidebar
-
-## 🕷️ Apify Setup
-
-1. Create account at [apify.com](https://console.apify.com)
-2. Get API token from Account Settings
-3. Add to `.env` as `APIFY_TOKEN`
-4. The app uses `compass/crawler-google-places` automatically
-
-## 📁 File Structure
-
-```
-outreachpro-app/
-├── server.js            # Express API (498 lines, all routes)
-├── package.json
-├── Dockerfile           # Node 20 Alpine
-├── docker-compose.yml   # Volume + healthcheck
-├── .env.example
-├── public/
-│   └── index.html       # Complete SPA frontend (1800+ lines)
-├── scrapers/
-│   ├── apify-maps.js    # Apify Google Maps scraper
-│   └── gmail-scraper.js # Gmail inbox lead extractor
-├── i18n/
-│   ├── en.json          # English (default)
-│   ├── de.json          # German
-│   ├── fr.json          # French
-│   ├── es.json          # Spanish
-│   ├── it.json          # Italian
-│   └── nl.json          # Dutch
-├── help/
-│   ├── en/              # English help articles
-│   └── de/              # German help articles
-├── data/
-│   ├── leads.json       # Lead database (Docker volume)
-│   ├── leads.seed.json  # 25 sample leads
-│   ├── campaigns.json
-│   ├── templates.json
-│   ├── email-accounts.json
-│   └── events.seed.json # sample events
-└── scripts/
-    ├── start.sh
-    └── reset.sh
-```
-
-## 🔄 Key Data Flow
-
-```
-Apify scrape → leads.json → HTML Composer → AI personalise (claude-sonnet-4)
-    → Gmail draft (OAuth2) → Campaign send → Unibox replies → CRM pipeline
-```
-
-## 🌍 Internationalization
-
-Switch language in the topbar dropdown. All UI strings are loaded from `/api/i18n/:lang` (EN/DE/FR/ES/IT/NL). Language preference persists to `localStorage`.
-
-## 🏢 Custom Workspace
-
-OutreachPro ships with a built-in workspace module you can configure for your own business. Set your company name, products, pricing, and events in **Settings → Workspace**.
-
-
-## 🐳 Docker Commands
+[![npm](https://img.shields.io/npm/v/outreachpro.svg)](https://www.npmjs.com/package/outreachpro)
+[![MIT License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](Dockerfile)
+[![Node](https://img.shields.io/badge/node-%3E%3D20-green.svg)](package.json)
 
 ```bash
-# Build and start
-docker compose up --build -d
-
-# View logs
-docker compose logs -f
-
-# Stop
-docker compose down
-
-# Reset data (WARNING: deletes all leads/campaigns)
-bash scripts/reset.sh
-
-# Check health
-curl http://localhost:3000/health
+npx outreachpro start
 ```
 
-## 📡 API Routes
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/health` | Health check |
-| GET | `/api/i18n/:lang` | i18n strings |
-| GET/POST | `/api/leads` | Lead CRUD |
-| POST | `/api/leads/bulk` | Bulk import |
-| DELETE | `/api/leads/:id` | Delete lead |
-| GET/POST | `/api/campaigns` | Campaign CRUD |
-| GET/POST | `/api/templates` | Template CRUD |
-| GET/POST | `/api/accounts` | Email accounts |
-| POST | `/api/apify/scrape` | Apify SSE scrape |
-| POST | `/api/ai/personalise` | Per-lead AI opening |
-| POST | `/api/ai/copilot` | AI copilot chat |
-| GET | `/api/gmail/auth` | Gmail OAuth2 start |
-| GET | `/api/gmail/callback` | Gmail OAuth2 callback |
-| GET | `/api/gmail/status` | Gmail connection status |
-| POST | `/api/gmail/draft` | Create Gmail draft |
-| POST | `/api/gmail/send` | SSE rate-limited send |
-| POST | `/api/gmail/scrape` | SSE inbox scraper |
-| GET | `/help/:lang/:module` | Help articles |
+Open **http://localhost:3000** — your full B2B outreach platform is running.
 
 ---
 
-Built with ❤️ by OutreachPro
+## What it does
+
+OutreachPro is a complete cold email automation platform you run on your own server. No SaaS fees, no data leaving your machine.
+
+```
+Google Maps → Leads → AI Personalise → Campaign → Reply → CRM → Won
+```
+
+---
+
+## Quick start
+
+```bash
+# 1. Create your .env file
+npx outreachpro init
+
+# 2. Add API keys to .env (Anthropic, Apify, Google)
+nano .env
+
+# 3. Start the server
+npx outreachpro start
+```
+
+Or with Docker:
+
+```bash
+npx outreachpro docker
+```
+
+Open **http://localhost:3000**
+
+---
+
+## Features
+
+| | |
+|---|---|
+| 🗺 | **Google Maps scraper** — find local businesses via Apify, auto-import leads |
+| ✦ | **Claude AI personalisation** — unique opening line per lead using business data |
+| 📧 | **Campaign sequences** — multi-step emails with delays, stop-on-reply, daily limits |
+| 📬 | **Unibox** — unified reply inbox with AI auto-labelling (Interested / Not now / Meeting) |
+| 🏆 | **CRM pipeline** — Kanban from Prospect → Won, drag-and-drop, pipeline value |
+| 🔥 | **Email warmup** — slow-ramp sending to build sender reputation |
+| 📊 | **Analytics** — open rates, reply rates, bounce tracking, revenue dashboard |
+| 🌍 | **6-language i18n** — EN / DE / FR / ES / IT / NL |
+| 🐳 | **Docker-first** — one command to run, your data stays on your server |
+
+---
+
+## Environment variables
+
+```bash
+# Required for AI personalisation
+ANTHROPIC_API_KEY=sk-ant-api03-...
+
+# Required for Google Maps lead scraping
+APIFY_TOKEN=apify_api_...
+
+# Required for Gmail integration (send + drafts)
+GOOGLE_CLIENT_ID=....apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-...
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/gmail/callback
+
+PORT=3000
+```
+
+---
+
+## CLI commands
+
+```bash
+npx outreachpro init        # create .env from template
+npx outreachpro start       # start server on :3000
+npx outreachpro docker      # start with Docker Compose
+npx outreachpro docker:down # stop Docker
+npx outreachpro help        # show all commands
+```
+
+---
+
+## Manual install
+
+```bash
+git clone https://github.com/vvlars-cmd/outreachpro
+cd outreachpro
+cp .env.example .env
+# fill in .env
+docker compose up --build
+```
+
+---
+
+## Tech stack
+
+- **Runtime:** Node.js 20 + Express.js on port 3000
+- **AI:** Anthropic Claude Sonnet (per-lead personalisation, reply labelling)
+- **Scraping:** Apify — compass/crawler-google-places
+- **Email:** Gmail OAuth (drafts + sending)
+- **Frontend:** Single-page HTML app, 16 views, zero frameworks
+- **i18n:** 6 languages, 177 strings each
+- **Data:** JSON files on Docker volume
+
+---
+
+## Views included
+
+Dashboard · Campaigns · Sequences · Unibox · Lead Finder · Email Composer · Apify Scraper · Gmail Scraper · Email Warmup · Analytics · Inbox Tester · CRM Pipeline · Email Accounts · Workspace · Settings · Help
+
+---
+
+## License
+
+MIT — Copyright (c) 2026 vvlars-cmd  
+Validity: 2026-03-27 to 2026-09-27
+
+---
+
+**GitHub:** [github.com/vvlars-cmd/outreachpro](https://github.com/vvlars-cmd/outreachpro)
