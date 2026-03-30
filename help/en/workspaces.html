@@ -1,0 +1,27 @@
+<h2>White-Label Client Workspaces</h2>
+<p>Run OutreachPro as an outreach agency. Each client gets a completely isolated workspace — their own leads, campaigns, inbox, CRM, and analytics — all from one OutreachPro instance.</p>
+
+<h3>Creating a Workspace</h3>
+<ol>
+  <li>Go to <strong>Workspace → Manage Workspaces</strong></li>
+  <li>Click <strong>New Workspace</strong></li>
+  <li>Enter the client name and their sender email</li>
+  <li>Pick a brand colour (shows in the workspace switcher)</li>
+  <li>Click <strong>Create</strong></li>
+</ol>
+<p>OutreachPro creates a dedicated data directory for this workspace. All leads, campaigns, and deals created while in this workspace are stored separately — completely isolated from other clients.</p>
+
+<h3>Switching Workspaces</h3>
+<p>Use the workspace selector in the top bar. The current workspace name and colour are shown. Switching instantly loads that workspace's data — leads, campaigns, CRM, and analytics.</p>
+
+<h3>Master Dashboard</h3>
+<p>The default workspace shows aggregate stats across all workspaces: total leads, active campaigns, pipeline value, and won revenue per client. Use this to monitor all clients at a glance.</p>
+
+<h3>Workspace Stats API</h3>
+<pre>GET /api/workspaces              → list all workspaces
+POST /api/workspaces             → create workspace
+GET /api/workspaces/:id/stats   → leads, campaigns, deals, inbox count
+DELETE /api/workspaces/:id      → delete workspace</pre>
+
+<h3>Agency Pricing Model</h3>
+<p>With white-label workspaces, you can charge clients €500–2000/month for managed outreach — while your actual cost is OutreachPro's API bills (~€50–100/month). The workspace isolation means each client sees only their data, making the product fully white-label ready.</p>
