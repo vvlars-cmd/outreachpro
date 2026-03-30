@@ -1,10 +1,12 @@
-<h2>E-Mail-Aufwärmen</h2>
-<p>Warmup steigert schrittweise Ihr Sendevolumen, um die Absender-Reputation bei Gmail und Outlook aufzubauen.</p>
-<h3>Ramp-Zeitplan</h3>
-<p>Startet bei 5 E-Mails/Tag, steigt wöchentlich um 5 bis zum konfigurierten Tagesziel. Woche 1: 5/Tag → Woche 6: 30/Tag.</p>
-<h3>Zustellbarkeits-Score</h3>
-<p>Score 0–100 zeigt die Posteingang-Platzierungsrate. Über 80: zuverlässig im Posteingang. Unter 60: Spam-Risiko.</p>
-<h3>DNS-Einträge</h3>
-<p>Stellen Sie sicher, dass SPF, DKIM und DMARC konfiguriert sind. Fehlende DMARC-Einträge sind die häufigste Ursache für Spam-Ordner-Platzierung.</p>
-<h3>Best Practices</h3>
-<ul><li>Nicht mehr als 50 E-Mails/Tag von einer neuen Domain im ersten Monat</li><li>Bounce-Rate unter 2% halten</li><li>Antwortrate über 5% anstreben</li></ul>
+<h2>E-Mail-Warmup</h2>
+<p>Baut schrittweise über 4–6 Wochen den Absender-Ruf auf, damit E-Mails im Posteingang landen.</p>
+<h3>Warmup-Zeitplan</h3>
+<pre>Woche 1: 5/Tag → Woche 2: 10/Tag → Woche 3: 20/Tag
+Woche 4: 30/Tag → Woche 5: 40/Tag → Woche 6: 50/Tag</pre>
+<p><strong>Zuerst Domain-Health-Check durchführen.</strong> Alle 5 Prüfungen (SPF, DKIM, DMARC, MX, Spamhaus) müssen bestehen, bevor der Warmup beginnt.</p>
+<h3>Tipps</h3>
+<ul>
+  <li>Eigene Domain nutzen — niemals @gmail.com für Kaltakquise</li>
+  <li>Maximal 50 Kalt-E-Mails pro Tag und Postfach</li>
+  <li>Bei Reputation unter 70: Kampagnen sofort pausieren</li>
+</ul>
