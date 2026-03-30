@@ -1,0 +1,35 @@
+<h2>Intent Signal Detector</h2>
+<p>The Intent Signal Detector monitors your leads' Google Business profiles for changes that indicate growth or buying intent — then flags the hottest prospects for immediate outreach.</p>
+
+<h3>What Counts as a Signal</h3>
+<ul>
+  <li><strong>Review surge</strong> — 5+ new reviews since last scan = business is active and growing</li>
+  <li><strong>Rating improvement</strong> — rating went up = business is improving, good time to reach out</li>
+  <li><strong>New photos</strong> — business is actively managing their profile (future enhancement)</li>
+</ul>
+
+<h3>Running a Scan</h3>
+<ol>
+  <li>Go to <strong>Analytics → Intent Signals</strong></li>
+  <li>Click <strong>Scan Leads</strong> (scans up to 20 leads per run)</li>
+  <li>Set limit if needed (default: 20)</li>
+  <li>Results appear showing which leads triggered signals and their signal score</li>
+</ol>
+
+<h3>Signal Scoring</h3>
+<ul>
+  <li>Review growth (+5 reviews): +40 points</li>
+  <li>Rating improvement: +30 points</li>
+  <li>Combined: 70+ points = hot lead 🔥</li>
+</ul>
+
+<h3>Taking Action</h3>
+<p>Click <strong>Action</strong> on any signal to mark it handled. This moves it from the active signals list to history. Best practice: action a signal by sending the lead a personalised email within 24 hours of detection — timing is everything.</p>
+
+<h3>Why This Matters</h3>
+<p>A business with rapidly growing reviews is investing in their reputation. They're likely growing their revenue and open to tools that help them scale. Reaching out at this exact moment — when they're actively improving — converts at 3–5× the rate of cold outreach.</p>
+
+<h3>API</h3>
+<pre>GET  /api/intent-signals              → list all signals
+POST /api/intent-signals/scan         → run scan {limit: 20}
+POST /api/intent-signals/:id/action   → mark actioned</pre>
