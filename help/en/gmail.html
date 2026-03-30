@@ -1,1 +1,32 @@
-<h2>Gmail Integration</h2><p>Connect Gmail via OAuth2 for draft creation and sending. Create OAuth2 credentials at <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a>. Set redirect URI to <code>http://localhost:3000/api/gmail/callback</code>.</p><h3>Gmail Scraper</h3><p>Query your inbox to extract contacts from email headers (From, Reply-To, CC). Results deduplicated against existing leads.</p>
+<h2>Gmail Integration</h2>
+<p>OutreachPro connects to Gmail via OAuth2 to send emails, save drafts, and scrape your inbox for new leads — all without storing your password.</p>
+
+<h3>Setup (5 minutes)</h3>
+<ol>
+  <li>Go to <strong>Google Cloud Console → APIs & Services</strong></li>
+  <li>Create a new project (or use existing)</li>
+  <li>Enable the <strong>Gmail API</strong></li>
+  <li>Create OAuth2 credentials: Web Application</li>
+  <li>Add Authorized Redirect URI: <code>http://localhost:3000/api/gmail/callback</code></li>
+  <li>Copy Client ID and Client Secret to your <code>.env</code> file</li>
+  <li>In OutreachPro: click <strong>Connect Gmail</strong> in Email Accounts</li>
+  <li>Authorise in the popup — you're connected</li>
+</ol>
+
+<h3>Gmail Scraper</h3>
+<p>The Gmail Scraper scans your inbox for business emails and automatically extracts leads. Go to <strong>Gmail Scraper</strong>, set keywords (e.g. "Fahrrad", "Bike"), and click Run. OutreachPro streams matching emails and imports the sender's name, email, and company as leads.</p>
+<p>Use this to capture inbound leads from people who've already emailed you — they convert at 10× the rate of cold outreach.</p>
+
+<h3>Sending & Drafts</h3>
+<ul>
+  <li><strong>Send directly</strong> — emails send immediately via Gmail API with rate limiting</li>
+  <li><strong>Save as Draft</strong> — creates a Gmail draft you can review before sending</li>
+  <li><strong>Batch Send</strong> — sends personalised emails to all leads in a campaign via SSE (streams progress live)</li>
+</ul>
+
+<h3>Troubleshooting</h3>
+<ul>
+  <li><strong>"Gmail not connected"</strong> — re-authorise by clicking Connect Gmail again</li>
+  <li><strong>"Rate limit exceeded"</strong> — Gmail API allows ~100 emails/hour. OutreachPro handles throttling automatically</li>
+  <li><strong>"Redirect URI mismatch"</strong> — make sure your Google Cloud OAuth settings include exactly <code>http://localhost:3000/api/gmail/callback</code></li>
+</ul>
