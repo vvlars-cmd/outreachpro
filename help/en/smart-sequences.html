@@ -1,0 +1,53 @@
+<h2>Smart Conditional Sequences</h2>
+<p>Standard sequences send the same follow-up to everyone on a fixed timer. Smart Sequences are different — they branch based on what each lead actually does. Opened your email? They go down path A. Didn't open? Path B. Replied? Sequence converts and stops. Every lead gets a personalised journey, not a mass cadence.</p>
+
+<h3>Why This Matters</h3>
+<p>Skylead charges $100/month just for conditional sequences. In OutreachPro, they're built in. A lead who opened your email three times is much hotter than one who never opened it — but without conditional sequences, you'd send them the same follow-up. Smart Sequences fix that.</p>
+
+<h3>How to Build a Smart Sequence</h3>
+<ol>
+  <li>Go to <strong>Sequences → Smart Sequences → New</strong></li>
+  <li>Add your first step (Day 0 — initial email)</li>
+  <li>Click <strong>Add Condition</strong> on the step</li>
+  <li>Set: <strong>If opened → go to Step 2A</strong> / <strong>If not opened → go to Step 2B</strong></li>
+  <li>Build Step 2A (for openers): shorter, more direct — they showed interest</li>
+  <li>Build Step 2B (for non-openers): different subject line, different angle</li>
+  <li>Click <strong>Enroll Leads</strong> to start the sequence</li>
+</ol>
+
+<h3>Example: CycleWASH 5-Step Smart Sequence</h3>
+<pre>Step 1 (Day 0): Initial email — "Ihr Fahrradladen in {{city}}"
+  ↓ IF opened →
+    Step 2A (Day 3): "Sie haben meine E-Mail gelesen — darf ich fragen warum nicht?"
+  ↓ IF not opened →
+    Step 2B (Day 4): Completely different subject: "Kurze Frage zu {{name}}"
+      ↓ IF 2B opened →
+        Step 3A (Day 7): Product-focused follow-up
+      ↓ IF 2B not opened →
+        Step 3B (Day 10): Final attempt — breakup email
+
+Step 4 (any path): LinkedIn connection request
+  ↓ IF replied at any point → STOP — lead enters CRM as Replied</pre>
+
+<h3>Condition Types</h3>
+<ul>
+  <li><strong>opened</strong> — lead opened the email (tracked via pixel)</li>
+  <li><strong>replied</strong> — lead replied (sequence stops, CRM updated)</li>
+  <li><strong>clicked</strong> — lead clicked a link in the email</li>
+  <li><strong>not_opened</strong> — lead didn't open within the delay window</li>
+</ul>
+
+<h3>Real-World Performance</h3>
+<p>Conditional sequences consistently generate 2–3× more replies than flat sequences because:</p>
+<ul>
+  <li>Engaged leads (opened, clicked) get more direct messaging — not a generic follow-up</li>
+  <li>Unengaged leads get a completely different angle — new subject line, new hook</li>
+  <li>You never waste a follow-up step on someone who already replied</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET  /api/smart-sequences                     → list all
+POST /api/smart-sequences                     → create sequence
+POST /api/smart-sequences/:id/enroll          → enroll leads
+POST /api/smart-sequences/:id/event           → record event {leadId, stepId, event}
+GET  /api/smart-sequences/:id/enrollments     → list enrolled leads</pre>
