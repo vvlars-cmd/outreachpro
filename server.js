@@ -168,6 +168,35 @@ table td,table th{font-size:14px!important}
     };
   }
 
+  // ── 4b. CRM launcher button in sidebar ──
+  function addCRMButton() {
+    if (document.getElementById('crm-launch-btn')) return;
+    // Find the CRM nav item and enhance it, or add a dedicated launcher
+    const crmNi = document.querySelector('[onclick*="nav(\\'crm\\')"]') || document.querySelector('[onclick*=\'nav("crm")\']');
+    if (crmNi) {
+      // Add "Full CRM" badge next to existing CRM nav item
+      if (!crmNi.querySelector('.crm-full-badge')) {
+        const badge = document.createElement('a');
+        badge.href = '/crm';
+        badge.target = '_blank';
+        badge.title = 'Open Full-Blown CRM';
+        badge.id = 'crm-launch-btn';
+        badge.style.cssText = 'margin-left:auto;font-size:9px;background:linear-gradient(135deg,#4f72ff,#a855f7);color:#fff;padding:2px 6px;border-radius:8px;font-weight:700;letter-spacing:.04em;text-decoration:none;cursor:pointer;flex-shrink:0';
+        badge.textContent = 'FULL CRM';
+        badge.onclick = (e) => { e.stopPropagation(); };
+        badge.className = 'crm-full-badge';
+        crmNi.appendChild(badge);
+      }
+    } else {
+      // Inject standalone CRM nav button into sidebar
+      const navScroll = document.querySelector('.nav-scroll');
+      if (!navScroll) return;
+      const div = document.createElement('div');
+      div.innerHTML = '<a href="/crm" target="_blank" id="crm-launch-btn" style="display:flex;align-items:center;gap:9px;width:calc(100% - 16px);margin:2px 8px;padding:8px 10px;border-radius:8px;background:linear-gradient(135deg,rgba(79,114,255,.12),rgba(168,85,247,.1));border:1px solid rgba(79,114,255,.25);color:#a5b4fc;font-size:12.5px;font-weight:700;font-family:var(--head,sans-serif);text-decoration:none;cursor:pointer;transition:all .14s"><svg width=\\"14\\" height=\\"14\\" viewBox=\\"0 0 24 24\\" fill=\\"none\\" stroke=\\"currentColor\\" stroke-width=\\"2\\"><rect x=\\"2\\" y=\\"3\\" width=\\"20\\" height=\\"14\\" rx=\\"2\\"/><path d=\\"M8 21h8M12 17v4\\"/></svg>Full CRM <span style=\\"margin-left:auto;font-size:9px;background:linear-gradient(135deg,#4f72ff,#a855f7);color:#fff;padding:2px 7px;border-radius:8px;font-weight:700\\">NEW</span></a>';
+      navScroll.appendChild(div);
+    }
+  }
+
   // ── 4. Nav tooltips ──
   function addTooltips() {
     const tips = {
@@ -182,7 +211,7 @@ table td,table th{font-size:14px!important}
       warmup:'Email Warmup — build sender reputation',
       analytics:'Analytics — open rates and pipeline',
       'inbox-test':'Inbox Tester — spam score checker',
-      crm:'CRM Pipeline — track deals',
+      crm:'CRM Pipeline — click FULL CRM badge to open full version',
       accounts:'Email Accounts — manage senders',
       cyclewash:'Workspace — configure your company settings',
       settings:'Settings — API keys and config',
@@ -198,6 +227,7 @@ table td,table th{font-size:14px!important}
   function init() {
     wireLangSelector();
     addHardResetBtn();
+    addCRMButton();
     addTooltips();
 
     // Apply saved language
@@ -247,6 +277,11 @@ app.get('/tests', (req, res) => {
 // ── HELP & TUTORIALS ──
 app.get('/help', (req, res) => {
   res.sendFile(path.join(__dirname, 'help-site', 'index.html'));
+});
+
+// ── CRM (full-blown) ──
+app.get('/crm', (req, res) => {
+  res.sendFile(path.join(__dirname, 'crm', 'index.html'));
 });
 
 // ── LANDING PAGE ──
@@ -826,32 +861,437 @@ app.post('/api/inbox/read', (req, res) => {
 // ════════════════════════════════════════════════════════════════════════════════
 // DEALS (CRM)
 // ════════════════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════════════════
+// FULL-BLOWN CRM — Contacts · Companies · Deals · Activities · Notes · Tasks
+// ════════════════════════════════════════════════════════════════════════════════
+
+// ── CRM helpers ──────────────────────────────────────────────────────────────
+const CRM_STAGES = ['Prospect','Contacted','Replied','Meeting','Proposal','Won','Lost'];
+const CRM_STAGE_PROB = { Prospect:0.05, Contacted:0.1, Replied:0.25, Meeting:0.5, Proposal:0.75, Won:1, Lost:0 };
+
+function crmId(prefix) { return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2,6)}`; }
+
+function getDealsFlat() {
+  const raw = readJSON('crm-deals.json', []);
+  // back-compat: if old kanban format, migrate
+  if (!Array.isArray(raw)) {
+    const flat = [];
+    Object.entries(raw).forEach(([stage, deals]) => {
+      (deals||[]).forEach(d => flat.push({ ...d, stage }));
+    });
+    writeJSON('crm-deals.json', flat);
+    return flat;
+  }
+  return raw;
+}
+
+// Seed CRM with demo data on first run
+function seedCRM() {
+  const p = path.join(DATA_DIR, 'crm-deals.json');
+  if (fs.existsSync(p)) return;
+  const now = new Date();
+  const d = (days) => new Date(now - days*864e5).toISOString();
+  const contacts = [
+    { id:'con-1', firstName:'Max', lastName:'Müller', email:'max.mueller@example.de', phone:'+49 221 123456', company:'Fahrrad Müller GmbH', title:'Inhaber', city:'Köln', source:'Apify', tags:['vip','e-bike'], createdAt:d(30) },
+    { id:'con-2', firstName:'Anna', lastName:'Schmidt', email:'a.schmidt@example.de', phone:'+49 211 234567', company:'Bike World Düsseldorf', title:'Geschäftsführerin', city:'Düsseldorf', source:'LinkedIn', tags:['warm'], createdAt:d(20) },
+    { id:'con-3', firstName:'Thomas', lastName:'Weber', email:'t.weber@example.de', phone:'+49 228 345678', company:'Sport Weber Bonn', title:'Inhaber', city:'Bonn', source:'Cold Email', tags:[], createdAt:d(14) },
+    { id:'con-4', firstName:'Sarah', lastName:'Koch', email:'s.koch@example.de', phone:'+49 241 456789', company:'E-Bike Center Aachen', title:'Einkauf', city:'Aachen', source:'Event', tags:['hot'], createdAt:d(7) },
+    { id:'con-5', firstName:'Klaus', lastName:'Bauer', email:'k.bauer@example.de', phone:'+49 251 567890', company:'Radhaus Münster', title:'Inhaber', city:'Münster', source:'Referral', tags:['vip'], createdAt:d(3) },
+  ];
+  const companies = [
+    { id:'co-1', name:'Fahrrad Müller GmbH', domain:'fahrrad-mueller.de', city:'Köln', industry:'Fahrradhandel', employees:'5-10', rating:4.8, reviews:342, website:'https://fahrrad-mueller.de', contactIds:['con-1'], createdAt:d(30) },
+    { id:'co-2', name:'Bike World Düsseldorf', domain:'bike-world-dus.de', city:'Düsseldorf', industry:'Fahrradhandel', employees:'10-20', rating:4.5, reviews:187, website:'https://bike-world-dus.de', contactIds:['con-2'], createdAt:d(20) },
+    { id:'co-3', name:'Sport Weber Bonn', domain:'sport-weber.de', city:'Bonn', industry:'Sportfachhandel', employees:'5-10', rating:4.3, reviews:94, website:'https://sport-weber.de', contactIds:['con-3'], createdAt:d(14) },
+    { id:'co-4', name:'E-Bike Center Aachen', domain:'ebike-aachen.de', city:'Aachen', industry:'E-Bike Spezialist', employees:'3-5', rating:4.9, reviews:78, website:'https://ebike-aachen.de', contactIds:['con-4'], createdAt:d(7) },
+    { id:'co-5', name:'Radhaus Münster', domain:'radhaus-muenster.de', city:'Münster', industry:'Fahrradhandel', employees:'10-20', rating:4.7, reviews:231, website:'https://radhaus-muenster.de', contactIds:['con-5'], createdAt:d(3) },
+  ];
+  const deals = [
+    { id:'deal-1', title:'CycleWASH Pro Platinum', company:'Fahrrad Müller GmbH', companyId:'co-1', contactId:'con-1', value:38000, stage:'Proposal', probability:75, currency:'EUR', source:'Apify', priority:'high', expectedClose:d(-10), assignee:'You', tags:['pro-platinum'], createdAt:d(25), updatedAt:d(2) },
+    { id:'deal-2', title:'CycleWASH Mini Platinum', company:'Bike World Düsseldorf', companyId:'co-2', contactId:'con-2', value:27500, stage:'Meeting', probability:50, currency:'EUR', source:'LinkedIn', priority:'medium', expectedClose:d(-20), assignee:'You', tags:['mini'], createdAt:d(18), updatedAt:d(4) },
+    { id:'deal-3', title:'CycleWASH Pro Platinum', company:'Sport Weber Bonn', companyId:'co-3', contactId:'con-3', value:38000, stage:'Replied', probability:25, currency:'EUR', source:'Cold Email', priority:'medium', expectedClose:d(-30), assignee:'You', tags:[], createdAt:d(12), updatedAt:d(6) },
+    { id:'deal-4', title:'CycleWASH Pro Platinum', company:'E-Bike Center Aachen', companyId:'co-4', contactId:'con-4', value:38000, stage:'Contacted', probability:10, currency:'EUR', source:'Event', priority:'high', expectedClose:d(-45), assignee:'You', tags:['hot'], createdAt:d(6), updatedAt:d(1) },
+    { id:'deal-5', title:'CycleWASH Mini Platinum', company:'Radhaus Münster', companyId:'co-5', contactId:'con-5', value:27500, stage:'Prospect', probability:5, currency:'EUR', source:'Referral', priority:'low', expectedClose:d(-60), assignee:'You', tags:[], createdAt:d(2), updatedAt:d(0) },
+    { id:'deal-6', title:'CycleWASH Pro Platinum — Won', company:'e-motion Hamm', companyId:null, contactId:null, value:38000, stage:'Won', probability:100, currency:'EUR', source:'Cold Email', priority:'high', expectedClose:d(20), closedAt:d(20), assignee:'You', tags:['won'], createdAt:d(45), updatedAt:d(20) },
+  ];
+  const activities = [
+    { id:'act-1', type:'email', dealId:'deal-1', contactId:'con-1', subject:'CycleWASH Pro Demo Follow-up', note:'Sent proposal PDF, awaiting signature', createdAt:d(2), createdBy:'You' },
+    { id:'act-2', type:'call', dealId:'deal-1', contactId:'con-1', subject:'Demo call — 30 min', note:'Very interested, wants to see ROI numbers. Follow up with proposal.', duration:30, createdAt:d(5), createdBy:'You' },
+    { id:'act-3', type:'meeting', dealId:'deal-2', contactId:'con-2', subject:'In-person demo at shop', note:'Showed live demo, impressed with speed. Comparing with 2 competitors.', createdAt:d(4), createdBy:'You' },
+    { id:'act-4', type:'email', dealId:'deal-3', contactId:'con-3', subject:'Initial outreach', note:'Replied asking for more info on pricing', createdAt:d(6), createdBy:'You' },
+    { id:'act-5', type:'note', dealId:'deal-4', contactId:'con-4', subject:'LinkedIn connection accepted', note:'Connected on LinkedIn, very active profile. Hot lead.', createdAt:d(1), createdBy:'You' },
+  ];
+  const tasks = [
+    { id:'task-1', title:'Send proposal to Fahrrad Müller', dealId:'deal-1', contactId:'con-1', dueDate:d(-1), priority:'high', status:'pending', assignee:'You', createdAt:d(3) },
+    { id:'task-2', title:'Schedule follow-up call with Bike World', dealId:'deal-2', contactId:'con-2', dueDate:d(-3), priority:'medium', status:'pending', assignee:'You', createdAt:d(5) },
+    { id:'task-3', title:'Prepare ROI sheet for Sport Weber', dealId:'deal-3', contactId:'con-3', dueDate:d(-7), priority:'low', status:'pending', assignee:'You', createdAt:d(8) },
+    { id:'task-4', title:'Send intro email to E-Bike Center Aachen', dealId:'deal-4', contactId:'con-4', dueDate:d(0), priority:'high', status:'done', assignee:'You', createdAt:d(2) },
+  ];
+  writeJSON('crm-deals.json', deals);
+  writeJSON('crm-contacts.json', contacts);
+  writeJSON('crm-companies.json', companies);
+  writeJSON('crm-activities.json', activities);
+  writeJSON('crm-tasks.json', tasks);
+}
+seedCRM();
+
+// ── DEALS ──────────────────────────────────────────────────────────────────────
+app.get('/api/crm/deals', (req, res) => {
+  let deals = getDealsFlat();
+  const { stage, search, priority, assignee, minValue, maxValue, sort } = req.query;
+  if (stage) deals = deals.filter(d => d.stage === stage);
+  if (priority) deals = deals.filter(d => d.priority === priority);
+  if (assignee) deals = deals.filter(d => d.assignee === assignee);
+  if (minValue) deals = deals.filter(d => (d.value||0) >= Number(minValue));
+  if (maxValue) deals = deals.filter(d => (d.value||0) <= Number(maxValue));
+  if (search) {
+    const q = search.toLowerCase();
+    deals = deals.filter(d => (d.title||'').toLowerCase().includes(q) || (d.company||'').toLowerCase().includes(q));
+  }
+  if (sort === 'value_desc') deals.sort((a,b) => (b.value||0)-(a.value||0));
+  else if (sort === 'value_asc') deals.sort((a,b) => (a.value||0)-(b.value||0));
+  else if (sort === 'recent') deals.sort((a,b) => new Date(b.updatedAt||b.createdAt)-new Date(a.updatedAt||a.createdAt));
+  else deals.sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+  res.json(deals);
+});
+
+app.get('/api/crm/deals/:id', (req, res) => {
+  const deals = getDealsFlat();
+  const deal = deals.find(d => d.id === req.params.id);
+  if (!deal) return res.status(404).json({ error: 'Deal not found' });
+  // Enrich with related data
+  const activities = readJSON('crm-activities.json', []).filter(a => a.dealId === deal.id);
+  const tasks = readJSON('crm-tasks.json', []).filter(t => t.dealId === deal.id);
+  const contact = deal.contactId ? (readJSON('crm-contacts.json', [])).find(c => c.id === deal.contactId) : null;
+  const company = deal.companyId ? (readJSON('crm-companies.json', [])).find(c => c.id === deal.companyId) : null;
+  res.json({ ...deal, activities, tasks, contact, company });
+});
+
+app.post('/api/crm/deals', (req, res) => {
+  const deals = getDealsFlat();
+  const deal = {
+    id: req.body.id || crmId('deal'),
+    title: req.body.title || 'New Deal',
+    company: req.body.company || '',
+    companyId: req.body.companyId || null,
+    contactId: req.body.contactId || null,
+    value: Number(req.body.value) || 0,
+    currency: req.body.currency || 'EUR',
+    stage: req.body.stage || 'Prospect',
+    probability: req.body.probability ?? (CRM_STAGE_PROB[req.body.stage||'Prospect']*100),
+    source: req.body.source || '',
+    priority: req.body.priority || 'medium',
+    assignee: req.body.assignee || 'You',
+    expectedClose: req.body.expectedClose || null,
+    tags: req.body.tags || [],
+    notes: req.body.notes || '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  deals.push(deal);
+  writeJSON('crm-deals.json', deals);
+  // Auto-create activity
+  const acts = readJSON('crm-activities.json', []);
+  acts.push({ id: crmId('act'), type:'note', dealId:deal.id, subject:`Deal created: ${deal.title}`, note:`Deal created in ${deal.stage} stage`, createdAt:new Date().toISOString(), createdBy:'You' });
+  writeJSON('crm-activities.json', acts);
+  res.json(deal);
+});
+
+app.put('/api/crm/deals/:id', (req, res) => {
+  const deals = getDealsFlat();
+  const idx = deals.findIndex(d => d.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Deal not found' });
+  const prev = deals[idx];
+  deals[idx] = { ...prev, ...req.body, id: prev.id, createdAt: prev.createdAt, updatedAt: new Date().toISOString() };
+  // Auto-log stage change
+  if (req.body.stage && req.body.stage !== prev.stage) {
+    const acts = readJSON('crm-activities.json', []);
+    acts.push({ id: crmId('act'), type:'stage_change', dealId:prev.id, subject:`Stage changed: ${prev.stage} → ${req.body.stage}`, note:'', createdAt:new Date().toISOString(), createdBy:'You' });
+    writeJSON('crm-activities.json', acts);
+    // Auto-update probability
+    if (!req.body.probability) deals[idx].probability = (CRM_STAGE_PROB[req.body.stage]||0.1)*100;
+    // Auto-set closedAt
+    if (req.body.stage === 'Won' || req.body.stage === 'Lost') deals[idx].closedAt = new Date().toISOString();
+  }
+  writeJSON('crm-deals.json', deals);
+  res.json(deals[idx]);
+});
+
+app.delete('/api/crm/deals/:id', (req, res) => {
+  writeJSON('crm-deals.json', getDealsFlat().filter(d => d.id !== req.params.id));
+  res.json({ ok: true });
+});
+
+// Bulk stage move
+app.post('/api/crm/deals/bulk/stage', (req, res) => {
+  const { ids, stage } = req.body;
+  if (!ids?.length || !stage) return res.status(400).json({ error: 'ids[] and stage required' });
+  const deals = getDealsFlat();
+  deals.forEach(d => { if (ids.includes(d.id)) { d.stage = stage; d.updatedAt = new Date().toISOString(); d.probability = (CRM_STAGE_PROB[stage]||0.1)*100; } });
+  writeJSON('crm-deals.json', deals);
+  res.json({ updated: ids.length });
+});
+
+// ── CONTACTS ──────────────────────────────────────────────────────────────────
+app.get('/api/crm/contacts', (req, res) => {
+  let contacts = readJSON('crm-contacts.json', []);
+  const { search, company, tag, source } = req.query;
+  if (search) { const q=search.toLowerCase(); contacts=contacts.filter(c=>`${c.firstName} ${c.lastName} ${c.email} ${c.company}`.toLowerCase().includes(q)); }
+  if (company) contacts=contacts.filter(c=>c.company===company);
+  if (tag) contacts=contacts.filter(c=>(c.tags||[]).includes(tag));
+  if (source) contacts=contacts.filter(c=>c.source===source);
+  res.json(contacts);
+});
+
+app.get('/api/crm/contacts/:id', (req, res) => {
+  const contact = readJSON('crm-contacts.json', []).find(c => c.id === req.params.id);
+  if (!contact) return res.status(404).json({ error: 'Contact not found' });
+  const deals = getDealsFlat().filter(d => d.contactId === contact.id);
+  const activities = readJSON('crm-activities.json', []).filter(a => a.contactId === contact.id);
+  const tasks = readJSON('crm-tasks.json', []).filter(t => t.contactId === contact.id);
+  res.json({ ...contact, deals, activities, tasks });
+});
+
+app.post('/api/crm/contacts', (req, res) => {
+  const contacts = readJSON('crm-contacts.json', []);
+  const contact = { id: crmId('con'), firstName:'', lastName:'', email:'', phone:'', company:'', title:'', city:'', source:'Manual', tags:[], notes:'', ...req.body, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  contacts.push(contact);
+  writeJSON('crm-contacts.json', contacts);
+  res.json(contact);
+});
+
+app.put('/api/crm/contacts/:id', (req, res) => {
+  const contacts = readJSON('crm-contacts.json', []);
+  const idx = contacts.findIndex(c => c.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  contacts[idx] = { ...contacts[idx], ...req.body, id: contacts[idx].id, createdAt: contacts[idx].createdAt, updatedAt: new Date().toISOString() };
+  writeJSON('crm-contacts.json', contacts);
+  res.json(contacts[idx]);
+});
+
+app.delete('/api/crm/contacts/:id', (req, res) => {
+  writeJSON('crm-contacts.json', readJSON('crm-contacts.json', []).filter(c => c.id !== req.params.id));
+  res.json({ ok: true });
+});
+
+// Import contacts from leads
+app.post('/api/crm/contacts/import-leads', (req, res) => {
+  const leads = readJSON('leads.json', []);
+  const existing = readJSON('crm-contacts.json', []);
+  const existingEmails = new Set(existing.map(c => c.email));
+  let imported = 0;
+  leads.forEach(l => {
+    if (!l.email || existingEmails.has(l.email)) return;
+    existing.push({ id: crmId('con'), firstName: l.name?.split(' ')[0] || l.name, lastName: l.name?.split(' ').slice(1).join(' ') || '', email: l.email, phone: l.phone || '', company: l.name, title: '', city: l.city || '', source: 'Leads Import', tags: [], linkedLeadId: l.id, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+    imported++;
+  });
+  writeJSON('crm-contacts.json', existing);
+  res.json({ imported, total: existing.length });
+});
+
+// ── COMPANIES ──────────────────────────────────────────────────────────────────
+app.get('/api/crm/companies', (req, res) => {
+  let cos = readJSON('crm-companies.json', []);
+  const { search, industry, city } = req.query;
+  if (search) { const q=search.toLowerCase(); cos=cos.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.city||'').toLowerCase().includes(q)); }
+  if (industry) cos=cos.filter(c=>c.industry===industry);
+  if (city) cos=cos.filter(c=>c.city===city);
+  // Enrich with deal counts
+  const deals = getDealsFlat();
+  cos = cos.map(co => ({ ...co, dealCount: deals.filter(d=>d.companyId===co.id).length, totalValue: deals.filter(d=>d.companyId===co.id&&d.stage!=='Lost').reduce((s,d)=>s+(d.value||0),0) }));
+  res.json(cos);
+});
+
+app.get('/api/crm/companies/:id', (req, res) => {
+  const co = readJSON('crm-companies.json', []).find(c => c.id === req.params.id);
+  if (!co) return res.status(404).json({ error: 'Not found' });
+  const deals = getDealsFlat().filter(d => d.companyId === co.id);
+  const contacts = readJSON('crm-contacts.json', []).filter(c => (co.contactIds||[]).includes(c.id));
+  res.json({ ...co, deals, contacts });
+});
+
+app.post('/api/crm/companies', (req, res) => {
+  const cos = readJSON('crm-companies.json', []);
+  const co = { id: crmId('co'), name:'', domain:'', city:'', industry:'', employees:'', website:'', contactIds:[], notes:'', ...req.body, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+  cos.push(co);
+  writeJSON('crm-companies.json', cos);
+  res.json(co);
+});
+
+app.put('/api/crm/companies/:id', (req, res) => {
+  const cos = readJSON('crm-companies.json', []);
+  const idx = cos.findIndex(c => c.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  cos[idx] = { ...cos[idx], ...req.body, id: cos[idx].id, createdAt: cos[idx].createdAt, updatedAt: new Date().toISOString() };
+  writeJSON('crm-companies.json', cos);
+  res.json(cos[idx]);
+});
+
+app.delete('/api/crm/companies/:id', (req, res) => {
+  writeJSON('crm-companies.json', readJSON('crm-companies.json', []).filter(c => c.id !== req.params.id));
+  res.json({ ok: true });
+});
+
+// ── ACTIVITIES (Timeline) ──────────────────────────────────────────────────────
+app.get('/api/crm/activities', (req, res) => {
+  let acts = readJSON('crm-activities.json', []);
+  if (req.query.dealId) acts = acts.filter(a => a.dealId === req.query.dealId);
+  if (req.query.contactId) acts = acts.filter(a => a.contactId === req.query.contactId);
+  if (req.query.type) acts = acts.filter(a => a.type === req.query.type);
+  acts.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+  res.json(acts);
+});
+
+app.post('/api/crm/activities', (req, res) => {
+  const acts = readJSON('crm-activities.json', []);
+  const act = { id: crmId('act'), type:'note', subject:'', note:'', dealId:null, contactId:null, companyId:null, duration:null, outcome:null, createdBy:'You', ...req.body, createdAt: new Date().toISOString() };
+  acts.push(act);
+  // Update deal's updatedAt
+  if (act.dealId) {
+    const deals = getDealsFlat();
+    const deal = deals.find(d => d.id === act.dealId);
+    if (deal) { deal.updatedAt = new Date().toISOString(); writeJSON('crm-deals.json', deals); }
+  }
+  writeJSON('crm-activities.json', acts);
+  res.json(act);
+});
+
+app.delete('/api/crm/activities/:id', (req, res) => {
+  writeJSON('crm-activities.json', readJSON('crm-activities.json', []).filter(a => a.id !== req.params.id));
+  res.json({ ok: true });
+});
+
+// ── TASKS ──────────────────────────────────────────────────────────────────────
+app.get('/api/crm/tasks', (req, res) => {
+  let tasks = readJSON('crm-tasks.json', []);
+  if (req.query.dealId) tasks = tasks.filter(t => t.dealId === req.query.dealId);
+  if (req.query.status) tasks = tasks.filter(t => t.status === req.query.status);
+  if (req.query.due === 'today') { const today = new Date().toISOString().split('T')[0]; tasks = tasks.filter(t => t.dueDate && t.dueDate.startsWith(today)); }
+  if (req.query.due === 'overdue') { const now = new Date(); tasks = tasks.filter(t => t.status==='pending' && t.dueDate && new Date(t.dueDate) < now); }
+  tasks.sort((a,b) => new Date(a.dueDate||'9999') - new Date(b.dueDate||'9999'));
+  res.json(tasks);
+});
+
+app.post('/api/crm/tasks', (req, res) => {
+  const tasks = readJSON('crm-tasks.json', []);
+  const task = { id: crmId('task'), title:'', dealId:null, contactId:null, dueDate:null, priority:'medium', status:'pending', assignee:'You', notes:'', ...req.body, createdAt: new Date().toISOString() };
+  tasks.push(task);
+  writeJSON('crm-tasks.json', tasks);
+  res.json(task);
+});
+
+app.put('/api/crm/tasks/:id', (req, res) => {
+  const tasks = readJSON('crm-tasks.json', []);
+  const idx = tasks.findIndex(t => t.id === req.params.id);
+  if (idx === -1) return res.status(404).json({ error: 'Not found' });
+  tasks[idx] = { ...tasks[idx], ...req.body, id: tasks[idx].id, createdAt: tasks[idx].createdAt };
+  writeJSON('crm-tasks.json', tasks);
+  res.json(tasks[idx]);
+});
+
+app.delete('/api/crm/tasks/:id', (req, res) => {
+  writeJSON('crm-tasks.json', readJSON('crm-tasks.json', []).filter(t => t.id !== req.params.id));
+  res.json({ ok: true });
+});
+
+// ── CRM ANALYTICS & REPORTING ──────────────────────────────────────────────────
+app.get('/api/crm/report', (req, res) => {
+  const deals = getDealsFlat();
+  const contacts = readJSON('crm-contacts.json', []);
+  const tasks = readJSON('crm-tasks.json', []);
+  const acts = readJSON('crm-activities.json', []);
+  const now = new Date();
+
+  // Pipeline by stage
+  const pipeline = {};
+  CRM_STAGES.forEach(s => {
+    const inStage = deals.filter(d => d.stage === s);
+    pipeline[s] = { count: inStage.length, value: inStage.reduce((sum,d)=>sum+(d.value||0),0), weighted: inStage.reduce((sum,d)=>sum+(d.value||0)*(CRM_STAGE_PROB[s]||0),0) };
+  });
+
+  // Forecasts
+  const activePipeline = deals.filter(d=>!['Won','Lost'].includes(d.stage));
+  const forecast30 = activePipeline.reduce((s,d)=>s+(d.value||0)*(CRM_STAGE_PROB[d.stage]||0.1),0);
+
+  // Won this month
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const wonThisMonth = deals.filter(d=>d.stage==='Won'&&new Date(d.closedAt||d.updatedAt)>=monthStart);
+  const wonRevenue = wonThisMonth.reduce((s,d)=>s+(d.value||0),0);
+
+  // Overdue tasks
+  const overdueTasks = tasks.filter(t=>t.status==='pending'&&t.dueDate&&new Date(t.dueDate)<now);
+
+  // Activity summary
+  const actTypes = {};
+  acts.forEach(a=>{ actTypes[a.type]=(actTypes[a.type]||0)+1; });
+
+  // Conversion rates
+  const totalDeals = deals.length;
+  const wonDeals = deals.filter(d=>d.stage==='Won').length;
+  const convRate = totalDeals ? Math.round(wonDeals/totalDeals*100) : 0;
+
+  // Source breakdown
+  const bySource = {};
+  deals.forEach(d=>{ if(d.source) bySource[d.source]=(bySource[d.source]||0)+1; });
+
+  // Stale deals (no update in 14+ days)
+  const stale = activePipeline.filter(d=>(now-new Date(d.updatedAt||d.createdAt))/864e5>14).map(d=>({ id:d.id, title:d.title, company:d.company, stage:d.stage, value:d.value, daysSince:Math.floor((now-new Date(d.updatedAt||d.createdAt))/864e5) }));
+
+  res.json({ pipeline, forecast30: Math.round(forecast30), wonRevenue, wonCount:wonDeals, totalDeals, convRate, contacts:contacts.length, overdueTasks:overdueTasks.length, actTypes, bySource, stale, generatedAt:now.toISOString() });
+});
+
+// AI-powered deal coaching
+app.post('/api/crm/deals/:id/coach', async (req, res) => {
+  const deal = getDealsFlat().find(d => d.id === req.params.id);
+  if (!deal) return res.status(404).json({ error: 'Deal not found' });
+  const activities = readJSON('crm-activities.json', []).filter(a => a.dealId === deal.id);
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) return res.json({ advice: 'Configure ANTHROPIC_API_KEY for AI coaching.', nextSteps: ['Add your API key to .env'] });
+  try {
+    const fetch = require('node-fetch');
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01' },
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:400,
+        system:'You are an expert B2B sales coach. Analyse this deal and give 3 specific, actionable next steps to advance it. Be concrete — no generic advice. Return JSON: {"advice":"2-sentence assessment","nextSteps":["step1","step2","step3"],"risk":"low|medium|high","riskReason":"..."}',
+        messages:[{ role:'user', content:`Deal: ${deal.title}, ${deal.company}, Stage: ${deal.stage}, Value: €${deal.value}, Probability: ${deal.probability}%. Recent activities: ${activities.slice(0,3).map(a=>`${a.type}: ${a.subject}`).join('; ')}` }]
+      })
+    });
+    const d = await r.json();
+    const text = d.content?.[0]?.text || '{}';
+    const parsed = JSON.parse(text.replace(/```json|```/g,'').trim());
+    res.json(parsed);
+  } catch(e) { res.json({ advice:'AI coaching unavailable.', nextSteps:['Review deal notes','Schedule follow-up','Send proposal'], risk:'medium', riskReason:'Unable to analyse' }); }
+});
+
+// ── LEGACY DEALS API (back-compat for existing kanban view) ────────────────────
 app.get('/api/deals', (req, res) => {
-  res.json(readJSON('deals.json', {
-    Prospect: [], Contacted: [], Meeting: [], Proposal: [],
-    Won: [{ id: 'd1', company: 'e-motion e-Bike Welt Hamm', value: 38000, city: 'Hamm', createdAt: new Date().toISOString() }],
-    Lost: []
-  }));
+  // Build kanban format from flat crm-deals
+  const deals = getDealsFlat();
+  const kanban = { Prospect:[], Contacted:[], Replied:[], Meeting:[], Proposal:[], Won:[], Lost:[] };
+  deals.forEach(d => { if (kanban[d.stage]) kanban[d.stage].push(d); });
+  res.json(kanban);
 });
 
 app.post('/api/deals', (req, res) => {
   const { stage, deal } = req.body;
   if (!stage || !deal) return res.status(400).json({ error: 'stage and deal required' });
-  const deals = readJSON('deals.json', { Prospect: [], Contacted: [], Meeting: [], Proposal: [], Won: [], Lost: [] });
-  if (!deals[stage]) deals[stage] = [];
-  if (!deal.id) deal.id = `d${Date.now()}`;
-  deal.createdAt = deal.createdAt || new Date().toISOString();
-  // Remove from any existing stage first (move operation)
-  Object.keys(deals).forEach(s => { deals[s] = deals[s].filter(d => d.id !== deal.id); });
-  deals[stage].push(deal);
-  writeJSON('deals.json', deals);
+  const deals = getDealsFlat();
+  const existing = deals.findIndex(d => d.id === deal.id);
+  const now = new Date().toISOString();
+  if (existing >= 0) {
+    const prev = deals[existing];
+    deals[existing] = { ...prev, ...deal, stage, updatedAt: now };
+    if (stage !== prev.stage && (stage==='Won'||stage==='Lost')) deals[existing].closedAt = now;
+  } else {
+    deals.push({ ...deal, id: deal.id||crmId('deal'), stage, probability: (CRM_STAGE_PROB[stage]||0.1)*100, createdAt: now, updatedAt: now });
+  }
+  writeJSON('crm-deals.json', deals);
   res.json({ ok: true, deal, stage });
 });
 
 app.delete('/api/deals/:id', (req, res) => {
-  const deals = readJSON('deals.json', {});
-  Object.keys(deals).forEach(s => { deals[s] = deals[s].filter(d => d.id !== req.params.id); });
-  writeJSON('deals.json', deals);
+  writeJSON('crm-deals.json', getDealsFlat().filter(d => d.id !== req.params.id));
   res.json({ ok: true });
 });
 
@@ -2565,6 +3005,1624 @@ p{color:#4b5563;margin-bottom:12px}
 });
 
 app.get('/api/proposals', (req, res) => res.json(readJSON('proposals.json', [])));
+
+// ════════════════════════════════════════════════════════════════════════════════
+// CRM INTEGRATIONS — Shared HTTP helper
+// ════════════════════════════════════════════════════════════════════════════════
+async function crmFetch(url, options = {}) {
+  const fetch = require('node-fetch');
+  const r = await fetch(url, {
+    headers: { 'Content-Type': 'application/json', ...options.headers },
+    method: options.method || 'GET',
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  const text = await r.text();
+  let data;
+  try { data = JSON.parse(text); } catch { data = { raw: text }; }
+  return { ok: r.ok, status: r.status, data };
+}
+
+// CRM config store (stored in crm-config.json)
+function getCrmConfig() { return readJSON('crm-config.json', { hubspot: {}, pipedrive: {}, salesforce: {}, zoho: {}, notion: {} }); }
+function saveCrmConfig(cfg) { writeJSON('crm-config.json', cfg); }
+
+// ════════════════════════════════════════════════════════════════════════════════
+// CRM INTEGRATION 1: HUBSPOT
+// REST API v3 — contacts, companies, deals, notes, sync leads
+// Docs: developers.hubspot.com/docs/api/crm
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/crm/hubspot/config', (req, res) => {
+  const cfg = getCrmConfig();
+  res.json({ configured: !!cfg.hubspot?.apiKey, portalId: cfg.hubspot?.portalId || null });
+});
+
+app.post('/api/crm/hubspot/config', (req, res) => {
+  const cfg = getCrmConfig();
+  cfg.hubspot = { apiKey: req.body.apiKey, portalId: req.body.portalId };
+  saveCrmConfig(cfg);
+  res.json({ ok: true, message: 'HubSpot configured' });
+});
+
+app.post('/api/crm/hubspot/test', async (req, res) => {
+  const cfg = getCrmConfig();
+  const key = cfg.hubspot?.apiKey;
+  if (!key) return res.status(400).json({ error: 'HubSpot API key not configured' });
+  const r = await crmFetch('https://api.hubapi.com/crm/v3/objects/contacts?limit=1', {
+    headers: { 'Authorization': `Bearer ${key}` }
+  });
+  res.json({ ok: r.ok, status: r.status, message: r.ok ? 'Connected to HubSpot ✓' : 'Auth failed', results: r.data?.results?.length });
+});
+
+// Search contacts
+app.get('/api/crm/hubspot/contacts', async (req, res) => {
+  const cfg = getCrmConfig();
+  const key = cfg.hubspot?.apiKey;
+  if (!key) return res.status(400).json({ error: 'HubSpot not configured' });
+  const limit = req.query.limit || 20;
+  const r = await crmFetch(`https://api.hubapi.com/crm/v3/objects/contacts?limit=${limit}&properties=email,firstname,lastname,company,phone,hs_lead_status`, {
+    headers: { 'Authorization': `Bearer ${key}` }
+  });
+  res.json(r.data);
+});
+
+// Create contact
+app.post('/api/crm/hubspot/contacts', async (req, res) => {
+  const cfg = getCrmConfig();
+  const key = cfg.hubspot?.apiKey;
+  if (!key) return res.status(400).json({ error: 'HubSpot not configured' });
+  const { email, firstname, lastname, company, phone, website } = req.body;
+  const r = await crmFetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${key}` },
+    body: { properties: { email, firstname, lastname, company, phone, website } }
+  });
+  res.json({ ok: r.ok, contact: r.data });
+});
+
+// Create deal
+app.post('/api/crm/hubspot/deals', async (req, res) => {
+  const cfg = getCrmConfig();
+  const key = cfg.hubspot?.apiKey;
+  if (!key) return res.status(400).json({ error: 'HubSpot not configured' });
+  const { dealname, amount, dealstage, closedate, pipeline } = req.body;
+  const r = await crmFetch('https://api.hubapi.com/crm/v3/objects/deals', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${key}` },
+    body: { properties: { dealname, amount: String(amount || ''), dealstage: dealstage || 'appointmentscheduled', closedate, pipeline: pipeline || 'default' } }
+  });
+  res.json({ ok: r.ok, deal: r.data });
+});
+
+// List deals
+app.get('/api/crm/hubspot/deals', async (req, res) => {
+  const cfg = getCrmConfig();
+  const key = cfg.hubspot?.apiKey;
+  if (!key) return res.status(400).json({ error: 'HubSpot not configured' });
+  const r = await crmFetch(`https://api.hubapi.com/crm/v3/objects/deals?limit=${req.query.limit || 20}&properties=dealname,amount,dealstage,closedate,pipeline`, {
+    headers: { 'Authorization': `Bearer ${key}` }
+  });
+  res.json(r.data);
+});
+
+// Add note to contact
+app.post('/api/crm/hubspot/notes', async (req, res) => {
+  const cfg = getCrmConfig();
+  const key = cfg.hubspot?.apiKey;
+  if (!key) return res.status(400).json({ error: 'HubSpot not configured' });
+  const { body, contactId, dealId, timestamp } = req.body;
+  // Create note engagement
+  const noteR = await crmFetch('https://api.hubapi.com/crm/v3/objects/notes', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${key}` },
+    body: {
+      properties: {
+        hs_note_body: body,
+        hs_timestamp: timestamp || new Date().toISOString()
+      },
+      associations: [
+        ...(contactId ? [{ to: { id: contactId }, types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }] }] : []),
+        ...(dealId ? [{ to: { id: dealId }, types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 214 }] }] : [])
+      ]
+    }
+  });
+  res.json({ ok: noteR.ok, note: noteR.data });
+});
+
+// SYNC: Push OutreachPro leads → HubSpot contacts
+app.post('/api/crm/hubspot/sync', async (req, res) => {
+  const cfg = getCrmConfig();
+  const key = cfg.hubspot?.apiKey;
+  if (!key) return res.status(400).json({ error: 'HubSpot not configured' });
+  const leads = readJSON('leads.json', []).filter(l => l.email);
+  const toSync = req.body.leadIds ? leads.filter(l => req.body.leadIds.includes(l.id)) : leads.slice(0, req.body.limit || 25);
+  const results = [];
+  for (const lead of toSync) {
+    const nameParts = (lead.name || '').split(' ');
+    const r = await crmFetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${key}` },
+      body: { properties: {
+        email: lead.email, firstname: nameParts[0] || lead.name, lastname: nameParts.slice(1).join(' ') || '',
+        company: lead.name, phone: lead.phone || '', website: lead.website || '',
+        city: lead.city || '', hs_lead_status: 'NEW'
+      }}
+    });
+    results.push({ leadId: lead.id, name: lead.name, ok: r.ok, hubspotId: r.data?.id, error: r.ok ? null : r.data?.message });
+    await new Promise(r => setTimeout(r, 100)); // rate limit
+  }
+  const synced = results.filter(r => r.ok).length;
+  // Track sync
+  const syncLog = readJSON('crm-sync-log.json', []);
+  syncLog.unshift({ crm: 'hubspot', synced, failed: results.length - synced, ts: new Date().toISOString() });
+  writeJSON('crm-sync-log.json', syncLog.slice(0, 100));
+  res.json({ synced, failed: results.length - synced, results });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// CRM INTEGRATION 2: PIPEDRIVE
+// REST API v2 — persons, deals, organizations, activities, notes
+// Docs: developers.pipedrive.com/docs/api/v2
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/crm/pipedrive/config', (req, res) => {
+  const cfg = getCrmConfig();
+  res.json({ configured: !!cfg.pipedrive?.apiKey, domain: cfg.pipedrive?.domain || null });
+});
+
+app.post('/api/crm/pipedrive/config', (req, res) => {
+  const cfg = getCrmConfig();
+  cfg.pipedrive = { apiKey: req.body.apiKey, domain: req.body.domain }; // domain: yourcompany
+  saveCrmConfig(cfg);
+  res.json({ ok: true, message: 'Pipedrive configured' });
+});
+
+function pdUrl(cfg, path) {
+  return `https://${cfg.pipedrive.domain}.pipedrive.com/api/v2${path}?api_token=${cfg.pipedrive.apiKey}`;
+}
+
+app.post('/api/crm/pipedrive/test', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const r = await crmFetch(pdUrl(cfg, '/persons') + '&limit=1');
+  res.json({ ok: r.ok, status: r.status, message: r.ok ? 'Connected to Pipedrive ✓' : 'Auth failed' });
+});
+
+// Get persons (contacts)
+app.get('/api/crm/pipedrive/persons', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const r = await crmFetch(pdUrl(cfg, '/persons') + `&limit=${req.query.limit || 20}`);
+  res.json(r.data);
+});
+
+// Create person
+app.post('/api/crm/pipedrive/persons', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const { name, email, phone, org_id } = req.body;
+  const r = await crmFetch(pdUrl(cfg, '/persons'), {
+    method: 'POST',
+    body: { name, email: [{ value: email, primary: true, label: 'work' }], phone: phone ? [{ value: phone, primary: true }] : [], org_id }
+  });
+  res.json({ ok: r.ok, person: r.data?.data });
+});
+
+// Create organization
+app.post('/api/crm/pipedrive/organizations', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const r = await crmFetch(pdUrl(cfg, '/organizations'), {
+    method: 'POST',
+    body: { name: req.body.name, address: req.body.address }
+  });
+  res.json({ ok: r.ok, org: r.data?.data });
+});
+
+// Create deal
+app.post('/api/crm/pipedrive/deals', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const { title, value, currency, person_id, org_id, stage_id, status, expected_close_date } = req.body;
+  const r = await crmFetch(pdUrl(cfg, '/deals'), {
+    method: 'POST',
+    body: { title, value: value || 0, currency: currency || 'EUR', person_id, org_id, stage_id: stage_id || 1, status: status || 'open', expected_close_date }
+  });
+  res.json({ ok: r.ok, deal: r.data?.data });
+});
+
+// Get deals
+app.get('/api/crm/pipedrive/deals', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const r = await crmFetch(pdUrl(cfg, '/deals') + `&limit=${req.query.limit || 20}&status=${req.query.status || 'open'}`);
+  res.json(r.data);
+});
+
+// Add activity
+app.post('/api/crm/pipedrive/activities', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const { subject, type, due_date, due_time, deal_id, person_id, note } = req.body;
+  const r = await crmFetch(pdUrl(cfg, '/activities'), {
+    method: 'POST',
+    body: { subject, type: type || 'call', due_date: due_date || new Date().toISOString().split('T')[0], due_time, deal_id, person_id, note }
+  });
+  res.json({ ok: r.ok, activity: r.data?.data });
+});
+
+// SYNC: Push OutreachPro leads → Pipedrive persons + organizations
+app.post('/api/crm/pipedrive/sync', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.pipedrive?.apiKey) return res.status(400).json({ error: 'Pipedrive not configured' });
+  const leads = readJSON('leads.json', []);
+  const toSync = req.body.leadIds ? leads.filter(l => req.body.leadIds.includes(l.id)) : leads.slice(0, req.body.limit || 25);
+  const results = [];
+  for (const lead of toSync) {
+    // Create org first
+    let orgId = null;
+    const orgR = await crmFetch(pdUrl(cfg, '/organizations'), { method: 'POST', body: { name: lead.name } });
+    if (orgR.ok) orgId = orgR.data?.data?.id;
+    // Create person linked to org
+    const personR = await crmFetch(pdUrl(cfg, '/persons'), {
+      method: 'POST',
+      body: {
+        name: lead.name,
+        email: lead.email ? [{ value: lead.email, primary: true, label: 'work' }] : [],
+        phone: lead.phone ? [{ value: lead.phone, primary: true }] : [],
+        org_id: orgId
+      }
+    });
+    results.push({ leadId: lead.id, name: lead.name, ok: personR.ok, personId: personR.data?.data?.id, orgId });
+    await new Promise(r => setTimeout(r, 120));
+  }
+  const synced = results.filter(r => r.ok).length;
+  const syncLog = readJSON('crm-sync-log.json', []);
+  syncLog.unshift({ crm: 'pipedrive', synced, failed: results.length - synced, ts: new Date().toISOString() });
+  writeJSON('crm-sync-log.json', syncLog.slice(0, 100));
+  res.json({ synced, failed: results.length - synced, results });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// CRM INTEGRATION 3: SALESFORCE
+// REST API — leads, opportunities, contacts, accounts
+// Auth: Username-Password OAuth2 flow (simplest for self-hosted)
+// Docs: developer.salesforce.com/docs/atlas.en-us.api_rest.meta
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/crm/salesforce/config', (req, res) => {
+  const cfg = getCrmConfig();
+  res.json({ configured: !!cfg.salesforce?.accessToken || !!cfg.salesforce?.clientId, instanceUrl: cfg.salesforce?.instanceUrl || null });
+});
+
+app.post('/api/crm/salesforce/config', (req, res) => {
+  const cfg = getCrmConfig();
+  cfg.salesforce = {
+    clientId: req.body.clientId,
+    clientSecret: req.body.clientSecret,
+    username: req.body.username,
+    password: req.body.password, // password + security token concatenated
+    instanceUrl: req.body.instanceUrl, // e.g. https://yourorg.salesforce.com
+    accessToken: req.body.accessToken // or set directly if using existing token
+  };
+  saveCrmConfig(cfg);
+  res.json({ ok: true, message: 'Salesforce configured' });
+});
+
+async function getSalesforceToken(cfg) {
+  if (cfg.salesforce?.accessToken) return cfg.salesforce.accessToken;
+  // Username-Password flow
+  const fetch = require('node-fetch');
+  const params = new URLSearchParams({
+    grant_type: 'password',
+    client_id: cfg.salesforce.clientId,
+    client_secret: cfg.salesforce.clientSecret,
+    username: cfg.salesforce.username,
+    password: cfg.salesforce.password
+  });
+  const r = await fetch('https://login.salesforce.com/services/oauth2/token', { method: 'POST', body: params });
+  const d = await r.json();
+  if (d.access_token) {
+    cfg.salesforce.accessToken = d.access_token;
+    cfg.salesforce.instanceUrl = d.instance_url;
+    saveCrmConfig(cfg);
+    return d.access_token;
+  }
+  throw new Error(d.error_description || 'Salesforce auth failed');
+}
+
+app.post('/api/crm/salesforce/test', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.salesforce?.clientId && !cfg.salesforce?.accessToken) return res.status(400).json({ error: 'Salesforce not configured' });
+  try {
+    const token = await getSalesforceToken(cfg);
+    const r = await crmFetch(`${cfg.salesforce.instanceUrl}/services/data/v59.0/query/?q=SELECT+Id,Name+FROM+Lead+LIMIT+1`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    res.json({ ok: r.ok, message: r.ok ? 'Connected to Salesforce ✓' : 'Query failed', records: r.data?.totalSize });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// Create Lead
+app.post('/api/crm/salesforce/leads', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.salesforce?.clientId && !cfg.salesforce?.accessToken) return res.status(400).json({ error: 'Salesforce not configured' });
+  try {
+    const token = await getSalesforceToken(cfg);
+    const { LastName, FirstName, Company, Email, Phone, LeadSource, Status, City, Website } = req.body;
+    const r = await crmFetch(`${cfg.salesforce.instanceUrl}/services/data/v59.0/sobjects/Lead/`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: { LastName: LastName || Company, FirstName: FirstName || '', Company, Email, Phone, LeadSource: LeadSource || 'Web', Status: Status || 'Open - Not Contacted', City, Website }
+    });
+    res.json({ ok: r.ok, lead: r.data });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// Create Opportunity
+app.post('/api/crm/salesforce/opportunities', async (req, res) => {
+  const cfg = getCrmConfig();
+  try {
+    const token = await getSalesforceToken(cfg);
+    const { Name, StageName, CloseDate, Amount, AccountId } = req.body;
+    const r = await crmFetch(`${cfg.salesforce.instanceUrl}/services/data/v59.0/sobjects/Opportunity/`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` },
+      body: { Name, StageName: StageName || 'Prospecting', CloseDate: CloseDate || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0], Amount, AccountId }
+    });
+    res.json({ ok: r.ok, opportunity: r.data });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// Query (SOQL)
+app.post('/api/crm/salesforce/query', async (req, res) => {
+  const cfg = getCrmConfig();
+  try {
+    const token = await getSalesforceToken(cfg);
+    const soql = encodeURIComponent(req.body.query || 'SELECT Id, Name, Email FROM Lead LIMIT 10');
+    const r = await crmFetch(`${cfg.salesforce.instanceUrl}/services/data/v59.0/query/?q=${soql}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    res.json(r.data);
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// SYNC: Push OutreachPro leads → Salesforce Leads
+app.post('/api/crm/salesforce/sync', async (req, res) => {
+  const cfg = getCrmConfig();
+  try {
+    const token = await getSalesforceToken(cfg);
+    const leads = readJSON('leads.json', []);
+    const toSync = req.body.leadIds ? leads.filter(l => req.body.leadIds.includes(l.id)) : leads.slice(0, req.body.limit || 20);
+    const results = [];
+    for (const lead of toSync) {
+      const nameParts = (lead.name || '').split(' ');
+      const r = await crmFetch(`${cfg.salesforce.instanceUrl}/services/data/v59.0/sobjects/Lead/`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: {
+          LastName: nameParts.slice(-1)[0] || lead.name,
+          FirstName: nameParts.slice(0, -1).join(' ') || '',
+          Company: lead.name, Email: lead.email || '', Phone: lead.phone || '',
+          City: lead.city || '', Website: lead.website || '',
+          LeadSource: 'OutreachPro', Status: 'Open - Not Contacted',
+          Description: `Rating: ${lead.rating}★ | Reviews: ${lead.reviewsCount} | Category: ${lead.category}`
+        }
+      });
+      results.push({ leadId: lead.id, name: lead.name, ok: r.ok, sfId: r.data?.id, error: r.ok ? null : r.data?.message });
+      await new Promise(r => setTimeout(r, 150));
+    }
+    const synced = results.filter(r => r.ok).length;
+    const syncLog = readJSON('crm-sync-log.json', []);
+    syncLog.unshift({ crm: 'salesforce', synced, failed: results.length - synced, ts: new Date().toISOString() });
+    writeJSON('crm-sync-log.json', syncLog.slice(0, 100));
+    res.json({ synced, failed: results.length - synced, results });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// CRM INTEGRATION 4: ZOHO CRM
+// REST API v6 — leads, deals, contacts, accounts
+// Auth: Self-client OAuth2 (generate tokens in Zoho API Console)
+// Docs: www.zoho.com/crm/developer/docs/api/v6
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/crm/zoho/config', (req, res) => {
+  const cfg = getCrmConfig();
+  res.json({ configured: !!cfg.zoho?.accessToken || !!cfg.zoho?.refreshToken, region: cfg.zoho?.region || 'com' });
+});
+
+app.post('/api/crm/zoho/config', (req, res) => {
+  const cfg = getCrmConfig();
+  cfg.zoho = {
+    clientId: req.body.clientId,
+    clientSecret: req.body.clientSecret,
+    refreshToken: req.body.refreshToken,
+    accessToken: req.body.accessToken,
+    region: req.body.region || 'com', // com, eu, in, com.au, jp
+    tokenExpiry: 0
+  };
+  saveCrmConfig(cfg);
+  res.json({ ok: true, message: 'Zoho CRM configured' });
+});
+
+async function getZohoToken(cfg) {
+  // If access token exists and not expired (1 hour), reuse
+  if (cfg.zoho?.accessToken && cfg.zoho?.tokenExpiry > Date.now()) return cfg.zoho.accessToken;
+  // Refresh token flow
+  const fetch = require('node-fetch');
+  const params = new URLSearchParams({
+    grant_type: 'refresh_token',
+    client_id: cfg.zoho.clientId,
+    client_secret: cfg.zoho.clientSecret,
+    refresh_token: cfg.zoho.refreshToken
+  });
+  const r = await fetch(`https://accounts.zoho.${cfg.zoho.region}/oauth/v2/token`, { method: 'POST', body: params });
+  const d = await r.json();
+  if (d.access_token) {
+    cfg.zoho.accessToken = d.access_token;
+    cfg.zoho.tokenExpiry = Date.now() + (d.expires_in || 3600) * 1000 - 60000;
+    saveCrmConfig(cfg);
+    return d.access_token;
+  }
+  throw new Error(d.error || 'Zoho token refresh failed');
+}
+
+function zohoUrl(cfg, module) { return `https://www.zohoapis.${cfg.zoho.region}/crm/v6/${module}`; }
+
+app.post('/api/crm/zoho/test', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.zoho?.refreshToken && !cfg.zoho?.accessToken) return res.status(400).json({ error: 'Zoho not configured' });
+  try {
+    const token = await getZohoToken(cfg);
+    const r = await crmFetch(zohoUrl(cfg, 'Leads?per_page=1'), { headers: { 'Authorization': `Zoho-oauthtoken ${token}` } });
+    res.json({ ok: r.ok, message: r.ok ? 'Connected to Zoho CRM ✓' : 'Failed', count: r.data?.data?.length });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// Get leads
+app.get('/api/crm/zoho/leads', async (req, res) => {
+  const cfg = getCrmConfig();
+  try {
+    const token = await getZohoToken(cfg);
+    const r = await crmFetch(zohoUrl(cfg, `Leads?per_page=${req.query.limit || 20}&fields=First_Name,Last_Name,Company,Email,Phone,Lead_Status`), {
+      headers: { 'Authorization': `Zoho-oauthtoken ${token}` }
+    });
+    res.json(r.data);
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// Create lead
+app.post('/api/crm/zoho/leads', async (req, res) => {
+  const cfg = getCrmConfig();
+  try {
+    const token = await getZohoToken(cfg);
+    const { Last_Name, First_Name, Company, Email, Phone, City, Website, Lead_Source } = req.body;
+    const r = await crmFetch(zohoUrl(cfg, 'Leads'), {
+      method: 'POST',
+      headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
+      body: { data: [{ Last_Name: Last_Name || Company, First_Name: First_Name || '', Company, Email, Phone, City, Website, Lead_Source: Lead_Source || 'OutreachPro' }] }
+    });
+    res.json({ ok: r.ok, lead: r.data?.data?.[0] });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// Create deal
+app.post('/api/crm/zoho/deals', async (req, res) => {
+  const cfg = getCrmConfig();
+  try {
+    const token = await getZohoToken(cfg);
+    const { Deal_Name, Amount, Stage, Closing_Date, Account_Name } = req.body;
+    const r = await crmFetch(zohoUrl(cfg, 'Deals'), {
+      method: 'POST',
+      headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
+      body: { data: [{ Deal_Name, Amount, Stage: Stage || 'Qualification', Closing_Date: Closing_Date || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0], Account_Name }] }
+    });
+    res.json({ ok: r.ok, deal: r.data?.data?.[0] });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// SYNC: Push OutreachPro leads → Zoho Leads
+app.post('/api/crm/zoho/sync', async (req, res) => {
+  const cfg = getCrmConfig();
+  try {
+    const token = await getZohoToken(cfg);
+    const leads = readJSON('leads.json', []);
+    const toSync = req.body.leadIds ? leads.filter(l => req.body.leadIds.includes(l.id)) : leads.slice(0, req.body.limit || 20);
+    // Zoho supports bulk insert up to 100 at a time
+    const batches = [];
+    for (let i = 0; i < toSync.length; i += 50) batches.push(toSync.slice(i, i + 50));
+    let synced = 0, failed = 0;
+    for (const batch of batches) {
+      const zohoLeads = batch.map(lead => {
+        const parts = (lead.name || '').split(' ');
+        return {
+          Last_Name: parts.slice(-1)[0] || lead.name, First_Name: parts.slice(0, -1).join(' ') || '',
+          Company: lead.name, Email: lead.email || '', Phone: lead.phone || '',
+          City: lead.city || '', Website: lead.website || '',
+          Lead_Source: 'OutreachPro',
+          Description: `${lead.rating}★ | ${lead.reviewsCount} reviews | ${lead.category}`
+        };
+      });
+      const r = await crmFetch(zohoUrl(cfg, 'Leads'), {
+        method: 'POST',
+        headers: { 'Authorization': `Zoho-oauthtoken ${token}` },
+        body: { data: zohoLeads }
+      });
+      synced += r.data?.data?.filter(d => d.status === 'success').length || 0;
+      failed += r.data?.data?.filter(d => d.status !== 'success').length || 0;
+    }
+    const syncLog = readJSON('crm-sync-log.json', []);
+    syncLog.unshift({ crm: 'zoho', synced, failed, ts: new Date().toISOString() });
+    writeJSON('crm-sync-log.json', syncLog.slice(0, 100));
+    res.json({ synced, failed, total: toSync.length });
+  } catch (e) { res.status(400).json({ ok: false, error: e.message }); }
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// CRM INTEGRATION 5: NOTION (CRM-as-database)
+// REST API — read/write pages in a Notion database used as CRM
+// Great for teams using Notion as their CRM
+// Docs: developers.notion.com
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/crm/notion/config', (req, res) => {
+  const cfg = getCrmConfig();
+  res.json({ configured: !!cfg.notion?.apiKey, databaseId: cfg.notion?.databaseId || null });
+});
+
+app.post('/api/crm/notion/config', (req, res) => {
+  const cfg = getCrmConfig();
+  cfg.notion = { apiKey: req.body.apiKey, databaseId: req.body.databaseId }; // integration token + DB ID
+  saveCrmConfig(cfg);
+  res.json({ ok: true, message: 'Notion configured' });
+});
+
+function notionHeaders(cfg) {
+  return { 'Authorization': `Bearer ${cfg.notion.apiKey}`, 'Notion-Version': '2022-06-28' };
+}
+
+app.post('/api/crm/notion/test', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.notion?.apiKey) return res.status(400).json({ error: 'Notion not configured' });
+  const r = await crmFetch(`https://api.notion.com/v1/databases/${cfg.notion.databaseId}`, {
+    headers: notionHeaders(cfg)
+  });
+  res.json({ ok: r.ok, message: r.ok ? 'Connected to Notion ✓' : 'Failed', title: r.data?.title?.[0]?.plain_text });
+});
+
+// Query database
+app.get('/api/crm/notion/pages', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.notion?.apiKey) return res.status(400).json({ error: 'Notion not configured' });
+  const r = await crmFetch(`https://api.notion.com/v1/databases/${cfg.notion.databaseId}/query`, {
+    method: 'POST',
+    headers: notionHeaders(cfg),
+    body: { page_size: Number(req.query.limit) || 20, sorts: [{ timestamp: 'created_time', direction: 'descending' }] }
+  });
+  res.json(r.data);
+});
+
+// Create page (lead/contact entry)
+app.post('/api/crm/notion/pages', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.notion?.apiKey) return res.status(400).json({ error: 'Notion not configured' });
+  const { name, email, company, city, status, rating, phone, website, notes } = req.body;
+  // Build Notion properties — supports common CRM schema
+  const properties = {
+    Name: { title: [{ text: { content: name || company || 'New Lead' } }] }
+  };
+  if (email) properties.Email = { email };
+  if (phone) properties.Phone = { phone_number: phone };
+  if (company) properties.Company = { rich_text: [{ text: { content: company } }] };
+  if (city) properties.City = { rich_text: [{ text: { content: city } }] };
+  if (status) properties.Status = { select: { name: status } };
+  if (rating) properties.Rating = { number: parseFloat(rating) || 0 };
+  if (website) properties.Website = { url: website };
+  const r = await crmFetch('https://api.notion.com/v1/pages', {
+    method: 'POST',
+    headers: notionHeaders(cfg),
+    body: {
+      parent: { database_id: cfg.notion.databaseId },
+      properties,
+      ...(notes ? { children: [{ object: 'block', type: 'paragraph', paragraph: { rich_text: [{ text: { content: notes } }] } }] } : {})
+    }
+  });
+  res.json({ ok: r.ok, page: r.data });
+});
+
+// Update page
+app.patch('/api/crm/notion/pages/:pageId', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.notion?.apiKey) return res.status(400).json({ error: 'Notion not configured' });
+  const properties = {};
+  if (req.body.status) properties.Status = { select: { name: req.body.status } };
+  if (req.body.notes) properties.Notes = { rich_text: [{ text: { content: req.body.notes } }] };
+  const r = await crmFetch(`https://api.notion.com/v1/pages/${req.params.pageId}`, {
+    method: 'PATCH',
+    headers: notionHeaders(cfg),
+    body: { properties }
+  });
+  res.json({ ok: r.ok, page: r.data });
+});
+
+// SYNC: Push OutreachPro leads → Notion database
+app.post('/api/crm/notion/sync', async (req, res) => {
+  const cfg = getCrmConfig();
+  if (!cfg.notion?.apiKey) return res.status(400).json({ error: 'Notion not configured' });
+  const leads = readJSON('leads.json', []);
+  const toSync = req.body.leadIds ? leads.filter(l => req.body.leadIds.includes(l.id)) : leads.slice(0, req.body.limit || 25);
+  const results = [];
+  for (const lead of toSync) {
+    const properties = {
+      Name: { title: [{ text: { content: lead.name || 'Unknown' } }] },
+      Status: { select: { name: lead.status || 'New' } }
+    };
+    if (lead.email) properties.Email = { email: lead.email };
+    if (lead.phone) properties.Phone = { phone_number: lead.phone };
+    if (lead.city) properties.City = { rich_text: [{ text: { content: lead.city } }] };
+    if (lead.rating) properties.Rating = { number: parseFloat(lead.rating) || 0 };
+    if (lead.website) properties.Website = { url: lead.website };
+    if (lead.category) properties.Category = { select: { name: lead.category.slice(0, 100) } };
+    const r = await crmFetch('https://api.notion.com/v1/pages', {
+      method: 'POST',
+      headers: notionHeaders(cfg),
+      body: { parent: { database_id: cfg.notion.databaseId }, properties }
+    });
+    results.push({ leadId: lead.id, name: lead.name, ok: r.ok, notionId: r.data?.id });
+    await new Promise(r => setTimeout(r, 100));
+  }
+  const synced = results.filter(r => r.ok).length;
+  const syncLog = readJSON('crm-sync-log.json', []);
+  syncLog.unshift({ crm: 'notion', synced, failed: results.length - synced, ts: new Date().toISOString() });
+  writeJSON('crm-sync-log.json', syncLog.slice(0, 100));
+  res.json({ synced, failed: results.length - synced, results });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// CRM INTEGRATIONS — Shared: status, sync log, multi-CRM sync
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/crm/status', (req, res) => {
+  const cfg = getCrmConfig();
+  res.json({
+    hubspot:    { configured: !!cfg.hubspot?.apiKey },
+    pipedrive:  { configured: !!cfg.pipedrive?.apiKey },
+    salesforce: { configured: !!cfg.salesforce?.accessToken || !!cfg.salesforce?.clientId },
+    zoho:       { configured: !!cfg.zoho?.accessToken || !!cfg.zoho?.refreshToken },
+    notion:     { configured: !!cfg.notion?.apiKey }
+  });
+});
+
+app.get('/api/crm/sync-log', (req, res) => {
+  res.json(readJSON('crm-sync-log.json', []));
+});
+
+// Multi-CRM sync — push to ALL configured CRMs at once
+app.post('/api/crm/sync-all', async (req, res) => {
+  const cfg = getCrmConfig();
+  const fetch = require('node-fetch');
+  const base = `http://localhost:${PORT}`;
+  const results = {};
+  const crms = ['hubspot', 'pipedrive', 'salesforce', 'zoho', 'notion'];
+  for (const crm of crms) {
+    const crmCfg = cfg[crm];
+    const isConfigured = crm === 'hubspot' ? !!crmCfg?.apiKey
+      : crm === 'pipedrive' ? !!crmCfg?.apiKey
+      : crm === 'salesforce' ? (!!crmCfg?.accessToken || !!crmCfg?.clientId)
+      : crm === 'zoho' ? (!!crmCfg?.refreshToken || !!crmCfg?.accessToken)
+      : crm === 'notion' ? !!crmCfg?.apiKey : false;
+    if (!isConfigured) { results[crm] = { skipped: true, reason: 'Not configured' }; continue; }
+    try {
+      const r = await fetch(`${base}/api/crm/${crm}/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ limit: req.body.limit || 25, leadIds: req.body.leadIds })
+      });
+      results[crm] = await r.json();
+    } catch (e) { results[crm] = { error: e.message }; }
+  }
+  res.json({ results, syncedAt: new Date().toISOString() });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 1: ACTIVITY TIMELINE
+// Every email, call, meeting, reply, open, click logged against the lead.
+// Salesforce charges $175/user/mo for this. Free in OutreachPro.
+// ════════════════════════════════════════════════════════════════════════════════
+function logActivity(leadId, type, data) {
+  const timeline = readJSON('activity-timeline.json', {});
+  if (!timeline[leadId]) timeline[leadId] = [];
+  timeline[leadId].unshift({
+    id: `act-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,
+    type,
+    ...data,
+    ts: new Date().toISOString()
+  });
+  timeline[leadId] = timeline[leadId].slice(0, 200);
+  writeJSON('activity-timeline.json', timeline);
+  return timeline[leadId][0];
+}
+
+app.get('/api/leads/:id/timeline', (req, res) => {
+  const timeline = readJSON('activity-timeline.json', {});
+  const entries = (timeline[req.params.id] || []);
+  res.json({ leadId: req.params.id, count: entries.length, entries });
+});
+
+app.post('/api/activities/log', async (req, res) => {
+  const { leadId, type, notes, subject, duration, outcome } = req.body;
+  if (!leadId || !type) return res.status(400).json({ error: 'leadId and type required' });
+  const leads = readJSON('leads.json', []);
+  const lead = leads.find(l => l.id === leadId);
+  let summary = notes, nextSteps = [], sentiment = 'neutral';
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (apiKey && notes && (type === 'call_logged' || type === 'meeting_notes')) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 250,
+          system: 'Extract structured info from sales call notes. Return JSON: {"summary":"1-sentence","nextSteps":["action"],"sentiment":"positive|neutral|negative|objection","followUpDate":"YYYY-MM-DD or null"}',
+          messages: [{ role: 'user', content: 'Lead: ' + (lead ? lead.name + ', ' + lead.city : '') + '. Notes: ' + notes }]
+        })
+      });
+      const d = await r.json();
+      const parsed = JSON.parse((d.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+      summary = parsed.summary || notes;
+      nextSteps = parsed.nextSteps || [];
+      sentiment = parsed.sentiment || 'neutral';
+      if (parsed.followUpDate) {
+        const memories = readJSON('memories.json', []);
+        memories.push({ id: 'mem-'+Date.now(), leadId, leadName: lead?.name, summary, followUpDate: parsed.followUpDate, intent: 'follow_up', actioned: false, createdAt: new Date().toISOString() });
+        writeJSON('memories.json', memories);
+      }
+    } catch(e) { console.error('Activity AI error:', e.message); }
+  }
+  const activity = logActivity(leadId, type, { notes, summary, nextSteps, sentiment, subject, duration, outcome, leadName: lead?.name });
+  res.json({ activity, nextSteps, sentiment });
+});
+
+app.get('/api/activities/recent', (req, res) => {
+  const timeline = readJSON('activity-timeline.json', {});
+  const all = [];
+  Object.entries(timeline).forEach(([leadId, entries]) => entries.forEach(e => all.push({ ...e, leadId })));
+  all.sort((a, b) => new Date(b.ts) - new Date(a.ts));
+  res.json(all.slice(0, parseInt(req.query.limit) || 50));
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 2: OPPORTUNITY SCORING
+// ════════════════════════════════════════════════════════════════════════════════
+function scoreDeal(deal, timeline) {
+  let score = 0; const factors = [];
+  const now = new Date();
+  const stageWeights = { Prospect:5, Contacted:15, Replied:35, Meeting:60, Proposal:80, Won:100, Lost:0 };
+  score += Math.round((stageWeights[deal.stage]||10) * 0.4);
+  factors.push({ label: 'Stage: '+deal.stage, impact: (stageWeights[deal.stage]||0)>=50?'positive':'neutral', pts: Math.round((stageWeights[deal.stage]||10)*0.4) });
+  const deals = readJSON('deals.json', []);
+  const avgValue = deals.filter(d=>d.value).reduce((s,d)=>s+(d.value||0),0) / (deals.filter(d=>d.value).length||1);
+  if (deal.value > avgValue*1.5) { score+=20; factors.push({label:'Above-average deal size',impact:'positive',pts:20}); }
+  else if (deal.value > avgValue) { score+=10; factors.push({label:'Average deal size',impact:'neutral',pts:10}); }
+  const activities = (timeline[deal.leadId]||[]);
+  if (activities.length > 0) {
+    const daysSince = (now - new Date(activities[0].ts)) / (1000*60*60*24);
+    if (daysSince < 3) { score+=20; factors.push({label:'Active last 3 days',impact:'positive',pts:20}); }
+    else if (daysSince < 7) { score+=12; factors.push({label:'Active this week',impact:'positive',pts:12}); }
+    else if (daysSince > 14) { score-=10; factors.push({label:'Stale '+Math.round(daysSince)+'d',impact:'negative',pts:-10}); }
+  }
+  if (activities.some(a=>a.type==='replied')) { score+=15; factors.push({label:'Lead has replied',impact:'positive',pts:15}); }
+  else if (activities.some(a=>a.type==='meeting_booked')) { score+=12; factors.push({label:'Meeting booked',impact:'positive',pts:12}); }
+  else if (activities.some(a=>a.type==='email_opened')) { score+=5; factors.push({label:'Email opened',impact:'neutral',pts:5}); }
+  return { score: Math.max(0,Math.min(99,score)), factors };
+}
+
+app.get('/api/deals/scored', (req, res) => {
+  const deals = readJSON('deals.json', []);
+  const timeline = readJSON('activity-timeline.json', {});
+  const scored = deals.filter(d=>!['Won','Lost'].includes(d.stage)).map(deal => {
+    const { score, factors } = scoreDeal(deal, timeline);
+    return { ...deal, opportunityScore: score, factors, risk: score>=70?'low':score>=40?'medium':'high' };
+  }).sort((a,b) => b.opportunityScore - a.opportunityScore);
+  res.json({ count: scored.length, deals: scored });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 3: PIPELINE INSPECTION
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/pipeline/inspection', (req, res) => {
+  const deals = readJSON('deals.json', []);
+  const timeline = readJSON('activity-timeline.json', {});
+  const now = new Date();
+  const weekAgo = new Date(now - 7*24*60*60*1000);
+  const active = deals.filter(d=>!['Won','Lost'].includes(d.stage));
+  const won = deals.filter(d=>d.stage==='Won'&&new Date(d.updatedAt||d.createdAt)>weekAgo);
+  const newDeals = deals.filter(d=>new Date(d.createdAt)>weekAgo);
+  const stalled = active.filter(d => {
+    const lastAct = (timeline[d.leadId]||[])[0];
+    const daysSince = lastAct ? (now-new Date(lastAct.ts))/(1000*60*60*24) : 999;
+    return daysSince > 7;
+  });
+  const byStage = {};
+  active.forEach(d => { if(!byStage[d.stage]) byStage[d.stage]={count:0,value:0}; byStage[d.stage].count++; byStage[d.stage].value+=(d.value||0); });
+  res.json({
+    summary: { activePipeline:active.length, totalPipelineValue:active.reduce((s,d)=>s+(d.value||0),0), wonThisWeek:won.length, wonValue:won.reduce((s,d)=>s+(d.value||0),0), newThisWeek:newDeals.length, stalled:stalled.length },
+    byStage, stalledDeals:stalled.map(d=>({id:d.id,name:d.name,stage:d.stage,value:d.value})),
+    recentWins:won.map(d=>({id:d.id,name:d.name,value:d.value})), newDeals:newDeals.map(d=>({id:d.id,name:d.name,stage:d.stage,value:d.value})),
+    generatedAt:new Date().toISOString()
+  });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 4: WORKFLOW AUTOMATION (Salesforce Flow equivalent)
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/workflows', (req, res) => res.json(readJSON('workflows.json', [
+  { id:'wf-1', name:'Reply received → move to Replied', trigger:'email_replied', action:'move_crm_stage', actionData:{stage:'Replied'}, enabled:true, runs:0 },
+  { id:'wf-2', name:'Meeting booked → move to Meeting', trigger:'meeting_booked', action:'move_crm_stage', actionData:{stage:'Meeting'}, enabled:true, runs:0 },
+  { id:'wf-3', name:'Hot signal → stop sequences', trigger:'signal_score_60', action:'stop_sequences', enabled:true, runs:0 },
+  { id:'wf-4', name:'Proposal stage → generate proposal', trigger:'stage_changed_proposal', action:'generate_proposal', enabled:false, runs:0 },
+  { id:'wf-5', name:'Stale 14d → re-engagement', trigger:'deal_stale_14d', action:'enqueue_reengagement', enabled:false, runs:0 }
+])));
+
+app.post('/api/workflows', (req, res) => {
+  const wfs = readJSON('workflows.json', []);
+  const wf = { id:'wf-'+Date.now(), ...req.body, runs:0, createdAt:new Date().toISOString() };
+  wfs.push(wf); writeJSON('workflows.json', wfs); res.json(wf);
+});
+
+app.post('/api/workflows/:id/toggle', (req, res) => {
+  const wfs = readJSON('workflows.json', []);
+  const wf = wfs.find(w=>w.id===req.params.id);
+  if (wf) wf.enabled = !wf.enabled;
+  writeJSON('workflows.json', wfs); res.json(wf||{error:'Not found'});
+});
+
+app.post('/api/workflows/evaluate', (req, res) => {
+  const { trigger, leadId, dealId } = req.body;
+  const wfs = readJSON('workflows.json', []).filter(w=>w.enabled&&w.trigger===trigger);
+  const results = [];
+  for (const wf of wfs) {
+    let status = 'queued', detail = '';
+    if (wf.action==='move_crm_stage'&&dealId) {
+      const deals = readJSON('deals.json', []);
+      const deal = deals.find(d=>d.id===dealId);
+      if (deal) { deal.stage=wf.actionData?.stage||deal.stage; deal.updatedAt=new Date().toISOString(); }
+      writeJSON('deals.json', deals); status='executed'; detail='Deal moved to '+wf.actionData?.stage;
+    } else if (wf.action==='stop_sequences'&&leadId) {
+      const enrollments = readJSON('ss-enrollments.json', []);
+      enrollments.filter(e=>e.leadId===leadId).forEach(e=>e.status='converted');
+      writeJSON('ss-enrollments.json', enrollments); status='executed'; detail='Sequences stopped';
+    } else if (wf.action==='log_activity'&&leadId) {
+      logActivity(leadId, 'workflow_action', { summary:wf.name });
+      status='executed';
+    }
+    wf.runs++; wf.lastRun=new Date().toISOString();
+    results.push({ workflowId:wf.id, name:wf.name, status, detail });
+  }
+  const allWfs = readJSON('workflows.json', []);
+  wfs.forEach(wf => { const w=allWfs.find(x=>x.id===wf.id); if(w){w.runs=wf.runs;w.lastRun=wf.lastRun;} });
+  writeJSON('workflows.json', allWfs);
+  res.json({ trigger, evaluated:wfs.length, results });
+});
+
+app.delete('/api/workflows/:id', (req, res) => {
+  writeJSON('workflows.json', readJSON('workflows.json', []).filter(w=>w.id!==req.params.id));
+  res.json({ ok:true });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 5: DAILY TASK QUEUE (Sales Workspace)
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/tasks/today', async (req, res) => {
+  const tasks = [];
+  const now = new Date();
+  const memories = readJSON('memories.json', []);
+  memories.filter(m=>m.followUpDate&&new Date(m.followUpDate)<=now&&!m.actioned).forEach(m => {
+    tasks.push({ id:'task-mem-'+m.id, type:'follow_up', priority:1, urgency:'high', title:'Follow up: '+m.leadName, detail:m.summary, leadId:m.leadId, action:'compose_email', ref:m.id });
+  });
+  const signals = readJSON('buying-signals.json', []);
+  signals.filter(s=>s.score>=60&&!s.actioned).slice(0,5).forEach(s => {
+    tasks.push({ id:'task-sig-'+s.id, type:'hot_signal', priority:2, urgency:'high', title:'Hot lead: '+s.leadName+' ('+s.event+')', detail:'Score '+s.score, leadId:s.leadId, action:'call_or_email', ref:s.id });
+  });
+  const deals = readJSON('deals.json', []);
+  const timeline = readJSON('activity-timeline.json', {});
+  deals.filter(d=>!['Won','Lost'].includes(d.stage)).forEach(d => {
+    const lastAct = (timeline[d.leadId]||[])[0];
+    const daysSince = lastAct ? (now-new Date(lastAct.ts))/(1000*60*60*24) : 999;
+    if (daysSince>7&&daysSince<30) tasks.push({ id:'task-stale-'+d.id, type:'stale_deal', priority:3, urgency:'medium', title:'Stale deal: '+d.name, detail:Math.round(daysSince)+'d no activity — '+d.stage+' stage, €'+(d.value||0).toLocaleString(), dealId:d.id, action:'log_activity', ref:d.id });
+  });
+  const enrollments = readJSON('ss-enrollments.json', []);
+  enrollments.filter(e=>e.status==='active'&&new Date(e.nextSendAt)<=now).slice(0,10).forEach(e => {
+    tasks.push({ id:'task-seq-'+e.id, type:'sequence_step', priority:4, urgency:'medium', title:'Sequence step due', detail:'Lead '+e.leadId, leadId:e.leadId, action:'send_email', ref:e.sequenceId });
+  });
+  tasks.sort((a,b)=>a.priority-b.priority);
+  let briefing = null;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (apiKey && tasks.length>0) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST', headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:100,
+          system:'Write a 1-sentence motivating daily briefing for a sales rep. Be specific and action-oriented.',
+          messages:[{role:'user',content:'Tasks today: '+tasks.length+'. High urgency: '+tasks.filter(t=>t.urgency==='high').length+'. Top: '+tasks[0]?.title}] })
+      });
+      const d = await r.json(); briefing = d.content?.[0]?.text;
+    } catch {}
+  }
+  res.json({ date:now.toISOString().split('T')[0], taskCount:tasks.length, highUrgency:tasks.filter(t=>t.urgency==='high').length, briefing, tasks });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 6: EMAIL SENTIMENT DETECTION (Einstein Email Insights)
+// ════════════════════════════════════════════════════════════════════════════════
+app.post('/api/inbox/analyse', async (req, res) => {
+  const { messageId, text, leadId } = req.body;
+  if (!text) return res.status(400).json({ error: 'text required' });
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  let result = { messageId, leadId, sentiment:'neutral', intent:'other', label:'Neutral', objection:null, urgency:'normal', followUpDate:null, suggestedAction:'Continue sequence' };
+  if (apiKey) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST', headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:200,
+          system:'Analyse this sales reply. Return JSON: {"sentiment":"positive|neutral|negative","intent":"interested|not_now|objection|meeting_request|unsubscribe|other","label":"Interested|Not Now|Objection|Meeting Request|Unsubscribe|Neutral","objection":"budget|timing|competitor|no_need|null","urgency":"hot|normal|low","followUpDate":"YYYY-MM-DD or null","suggestedAction":"next action"}',
+          messages:[{role:'user',content:text}] })
+      });
+      const d = await r.json();
+      const parsed = JSON.parse((d.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+      result = { ...result, ...parsed };
+    } catch(e) { console.error('Sentiment error:', e.message); }
+  } else {
+    const lower = text.toLowerCase();
+    if (lower.includes('interessiert')||lower.includes('interested')||lower.includes('ja ')) result = {...result,sentiment:'positive',intent:'interested',label:'Interested',suggestedAction:'Book demo'};
+    else if (lower.includes('unsubscribe')||lower.includes('kein interesse')) result = {...result,sentiment:'negative',intent:'unsubscribe',label:'Unsubscribe',suggestedAction:'Remove from sequences'};
+    else if (lower.includes('termin')||lower.includes('meeting')||lower.includes('anruf')) result = {...result,sentiment:'positive',intent:'meeting_request',label:'Meeting Request',urgency:'hot',suggestedAction:'Send booking link'};
+    else if (lower.includes('budget')||lower.includes('preis')||lower.includes('teuer')) result = {...result,intent:'objection',label:'Objection',objection:'budget',suggestedAction:'Send ROI calculation'};
+  }
+  if (leadId) logActivity(leadId, 'email_analysed', { sentiment:result.sentiment, intent:result.intent, label:result.label });
+  if (messageId) {
+    const inbox = readJSON('inbox.json', []);
+    const msg = inbox.find(m=>m.id===messageId);
+    if (msg) { msg.label=result.label; msg.sentiment=result.sentiment; }
+    writeJSON('inbox.json', inbox);
+  }
+  res.json(result);
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 7: ACCOUNT RESEARCH (Relationship Insights)
+// ════════════════════════════════════════════════════════════════════════════════
+app.post('/api/leads/:id/account-research', async (req, res) => {
+  const leads = readJSON('leads.json', []);
+  const lead = leads.find(l=>l.id===req.params.id);
+  if (!lead) return res.status(404).json({ error:'Lead not found' });
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  let brief = { leadId:lead.id, leadName:lead.name, generatedAt:new Date().toISOString() };
+  if (apiKey) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST', headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:400,
+          system:'Write a strategic account brief from Google business data. Return JSON: {"decisionMakerTitle":"title","businessSize":"solo|small|medium|large","buyingSignals":["signal"],"painPoints":["pain"],"talkingPoints":["angle"],"competitorRisk":"low|medium|high","overallRating":"cold|warm|hot","reasoning":"1-sentence"}',
+          messages:[{role:'user',content:'Business: '+lead.name+', '+lead.city+', '+lead.category+'. Rating: '+lead.rating+'star ('+lead.reviewsCount+' reviews). Website: '+(lead.website||'none')+'. Email: '+(lead.email||'none')+'.'}] })
+      });
+      const d = await r.json();
+      const parsed = JSON.parse((d.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+      brief = { ...brief, ...parsed };
+    } catch(e) { brief.error = e.message; }
+  } else {
+    brief = { ...brief, decisionMakerTitle:'Owner/Geschäftsführer', businessSize:lead.reviewsCount>100?'medium':'small', buyingSignals:[lead.rating>=4.5?'Excellent reputation':'Growing business'], painPoints:['Time-consuming manual processes'], talkingPoints:[lead.reviewsCount+' reviews = high customer volume'], overallRating:lead.rating>=4.5&&lead.reviewsCount>=50?'hot':'warm' };
+  }
+  lead.accountBrief = brief; lead.accountBriefAt = new Date().toISOString();
+  writeJSON('leads.json', leads);
+  res.json(brief);
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 8: CPQ — PRODUCT CATALOGUE + PRICING CALCULATOR
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/products', (req, res) => res.json(readJSON('products.json', [
+  { id:'prod-1', name:'CycleWASH Pro Platinum', basePrice:38000, currency:'EUR', description:'Professional bike wash system, 2-year warranty, installation included', category:'machine', discountRules:[{minQty:2,discountPct:5},{minQty:5,discountPct:10}] },
+  { id:'prod-2', name:'CycleWASH Mini Platinum', basePrice:27500, currency:'EUR', description:'Compact system for smaller shops, 2-year warranty', category:'machine', discountRules:[{minQty:2,discountPct:5}] },
+  { id:'prod-3', name:'Extended Warranty (5yr)', basePrice:3500, currency:'EUR', description:'5-year full coverage warranty extension', category:'service', discountRules:[] },
+  { id:'prod-4', name:'Installation & Training', basePrice:1200, currency:'EUR', description:'On-site installation and staff training (1 day)', category:'service', discountRules:[] }
+])));
+
+app.post('/api/products', (req, res) => {
+  const products = readJSON('products.json', []);
+  const prod = { id:'prod-'+Date.now(), ...req.body, createdAt:new Date().toISOString() };
+  products.push(prod); writeJSON('products.json', products); res.json(prod);
+});
+
+app.post('/api/cpq/calculate', (req, res) => {
+  const { items, globalDiscountPct=0 } = req.body;
+  if (!items?.length) return res.status(400).json({ error:'items required' });
+  const products = readJSON('products.json', []);
+  const lineItems = items.map(item => {
+    const prod = products.find(p=>p.id===item.productId);
+    if (!prod) return null;
+    const qty = item.qty||1;
+    const volRule = (prod.discountRules||[]).filter(r=>qty>=r.minQty).sort((a,b)=>b.minQty-a.minQty)[0];
+    const totalDisc = Math.min((volRule?.discountPct||0)+(item.manualDiscountPct||0)+globalDiscountPct, 40);
+    const unitPrice = Math.round(prod.basePrice*(1-totalDisc/100));
+    return { productId:prod.id, name:prod.name, qty, basePrice:prod.basePrice, unitPrice, lineTotal:unitPrice*qty, totalDiscountPct:totalDisc };
+  }).filter(Boolean);
+  const subtotal = lineItems.reduce((s,l)=>s+l.lineTotal,0);
+  res.json({ lineItems, subtotal, globalDiscountPct, total:Math.round(subtotal*(1-globalDiscountPct/100)), currency:'EUR', validDays:30 });
+});
+
+app.delete('/api/products/:id', (req, res) => {
+  writeJSON('products.json', readJSON('products.json',[]).filter(p=>p.id!==req.params.id));
+  res.json({ ok:true });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 9: COACHING DASHBOARD
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/coaching/dashboard', async (req, res) => {
+  const campaigns = readJSON('campaigns.json', []);
+  const abTests = readJSON('ab-tests.json', []);
+  const deals = readJSON('deals.json', []);
+  const leads = readJSON('leads.json', []);
+  const memories = readJSON('memories.json', []);
+  const timeline = readJSON('activity-timeline.json', {});
+  const stageOrder = ['Prospect','Contacted','Replied','Meeting','Proposal','Won'];
+  const funnel = stageOrder.map(stage=>({ stage, count:deals.filter(d=>d.stage===stage).length, value:deals.filter(d=>d.stage===stage).reduce((s,d)=>s+(d.value||0),0) }));
+  const bestCampaign = campaigns.filter(c=>c.stats?.sent>0).sort((a,b)=>(b.stats?.replies||0)/(b.stats?.sent||1)-(a.stats?.replies||0)/(a.stats?.sent||1))[0];
+  const allActs = Object.values(timeline).flat();
+  const actBreakdown = {};
+  allActs.forEach(a=>{ actBreakdown[a.type]=(actBreakdown[a.type]||0)+1; });
+  let coachingInsight = null;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (apiKey) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method:'POST', headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+        body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:150,
+          system:'Write 2 specific actionable coaching insights based on pipeline data. Be concrete.',
+          messages:[{role:'user',content:'Pipeline: '+funnel.map(f=>f.stage+':'+f.count).join(',')+'. Overdue follow-ups: '+memories.filter(m=>!m.actioned&&m.followUpDate&&new Date(m.followUpDate)<new Date()).length+'. A/B tests done: '+abTests.filter(t=>t.status==='complete').length}] })
+      });
+      const d = await r.json(); coachingInsight = d.content?.[0]?.text;
+    } catch {}
+  }
+  res.json({ bestCampaign:bestCampaign?{name:bestCampaign.name}:null, completedAbTests:abTests.filter(t=>t.status==='complete').map(t=>({winner:t.winner,subject:t.winnerSubject})), funnel, overdueFollowUps:memories.filter(m=>!m.actioned&&m.followUpDate&&new Date(m.followUpDate)<new Date()).length, activityBreakdown:actBreakdown, coachingInsight, generatedAt:new Date().toISOString() });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE FEATURE 10: LEAD PRIORITISATION (Einstein Lead Scoring)
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/leads/prioritised', (req, res) => {
+  const leads = readJSON('leads.json', []);
+  const signals = readJSON('buying-signals.json', []);
+  const timeline = readJSON('activity-timeline.json', {});
+  const memories = readJSON('memories.json', []);
+  const scored = leads.map(lead => {
+    let priority = lead.score||0; const factors = [];
+    const leadSignals = signals.filter(s=>s.leadId===lead.id&&!s.actioned);
+    if (leadSignals.length>0) { priority+=leadSignals.reduce((s,sig)=>s+sig.score,0)/2; factors.push('Has buying signals'); }
+    if (lead.emailVerified) { priority+=10; factors.push('Email verified'); }
+    if (lead.emailRisk==='high') { priority-=20; factors.push('High-risk email'); }
+    const acts = (timeline[lead.id]||[]);
+    if (acts.some(a=>a.type==='replied')) { priority+=30; factors.push('Has replied'); }
+    else if (acts.some(a=>a.type==='email_opened')) { priority+=10; factors.push('Opened email'); }
+    if (memories.find(m=>m.leadId===lead.id&&!m.actioned)) factors.push('Follow-up queued');
+    priority = Math.min(100,Math.max(0,priority));
+    return { ...lead, priorityScore:Math.round(priority), tier:priority>=70?'hot':priority>=40?'warm':'cold', factors };
+  }).sort((a,b)=>b.priorityScore-a.priorityScore);
+  res.json({ total:scored.length, hot:scored.filter(l=>l.tier==='hot').length, warm:scored.filter(l=>l.tier==='warm').length, cold:scored.filter(l=>l.tier==='cold').length, leads:scored });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 31: QUOTA + COMMISSION TRACKER
+// SPM software core: set monthly targets, track progress, calculate commissions.
+// Salesforce SPM: included in Unlimited+ at $350/user/mo. Free in OutreachPro.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/quota', (req, res) => {
+  const quota = readJSON('quota.json', {
+    monthly: 50000, currency: 'EUR',
+    commissionRate: 5, // % of deal value when won
+    bonusThreshold: 100, // % of quota = bonus kicks in
+    bonusPct: 10, // bonus commission rate above threshold
+    period: new Date().toISOString().slice(0, 7) // YYYY-MM
+  });
+  const deals = readJSON('deals.json', []);
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const wonThisMonth = deals.filter(d => d.stage === 'Won' && new Date(d.updatedAt || d.createdAt) >= monthStart);
+  const wonValue = wonThisMonth.reduce((s, d) => s + (d.value || 0), 0);
+  const pct = quota.monthly ? (wonValue / quota.monthly * 100) : 0;
+  const baseCommission = wonValue * (quota.commissionRate / 100);
+  const bonusCommission = pct >= quota.bonusThreshold ? wonValue * (quota.bonusPct / 100) : 0;
+  res.json({
+    quota: quota.monthly, currency: quota.currency, period: quota.period,
+    wonValue, wonDeals: wonThisMonth.length, pct: Math.round(pct),
+    onTrack: pct >= (now.getDate() / new Date(now.getFullYear(), now.getMonth()+1, 0).getDate() * 100),
+    commission: { base: Math.round(baseCommission), bonus: Math.round(bonusCommission), total: Math.round(baseCommission + bonusCommission), rate: quota.commissionRate, bonusRate: quota.bonusPct },
+    daysLeft: new Date(now.getFullYear(), now.getMonth()+1, 0).getDate() - now.getDate(),
+    recentWins: wonThisMonth.map(d => ({ name: d.name, value: d.value, date: d.updatedAt || d.createdAt }))
+  });
+});
+
+app.post('/api/quota', (req, res) => {
+  const quota = { ...readJSON('quota.json', {}), ...req.body };
+  writeJSON('quota.json', quota);
+  res.json(quota);
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 32: WIN RATE ANALYTICS
+// Track won vs lost by stage, campaign, time period. Identify where deals die.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/analytics/win-rate', (req, res) => {
+  const deals = readJSON('deals.json', []);
+  const { period = '90d' } = req.query;
+  const now = new Date();
+  const daysBack = period === '30d' ? 30 : period === '90d' ? 90 : period === '180d' ? 180 : 365;
+  const since = new Date(now - daysBack * 24 * 60 * 60 * 1000);
+  const closed = deals.filter(d => ['Won','Lost'].includes(d.stage) && new Date(d.updatedAt || d.createdAt) >= since);
+  const won = closed.filter(d => d.stage === 'Won');
+  const lost = closed.filter(d => d.stage === 'Lost');
+  const winRate = closed.length ? (won.length / closed.length * 100) : 0;
+  const avgDealSize = won.length ? won.reduce((s, d) => s + (d.value || 0), 0) / won.length : 0;
+  // Win rate by source/campaign
+  const byCampaign = {};
+  deals.forEach(d => {
+    const key = d.source || 'direct';
+    if (!byCampaign[key]) byCampaign[key] = { won: 0, lost: 0, total: 0 };
+    if (d.stage === 'Won') byCampaign[key].won++;
+    if (d.stage === 'Lost') byCampaign[key].lost++;
+    byCampaign[key].total++;
+  });
+  Object.keys(byCampaign).forEach(k => {
+    const b = byCampaign[k];
+    b.winRate = b.total ? Math.round(b.won / b.total * 100) : 0;
+  });
+  // Monthly trend
+  const monthlyWins = {};
+  won.forEach(d => {
+    const month = (d.updatedAt || d.createdAt || '').slice(0, 7);
+    if (month) monthlyWins[month] = (monthlyWins[month] || 0) + 1;
+  });
+  res.json({ period, winRate: Math.round(winRate), won: won.length, lost: lost.length, total: closed.length, avgDealSize: Math.round(avgDealSize), totalWonValue: won.reduce((s,d) => s+(d.value||0), 0), byCampaign, monthlyTrend: monthlyWins });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 33: AI CALL SCRIPTS
+// Claude writes a full phone script tailored to the lead before a call.
+// Salesforce AI: included at $350-550/user/mo. Free in OutreachPro.
+// ════════════════════════════════════════════════════════════════════════════════
+app.post('/api/leads/:id/call-script', async (req, res) => {
+  const leads = readJSON('leads.json', []);
+  const lead = leads.find(l => l.id === req.params.id);
+  if (!lead) return res.status(404).json({ error: 'Lead not found' });
+  const { objectionType, callGoal = 'book_demo', language = 'de' } = req.body;
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  let script = {
+    leadId: lead.id, leadName: lead.name, callGoal, language,
+    opener: `Guten Tag, hier ist [NAME] von [COMPANY]. Spreche ich mit dem Verantwortlichen von ${lead.name}?`,
+    hook: `Ich habe Ihre ${lead.reviewsCount || ''} Bewertungen gesehen — beeindruckend. Darf ich kurz fragen, wie viel Zeit Ihr Team täglich mit Fahrradreinigung verbringt?`,
+    pitch: 'Unsere Lösung kann das um 80% reduzieren. Wäre das interessant für Sie?',
+    objectionHandlers: {
+      budget: 'Die Anlage amortisiert sich erfahrungsgemäß in 12-18 Monaten. Soll ich Ihnen die Kalkulation kurz zeigen?',
+      timing: 'Ich verstehe. Wann wäre ein guter Zeitpunkt — vielleicht in einem Monat?',
+      competitor: 'Das höre ich öfter. Was schätzen Sie an Ihrer jetzigen Lösung am meisten?',
+      no_need: 'Wie lösen Sie das Thema aktuell? Mich interessiert, was bei Ihnen bereits gut funktioniert.'
+    },
+    cta: 'Hätten Sie nächste Woche 30 Minuten für eine kurze Demo? Ich zeige Ihnen live, wie es bei einem ähnlichen Betrieb in [city] funktioniert.',
+    closing: 'Perfekt. Ich schicke Ihnen gleich einen Terminlink. Danke für Ihre Zeit!'
+  };
+
+  if (apiKey) {
+    try {
+      const fetch = require('node-fetch');
+      const timeline = readJSON('activity-timeline.json', {});
+      const lastActivity = (timeline[lead.id] || [])[0];
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 500,
+          system: `Write a concise phone call script for a B2B sales rep. Language: ${language}. Goal: ${callGoal}. Return JSON: {"opener":"...","hook":"...","pitch":"...","objectionHandlers":{"budget":"...","timing":"...","competitor":"...","no_need":"..."},"cta":"...","closing":"...","talkingPoints":["point 1","point 2"]}. Keep each section to 1-2 sentences. Natural, human tone — not scripted sounding.`,
+          messages: [{ role: 'user', content: `Lead: ${lead.name}, ${lead.city}, ${lead.category}, ${lead.rating}★ (${lead.reviewsCount} reviews). ${lead.website ? 'Website: '+lead.website : ''} ${lastActivity ? 'Last touch: '+lastActivity.type+' '+lastActivity.ts?.slice(0,10) : 'Cold call'}. ${objectionType ? 'Known objection: '+objectionType : ''}` }]
+        })
+      });
+      const d = await r.json();
+      const parsed = JSON.parse((d.content?.[0]?.text || '{}').replace(/```json|```/g, '').trim());
+      script = { ...script, ...parsed, leadId: lead.id, leadName: lead.name, callGoal, language };
+    } catch(e) { console.error('Call script error:', e.message); }
+  }
+  res.json(script);
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 34: CUSTOMER / LEAD SEGMENTATION
+// Segment leads by category, city, rating tier, score tier, status.
+// Drive targeted campaign sends per segment.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/segments', (req, res) => {
+  const leads = readJSON('leads.json', []);
+  // Auto-build segments
+  const segments = {};
+
+  // By category
+  leads.forEach(l => {
+    const cat = l.category || 'Unknown';
+    if (!segments[cat]) segments[cat] = { name: cat, type: 'category', leads: [], count: 0 };
+    segments[cat].leads.push(l.id);
+    segments[cat].count++;
+  });
+
+  // By city
+  const byCity = {};
+  leads.forEach(l => {
+    const city = l.city || 'Unknown';
+    if (!byCity[city]) byCity[city] = { name: city, type: 'city', leads: [], count: 0 };
+    byCity[city].leads.push(l.id);
+    byCity[city].count++;
+  });
+
+  // By rating tier
+  const tiers = { premium: leads.filter(l => l.rating >= 4.5), good: leads.filter(l => l.rating >= 4.0 && l.rating < 4.5), average: leads.filter(l => l.rating < 4.0 && l.rating > 0) };
+
+  // By score tier
+  const scoreTiers = { hot: leads.filter(l => (l.score || 0) >= 70), warm: leads.filter(l => (l.score || 0) >= 40 && (l.score || 0) < 70), cold: leads.filter(l => (l.score || 0) < 40) };
+
+  // By status
+  const byStatus = {};
+  leads.forEach(l => {
+    const s = l.status || 'new';
+    if (!byStatus[s]) byStatus[s] = 0;
+    byStatus[s]++;
+  });
+
+  res.json({
+    byCategory: Object.values(segments).sort((a,b) => b.count - a.count).slice(0, 20),
+    byCity: Object.values(byCity).sort((a,b) => b.count - a.count).slice(0, 20),
+    byRating: { premium: { count: tiers.premium.length, label: '4.5★+' }, good: { count: tiers.good.length, label: '4.0–4.4★' }, average: { count: tiers.average.length, label: 'Below 4★' } },
+    byScore: { hot: scoreTiers.hot.length, warm: scoreTiers.warm.length, cold: scoreTiers.cold.length },
+    byStatus,
+    total: leads.length
+  });
+});
+
+app.post('/api/segments/export', (req, res) => {
+  // Export leads matching a segment filter as CSV
+  const { field, value, operator = 'eq' } = req.body; // field: 'category'|'city'|'status', value, operator: 'eq'|'gte'|'lte'|'contains'
+  const leads = readJSON('leads.json', []);
+  const filtered = leads.filter(l => {
+    const v = l[field];
+    if (operator === 'eq') return String(v).toLowerCase() === String(value).toLowerCase();
+    if (operator === 'gte') return parseFloat(v) >= parseFloat(value);
+    if (operator === 'lte') return parseFloat(v) <= parseFloat(value);
+    if (operator === 'contains') return String(v).toLowerCase().includes(String(value).toLowerCase());
+    return true;
+  });
+  const rows = filtered.map(l => headers.map(h => JSON.stringify(String(l[h]||''))).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  res.setHeader('Content-Type', 'text/csv;charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename="segment-${field}-${value}.csv"`);
+  res.send('﻿' + csv);
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 35: SEQUENCE STEP ANALYTICS
+// Which step of a sequence gets the best open/reply rates?
+// Find where leads drop off. Optimise your sequences with data.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/analytics/sequences', (req, res) => {
+  const enrollments = readJSON('ss-enrollments.json', []);
+  const seqs = readJSON('smart-sequences.json', []);
+
+  const analytics = seqs.map(seq => {
+    const seqEnrollments = enrollments.filter(e => e.sequenceId === seq.id);
+    const stepStats = {};
+    seqEnrollments.forEach(e => {
+      (e.events || []).forEach(ev => {
+        if (!stepStats[ev.stepId]) stepStats[ev.stepId] = { sent: 0, opened: 0, clicked: 0, replied: 0 };
+        if (ev.event === 'sent') stepStats[ev.stepId].sent++;
+        if (ev.event === 'opened') stepStats[ev.stepId].opened++;
+        if (ev.event === 'clicked') stepStats[ev.stepId].clicked++;
+        if (ev.event === 'replied') stepStats[ev.stepId].replied++;
+      });
+    });
+    // Enrich with step names
+    const stepBreakdown = (seq.steps || []).map(step => {
+      const s = stepStats[step.id] || { sent: 0, opened: 0, clicked: 0, replied: 0 };
+      return {
+        stepId: step.id,
+        stepName: step.subject || `Step (Day ${step.delayDays || 0})`,
+        delayDays: step.delayDays || 0,
+        type: step.type || 'email',
+        ...s,
+        openRate: s.sent ? Math.round(s.opened / s.sent * 100) : 0,
+        replyRate: s.sent ? Math.round(s.replied / s.sent * 100) : 0
+      };
+    });
+    return {
+      sequenceId: seq.id, name: seq.name,
+      enrolled: seqEnrollments.length,
+      active: seqEnrollments.filter(e => e.status === 'active').length,
+      converted: seqEnrollments.filter(e => e.status === 'converted').length,
+      conversionRate: seqEnrollments.length ? Math.round(seqEnrollments.filter(e => e.status === 'converted').length / seqEnrollments.length * 100) : 0,
+      stepBreakdown,
+      bestStep: stepBreakdown.sort((a,b) => b.replyRate - a.replyRate)[0]?.stepName || null
+    };
+  });
+
+  res.json({ sequences: analytics });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 36: MEETING SUMMARY + FOLLOW-UP DRAFTER
+// Paste meeting notes → Claude writes summary + follow-up email draft.
+// Salesforce AI: meeting summaries available at $350+/mo. Free in OutreachPro.
+// ════════════════════════════════════════════════════════════════════════════════
+app.post('/api/meetings/summarise', async (req, res) => {
+  const { leadId, notes, duration, language = 'de' } = req.body;
+  if (!notes) return res.status(400).json({ error: 'notes required' });
+  const leads = readJSON('leads.json', []);
+  const lead = leads.find(l => l.id === leadId);
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+
+  let result = {
+    leadId, leadName: lead?.name,
+    summary: notes.slice(0, 200),
+    keyPoints: [], nextSteps: [], objections: [],
+    sentiment: 'neutral', dealHealth: 'unknown',
+    followUpEmail: { subject: 'Follow-up: unser Gespräch', body: `Hallo ${lead?.name || ''},
+
+hiermit sende ich Ihnen wie besprochen...
+
+Beste Grüße` },
+    proposalRecommended: false
+  };
+
+  if (apiKey) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 600,
+          system: `You are a B2B sales assistant. Analyse meeting notes and return JSON: {"summary":"2-sentence summary","keyPoints":["point 1","point 2"],"nextSteps":["action 1","action 2"],"objections":["objection if any"],"sentiment":"positive|neutral|negative","dealHealth":"hot|warm|cold|dead","followUpEmail":{"subject":"subject line in ${language}","body":"full follow-up email in ${language}, professional, referencing discussion points, ending with CTA"},"proposalRecommended":true/false}`,
+          messages: [{ role: 'user', content: `Lead: ${lead?.name || 'Unknown'}, ${lead?.city || ''}, ${lead?.category || ''}.
+Duration: ${duration || 'unknown'} min.
+Notes: ${notes}` }]
+        })
+      });
+      const d = await r.json();
+      const parsed = JSON.parse((d.content?.[0]?.text || '{}').replace(/```json|```/g, '').trim());
+      result = { ...result, ...parsed, leadId, leadName: lead?.name };
+    } catch(e) { console.error('Meeting summary error:', e.message); }
+  }
+
+  // Auto-log to activity timeline
+  if (leadId) logActivity(leadId, 'meeting_notes', { summary: result.summary, nextSteps: result.nextSteps, sentiment: result.sentiment, duration });
+
+  // Auto-create follow-up tasks
+  if (result.nextSteps?.length > 0) {
+    const memories = readJSON('memories.json', []);
+    const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+    memories.push({ id: 'mem-mtg-'+Date.now(), leadId, leadName: lead?.name, summary: result.nextSteps[0], followUpDate: tomorrow.toISOString().split('T')[0], intent: 'meeting_followup', actioned: false, createdAt: new Date().toISOString() });
+    writeJSON('memories.json', memories);
+  }
+
+  res.json(result);
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 37: SALES GOALS + PROGRESS TRACKER
+// Monthly, quarterly, and annual goals with real-time progress bars.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/goals', (req, res) => {
+  const goals = readJSON('goals.json', [
+    { id: 'g-1', name: 'Monthly Revenue', type: 'revenue', period: 'monthly', target: 50000, currency: 'EUR', createdAt: new Date().toISOString() },
+    { id: 'g-2', name: 'New Leads per Month', type: 'leads', period: 'monthly', target: 50, createdAt: new Date().toISOString() },
+    { id: 'g-3', name: 'Demos Booked', type: 'meetings', period: 'monthly', target: 10, createdAt: new Date().toISOString() },
+    { id: 'g-4', name: 'Emails Sent', type: 'emails_sent', period: 'monthly', target: 500, createdAt: new Date().toISOString() }
+  ]);
+
+  const deals = readJSON('deals.json', []);
+  const leads = readJSON('leads.json', []);
+  const timeline = readJSON('activity-timeline.json', {});
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  const enriched = goals.map(goal => {
+    let current = 0;
+    if (goal.type === 'revenue') current = deals.filter(d => d.stage === 'Won' && new Date(d.updatedAt||d.createdAt) >= monthStart).reduce((s,d) => s+(d.value||0), 0);
+    else if (goal.type === 'leads') current = leads.filter(l => new Date(l.createdAt||0) >= monthStart).length;
+    else if (goal.type === 'meetings') {
+      const allActs = Object.values(timeline).flat();
+      current = allActs.filter(a => a.type === 'meeting_booked' && new Date(a.ts) >= monthStart).length;
+    } else if (goal.type === 'emails_sent') {
+      const allActs = Object.values(timeline).flat();
+      current = allActs.filter(a => a.type === 'email_sent' && new Date(a.ts) >= monthStart).length;
+    }
+    const pct = goal.target ? Math.min(Math.round(current / goal.target * 100), 100) : 0;
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+    const dayPct = (now.getDate() / daysInMonth * 100);
+    return { ...goal, current, pct, onTrack: pct >= dayPct * 0.8, projectedEndOfMonth: Math.round(current / (now.getDate() / daysInMonth)) };
+  });
+
+  res.json(enriched);
+});
+
+app.post('/api/goals', (req, res) => {
+  const goals = readJSON('goals.json', []);
+  const goal = { id: 'g-'+Date.now(), ...req.body, createdAt: new Date().toISOString() };
+  goals.push(goal); writeJSON('goals.json', goals); res.json(goal);
+});
+
+app.delete('/api/goals/:id', (req, res) => {
+  writeJSON('goals.json', readJSON('goals.json', []).filter(g => g.id !== req.params.id));
+  res.json({ ok: true });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 38: SALES PLAYBOOKS
+// Structured battle cards for common scenarios: objections, competitors, pitches.
+// Salesforce Sales Enablement: $150+/mo add-on. Free in OutreachPro.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/playbooks', (req, res) => res.json(readJSON('playbooks.json', [
+  {
+    id: 'pb-1', name: 'Budget Objection', trigger: 'budget', category: 'objection',
+    steps: ['Acknowledge: "Ich verstehe, Budget ist immer ein wichtiger Faktor."', 'Reframe: "Darf ich kurz zeigen, wie sich die Anlage in 18 Monaten amortisiert?"', 'Proof: "Bei [Referenzkunde] in [Stadt] hat sich die Investition in 14 Monaten gerechnet."', 'Offer: "Wir haben auch Finanzierungsoptionen — soll ich die mal kurz durchgehen?"'],
+    talkingPoints: ['ROI in 12-18 Monaten', 'Zeitersparnis = direkter Kostenvorteil', 'Finanzierung möglich'],
+    keyQuestion: 'Was wäre für Sie der ideale Zeitrahmen für eine solche Investition?'
+  },
+  {
+    id: 'pb-2', name: 'Timing Objection', trigger: 'timing', category: 'objection',
+    steps: ['Acknowledge: "Das verstehe ich — der Zeitpunkt muss passen."', 'Qualify: "Was müsste sich ändern, damit es passt?"', 'Plant seed: "Darf ich trotzdem kurz zeigen, was möglich wäre?"', 'Next touch: "Wann wäre ein guter Zeitpunkt, um nochmal zu sprechen?"'],
+    talkingPoints: ['Kein Druck', 'Infos schicken zum Selbststudium', 'Datum für Rückruf vereinbaren'],
+    keyQuestion: 'Wann wäre ein guter Zeitpunkt — in einem Monat, oder nach der Saison?'
+  },
+  {
+    id: 'pb-3', name: 'Competitor Objection', trigger: 'competitor', category: 'objection',
+    steps: ['Never badmouth: "Das kenne ich — was schätzen Sie daran?"', 'Understand: "Was ist Ihnen bei einer Reinigungsanlage am wichtigsten?"', 'Differentiate: "Was uns unterscheidet ist..."', 'Offer comparison: "Darf ich Ihnen unseren Vergleich zeigen?"'],
+    talkingPoints: ['Direkte Vergleichstabelle', 'Servicequalität + Garantie', 'Lokale Referenzkunden'],
+    keyQuestion: 'Was wäre für Sie der entscheidende Faktor beim Vergleich?'
+  },
+  {
+    id: 'pb-4', name: 'Cold Call Opener', trigger: 'cold_call', category: 'prospecting',
+    steps: ['Permission: "Haben Sie kurz 2 Minuten?"', 'Hook: "Ich habe Ihre [X] Bewertungen gesehen — beeindruckend."', 'Pain: "Wie viel Zeit verbringt Ihr Team täglich mit Fahrradreinigung?"', 'Bridge: "Genau das ist unser Thema — wir machen das 80% schneller."', 'CTA: "Darf ich Ihnen das kurz zeigen?"'],
+    talkingPoints: ['80% Zeitersparnis', '3-4 Minuten pro Fahrrad', 'Referenzen in Ihrer Region'],
+    keyQuestion: 'Wie lösen Sie das Thema Reinigung aktuell?'
+  },
+  {
+    id: 'pb-5', name: 'Demo Closing', trigger: 'post_demo', category: 'closing',
+    steps: ['Recap: "Was hat Sie am meisten überzeugt?"', 'Address hesitation: "Was hält Sie noch zurück?"', 'Next step: "Sollen wir einen Termin für die Details machen?"', 'Create urgency: "Wir haben noch [X] Slots für Installation in Q[X]."'],
+    talkingPoints: ['Zusammenfassung der Demo-Highlights', 'Offene Fragen klären', 'Nächsten Schritt festlegen'],
+    keyQuestion: 'Was müsste noch passieren, damit wir loslegen können?'
+  }
+])));
+
+app.post('/api/playbooks', (req, res) => {
+  const playbooks = readJSON('playbooks.json', []);
+  const pb = { id: 'pb-'+Date.now(), ...req.body, createdAt: new Date().toISOString() };
+  playbooks.push(pb); writeJSON('playbooks.json', playbooks); res.json(pb);
+});
+
+app.get('/api/playbooks/:trigger', (req, res) => {
+  const playbooks = readJSON('playbooks.json', []);
+  const pb = playbooks.find(p => p.trigger === req.params.trigger || p.id === req.params.trigger);
+  res.json(pb || { error: 'Playbook not found' });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 39: WIN-BACK / RE-ENGAGEMENT CAMPAIGN
+// Auto-generate re-engagement outreach for Lost deals or cold leads after 90d.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/winback/candidates', (req, res) => {
+  const deals = readJSON('deals.json', []);
+  const leads = readJSON('leads.json', []);
+  const { daysOld = 90 } = req.query;
+  const cutoff = new Date(Date.now() - parseInt(daysOld) * 24 * 60 * 60 * 1000);
+
+  // Lost deals older than cutoff
+  const lostDeals = deals.filter(d => d.stage === 'Lost' && new Date(d.updatedAt || d.createdAt) < cutoff).map(d => ({
+    type: 'lost_deal', id: d.id, name: d.name, value: d.value, lostDate: d.updatedAt || d.createdAt, leadId: d.leadId, daysSinceLost: Math.round((Date.now() - new Date(d.updatedAt||d.createdAt)) / (1000*60*60*24))
+  }));
+
+  // Cold leads with no activity (never in a deal, last contacted > 90d)
+  const timeline = readJSON('activity-timeline.json', {});
+  const coldLeads = leads.filter(l => {
+    const acts = timeline[l.id] || [];
+    if (acts.length === 0) return false;
+    const lastAct = new Date(acts[0].ts);
+    return lastAct < cutoff && !deals.find(d => d.leadId === l.id && d.stage !== 'Lost');
+  }).slice(0, 20).map(l => ({
+    type: 'cold_lead', id: l.id, name: l.name, city: l.city, email: l.email, daysSinceContact: Math.round((Date.now() - new Date((timeline[l.id]||[])[0]?.ts||0)) / (1000*60*60*24))
+  }));
+
+  res.json({ candidates: [...lostDeals, ...coldLeads], total: lostDeals.length + coldLeads.length, lostDeals: lostDeals.length, coldLeads: coldLeads.length });
+});
+
+app.post('/api/winback/generate', async (req, res) => {
+  const { leadId, dealId, reason = 'timing', language = 'de' } = req.body;
+  const leads = readJSON('leads.json', []);
+  const deals = readJSON('deals.json', []);
+  const lead = leads.find(l => l.id === leadId) || leads.find(l => l.id === deals.find(d => d.id === dealId)?.leadId);
+  if (!lead) return res.status(400).json({ error: 'Lead not found' });
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  let email = {
+    subject: `Noch einmal: ${lead.name}`,
+    body: `Hallo,
+
+es ist eine Weile her seit unserem letzten Gespräch. Ich wollte kurz schauen, ob sich etwas geändert hat und ob wir Ihnen jetzt helfen können.
+
+Beste Grüße`
+  };
+
+  if (apiKey) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 300,
+          system: `Write a warm, non-pushy B2B win-back email in ${language}. The lead was previously interested but didn't buy. Reference that time has passed and circumstances may have changed. Return JSON: {"subject":"subject line","body":"full email body"}. Max 120 words in body. Friendly tone, no pressure.`,
+          messages: [{ role: 'user', content: `Lead: ${lead.name}, ${lead.city}, ${lead.category}. Previous objection: ${reason}. Time since last contact: ${req.body.daysSince || '90'} days.` }]
+        })
+      });
+      const d = await r.json();
+      const parsed = JSON.parse((d.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+      email = parsed;
+    } catch(e) { console.error('Win-back error:', e.message); }
+  }
+
+  res.json({ leadId: lead.id, leadName: lead.name, email, enrollInCampaign: true });
+});
+
+// ════════════════════════════════════════════════════════════════════════════════
+// SALESFORCE ROUND 2 — FEATURE 40: EMAIL TEMPLATE LIBRARY + AI VARIANTS
+// Save templates, load them, generate AI variant versions.
+// ════════════════════════════════════════════════════════════════════════════════
+app.get('/api/templates', (req, res) => {
+  const defaults = [
+    { id:'tpl-1', name:'Cold Outreach DE', subject:'Kurze Frage zu {{name}} in {{city}}', body:'Hallo {{name}},\n\n{{aiOpening}}\n\nDarf ich Ihnen kurz zeigen, wie wir helfen koennen?\n\nBeste Gruesse', tags:['cold','german','bike'], uses:0 },
+    { id:'tpl-2', name:'Follow-Up After No Reply', subject:'Nochmal: {{name}}', body:'Hallo,\n\nIch wollte kurz nachfragen — haben Sie meine E-Mail erhalten?\n\n{{aiOpening}}\n\nBeste Gruesse', tags:['follow-up','german'], uses:0 },
+    { id:'tpl-3', name:'Post-Demo Follow-Up', subject:'Vielen Dank fuer Ihre Zeit, {{name}}', body:'Hallo,\n\nvielen Dank fuer das Gespraech heute.\n\n{{aiOpening}}\n\nBeste Gruesse', tags:['post-demo','german'], uses:0 }
+  ];
+  res.json(readJSON('templates.json', defaults));
+});
+
+app.post('/api/templates/:id/variant', async (req, res) => {
+  const templates = readJSON('templates.json', []);
+  const tpl = templates.find(t => t.id === req.params.id);
+  if (!tpl) return res.status(404).json({ error: 'Template not found' });
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  let variant = { ...tpl, id:'tpl-'+Date.now(), name:tpl.name+' (AI Variant)', uses:0 };
+
+  if (apiKey) {
+    try {
+      const fetch = require('node-fetch');
+      const r = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 300,
+          system: 'Rewrite this email template with a different angle, tone, or hook. Keep {{tokens}} intact. Return JSON: {"subject":"...","body":"..."}',
+          messages: [{ role: 'user', content: `Original subject: ${tpl.subject}
+Original body: ${tpl.body}
+Variant style: ${req.body.style || 'shorter and more direct'}` }]
+        })
+      });
+      const d = await r.json();
+      const parsed = JSON.parse((d.content?.[0]?.text||'{}').replace(/```json|```/g,'').trim());
+      variant = { ...variant, ...parsed };
+    } catch(e) { console.error('Template variant error:', e.message); }
+  }
+  templates.push(variant); writeJSON('templates.json', templates); res.json(variant);
+});
+
+app.delete('/api/templates/:id', (req, res) => {
+  writeJSON('templates.json', readJSON('templates.json', []).filter(t => t.id !== req.params.id));
+  res.json({ ok: true });
+});
 
 // ════════════════════════════════════════════════════════════════════════════════
 // SPA FALLBACK (must be LAST — after all API routes)
