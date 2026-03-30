@@ -1,0 +1,50 @@
+<h2>One-Click Proposal Generator</h2>
+<p>When a CRM deal reaches "Proposal" stage, generate a complete, print-ready sales proposal in one click. Claude writes a personalised executive summary. OutreachPro fills in the product details, ROI calculations, and pricing. The result is a professional branded proposal you can email, share as a link, or print — without touching a design tool. PandaDoc charges €35/month for this. It's built in.</p>
+
+<h3>Generating a Proposal</h3>
+<ol>
+  <li>Open a CRM deal in "Proposal" stage</li>
+  <li>Click <strong>Generate Proposal</strong></li>
+  <li>Optionally add a custom message for Claude to incorporate</li>
+  <li>Choose products to include and apply a discount if relevant</li>
+  <li>Click <strong>Generate</strong> — proposal renders in ~5 seconds</li>
+  <li>Preview the HTML proposal, then click <strong>Send via Gmail</strong> or <strong>Copy Link</strong></li>
+</ol>
+
+<h3>What the Proposal Includes</h3>
+<ul>
+  <li><strong>Cover page</strong> — client name, city, date, reference number, validity period</li>
+  <li><strong>Executive summary</strong> — 2 sentences written by Claude, personalised to the specific business (references their rating, category, city)</li>
+  <li><strong>Product section</strong> — your products with pricing, featured recommendation highlighted</li>
+  <li><strong>ROI table</strong> — cleaning time reduction, throughput increase, payback period</li>
+  <li><strong>CTA section</strong> — bold call-to-action with your booking link</li>
+  <li><strong>Footer</strong> — company details, address, registration number</li>
+</ul>
+
+<h3>Example Executive Summary (Claude-written)</h3>
+<blockquote><em>"With 342 Google reviews and a 4.8-star rating, Fahrrad Müller has clearly built Köln's most trusted bike shop. CycleWASH Pro is designed for exactly this type of high-volume premium operation — cutting per-bike cleaning time from 15 minutes to under 4, letting your team serve more customers while maintaining the quality your reputation is built on."</em></blockquote>
+
+<h3>Customising Products and Pricing</h3>
+<p>The proposal generator uses your workspace product settings by default. Override for any specific deal:</p>
+<ul>
+  <li>Add/remove products from the proposal</li>
+  <li>Apply a percentage discount (shown as a discount badge)</li>
+  <li>Add custom line items (installation, training, extended warranty)</li>
+</ul>
+
+<h3>Validity Period</h3>
+<p>Every proposal automatically includes a 30-day validity date. This creates urgency without a hard sell — the lead knows the pricing is only locked in for 30 days. You can adjust the validity period in Settings → Proposal Defaults.</p>
+
+<h3>Sharing Options</h3>
+<ul>
+  <li><strong>Email HTML</strong> — copy the full HTML into a Gmail email (renders beautifully in most email clients)</li>
+  <li><strong>Direct link</strong> — share the proposal URL directly: the lead can view it in any browser</li>
+  <li><strong>Print/PDF</strong> — open in browser → print → save as PDF for physical meetings</li>
+</ul>
+
+<h3>API</h3>
+<pre>POST /api/proposals/generate
+  Body: { dealId, leadId, customMessage, products[], discount }
+  → { proposal, html, previewUrl }
+
+GET /api/proposals → list all generated proposals</pre>
