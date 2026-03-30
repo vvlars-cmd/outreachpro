@@ -1,0 +1,32 @@
+<h2>A/B Subject Line Testing</h2>
+<p>Test two subject line variants against each other in any campaign. OutreachPro tracks opens per variant and automatically promotes the winner — no manual analysis needed.</p>
+
+<h3>Creating an A/B Test</h3>
+<ol>
+  <li>Open any Campaign and click <strong>A/B Test</strong></li>
+  <li>Enter Subject A and Subject B</li>
+  <li>Set the split (default: 50% each)</li>
+  <li>Set auto-promote threshold (default: 50 sends — after 50 total emails sent, the winner is auto-promoted)</li>
+  <li>Click <strong>Start Test</strong></li>
+</ol>
+
+<h3>How Auto-Promotion Works</h3>
+<p>As emails send, OutreachPro records opens per variant. When the total send count reaches the threshold (e.g. 50), it calculates the open rate for each:</p>
+<pre>Subject A: 22 sends, 8 opens → 36.4% open rate
+Subject B: 28 sends, 7 opens → 25.0% open rate
+→ Winner: Subject A (promoted automatically for remaining sends)</pre>
+
+<h3>Subject Line Best Practices</h3>
+<ul>
+  <li>Test one variable at a time — different length, personalisation, or angle</li>
+  <li>Subject A: question format — "Quick question about {{name}}'s workshop?"</li>
+  <li>Subject B: observation format — "Noticed {{name}}'s {{rating}}★ rating on Google"</li>
+  <li>Avoid ALL CAPS, excessive punctuation, and spam trigger words</li>
+  <li>Keep under 50 characters for full mobile display</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET    /api/ab-tests                    → list all tests
+POST   /api/ab-tests                    → create test
+POST   /api/ab-tests/:id/record         → record event {variant, event}
+DELETE /api/ab-tests/:id                → delete test</pre>
