@@ -1,0 +1,45 @@
+<h2>Pipedrive Integration</h2>
+<p>Pipedrive is built for sales teams who manage deals in visual pipelines. OutreachPro connects to Pipedrive to sync your scraped leads as persons and organizations, push deals when prospects advance in your sequence, and log activities to keep your Pipedrive pipeline accurate.</p>
+
+<h3>Getting Your Pipedrive API Token</h3>
+<ol>
+  <li>Log in to Pipedrive → Click your avatar (top right) → <strong>Personal preferences</strong></li>
+  <li>Go to the <strong>API</strong> tab</li>
+  <li>Copy your personal API token</li>
+  <li>Your company domain is the subdomain from your Pipedrive URL: <code>yourcompany.pipedrive.com</code> → domain = <code>yourcompany</code></li>
+  <li>In OutreachPro: Settings → CRM → Pipedrive → paste token + domain → <strong>Test Connection</strong></li>
+</ol>
+
+<h3>Data Mapping</h3>
+<pre>OutreachPro Lead → Pipedrive
+name             → Person name + Organization name
+email            → Person email (label: work)
+phone            → Person phone
+city             → (in person notes)
+website          → Organization website
+status           → (deal stage when synced as deal)</pre>
+
+<h3>How Sync Works</h3>
+<p>When you sync a lead to Pipedrive, OutreachPro creates two records:</p>
+<ol>
+  <li><strong>Organization</strong> — the business (e.g. "Fahrrad Müller Köln")</li>
+  <li><strong>Person</strong> — linked to the organization, with email and phone</li>
+</ol>
+<p>You can then manually create a Deal linked to the person/org in Pipedrive, or use OutreachPro's deal creation API to auto-create it when a lead reaches "Proposal" stage.</p>
+
+<h3>Logging Activities from OutreachPro</h3>
+<p>When you send an email, OutreachPro can log a Pipedrive activity: type = "Email", subject = your email subject, due date = send date. This gives your Pipedrive timeline a complete record of all outreach. Enable in <strong>Settings → CRM → Pipedrive → Log emails as activities</strong>.</p>
+
+<h3>Use Case: Trade Show Follow-Up</h3>
+<p>After a trade show (e.g. Eurobike Köln), import the attendee list into OutreachPro → run a personalised follow-up sequence → sync all engaged leads (opened or replied) to Pipedrive → create deals for everyone who books a demo.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/pipedrive/config         → {apiKey, domain}
+POST /api/crm/pipedrive/test           → test connection
+GET  /api/crm/pipedrive/persons        → list persons
+POST /api/crm/pipedrive/persons        → create person
+POST /api/crm/pipedrive/organizations  → create org
+GET  /api/crm/pipedrive/deals          → list deals
+POST /api/crm/pipedrive/deals          → create deal
+POST /api/crm/pipedrive/activities     → log activity
+POST /api/crm/pipedrive/sync           → sync leads → persons + orgs</pre>
