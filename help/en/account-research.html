@@ -1,0 +1,35 @@
+<h2>Account Research</h2>
+<p>Before calling or emailing a lead, you should know: who the decision maker likely is, what their pain points are, what buying signals their Google profile shows, and how hot they are. OutreachPro's Account Research uses Claude to generate a strategic brief for any lead in one click. Salesforce calls this "Relationship Insights" and charges for it in their Unlimited tier at $350+/user/month.</p>
+
+<h3>What the Brief Includes</h3>
+<ul>
+  <li><strong>Decision maker title</strong> — likely title of the person who signs off on purchases (e.g. "Inhaber", "Geschäftsführer")</li>
+  <li><strong>Business size</strong> — inferred from review count and category (solo, small, medium, large)</li>
+  <li><strong>Buying signals</strong> — positive indicators from their profile (e.g. "Excellent reputation suggests premium positioning", "High review growth = actively investing in business")</li>
+  <li><strong>Pain points</strong> — likely problems your product solves for this type of business</li>
+  <li><strong>Talking points</strong> — specific angles for your opening line, tailored to this business</li>
+  <li><strong>Competitor risk</strong> — how likely they already have a competing solution (low/medium/high)</li>
+  <li><strong>Overall rating</strong> — cold / warm / hot</li>
+</ul>
+
+<h3>Generating a Brief</h3>
+<ol>
+  <li>Open any lead in Lead Finder</li>
+  <li>Click <strong>Account Research</strong></li>
+  <li>Claude analyses their Google Business profile data (name, city, category, rating, reviews, website) and returns the brief in ~3 seconds</li>
+  <li>Brief is cached on the lead — no repeated API calls</li>
+</ol>
+
+<h3>Using the Brief Before a Call</h3>
+<pre>Brief: Fahrrad Müller, Köln
+Decision maker: Inhaber / Geschäftsführer
+Business size: Medium (342 reviews)
+Buying signals: "342 reviews + 4.8★ = premium operation with high volume"
+Pain points: "Time spent manually cleaning bikes limits throughput"
+Talking point: "With your review volume, every minute saved per bike = real money"
+Overall: HOT</pre>
+
+<h3>API</h3>
+<pre>POST /api/leads/:id/account-research
+→ { decisionMakerTitle, businessSize, buyingSignals[], painPoints[],
+    talkingPoints[], competitorRisk, overallRating, reasoning }</pre>
