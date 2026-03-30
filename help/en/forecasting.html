@@ -1,0 +1,43 @@
+<h2>Revenue Forecasting + Deal Velocity</h2>
+<p>OutreachPro analyses your CRM pipeline and predicts how much revenue you'll close in the next 30, 60, and 90 days. It also flags deals that have been stuck in one stage too long — before they go cold and disappear. Enterprise tools like Clari charge thousands per month for this. It's built into OutreachPro.</p>
+
+<h3>How the Forecast Works</h3>
+<p>Each CRM stage has a probability weight based on how far along the deal is:</p>
+<pre>Prospect  →  5% probability of closing
+Contacted → 10% probability
+Replied   → 25% probability
+Meeting   → 50% probability
+Proposal  → 75% probability</pre>
+<p>The 30-day forecast multiplies each deal's value by its stage probability and sums the result. A €38,000 deal in Proposal stage contributes €28,500 to the forecast. A €38,000 deal in Prospect contributes €1,900.</p>
+<p>The 60 and 90-day forecasts apply a pipeline velocity multiplier based on your historical close rate.</p>
+
+<h3>AI Narrative Forecast</h3>
+<p>If your Anthropic API key is configured, Claude writes a plain-English 2-sentence forecast summary after crunching the numbers. Example:</p>
+<blockquote><em>"With 4 deals in Proposal stage totalling €152,000 and a healthy pipeline of 12 active deals, your 30-day forecast is €47,800. The 2 deals stuck in Meeting for 21+ days are the main risk — prioritise re-engagement calls this week."</em></blockquote>
+
+<h3>Stale Deal Alerts</h3>
+<p>Any deal with no activity update in 14+ days is flagged as stale. Go to <strong>Analytics → Forecasting → Stale Deals</strong> to see the full list with days-since-activity. These are your highest-risk deals — they haven't moved because nobody has followed up.</p>
+<p>Stale deal rescue workflow:</p>
+<ol>
+  <li>Open the stale deal in CRM</li>
+  <li>Click <strong>Re-engage</strong> — generates a personalised win-back email via Claude</li>
+  <li>Check Memory CRM — did this lead ask to be contacted later? If so, the timing may be intentional</li>
+  <li>If no response within 7 days, move to Lost and re-add to a re-engagement campaign</li>
+</ol>
+
+<h3>Using Forecasts for Planning</h3>
+<ul>
+  <li><strong>30-day forecast</strong> — use for monthly revenue planning and expense decisions</li>
+  <li><strong>60-day forecast</strong> — use to decide whether to run more outreach campaigns this month</li>
+  <li><strong>90-day forecast</strong> — use for quarterly sales targets and inventory planning</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET /api/forecast
+→ {
+    forecast: { d30, d60, d90 },
+    pipeline: { active, totalValue },
+    won: { count, totalValue },
+    staleDeals: [{id, name, stage, value, daysSinceActivity}],
+    narrative: "Claude's plain-English summary"
+  }</pre>
