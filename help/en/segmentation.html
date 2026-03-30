@@ -1,0 +1,32 @@
+<h2>Lead Segmentation</h2>
+<p>Automatically segment your lead database by category, city, rating tier, score tier, and status. Export any segment as CSV to run targeted campaigns, or use segment data to understand your pipeline composition.</p>
+
+<h3>Segment Types</h3>
+<ul>
+  <li><strong>By category</strong> — Fahrradhändler, E-Bike Händler, Fahrrad Werkstatt etc. — see which categories dominate your pipeline</li>
+  <li><strong>By city</strong> — Köln, Düsseldorf, Bonn — which cities have the most leads? Which convert best?</li>
+  <li><strong>By rating tier</strong> — Premium (4.5★+), Good (4.0–4.4★), Average (below 4★)</li>
+  <li><strong>By score tier</strong> — Hot (70+), Warm (40–69), Cold (below 40)</li>
+  <li><strong>By status</strong> — new, contacted, replied, converted</li>
+</ul>
+
+<h3>Using Segments for Targeted Campaigns</h3>
+<p>Example workflows:</p>
+<ul>
+  <li>Export all Premium-rated leads in Köln → personalised high-touch campaign</li>
+  <li>Export all Cold-scored leads with verified emails → different angle, lower effort</li>
+  <li>Export all "Fahrradhändler" category → category-specific subject line ("Ihr Fahrradgeschäft...")</li>
+  <li>Export all contacted-but-not-replied leads → stronger follow-up with video thumbnail</li>
+</ul>
+
+<h3>Exporting a Segment</h3>
+<ol>
+  <li>Go to <strong>Lead Finder → Segments</strong></li>
+  <li>Click on any segment to see the leads</li>
+  <li>Click <strong>Export CSV</strong> — downloads with BOM for Excel compatibility</li>
+  <li>Import the CSV into a targeted campaign</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET  /api/segments         → all segments auto-calculated
+POST /api/segments/export  → {field, value, operator: 'eq'|'gte'|'lte'|'contains'} → CSV</pre>
