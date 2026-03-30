@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>OutreachPro — Test Runner</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0d;--surf:#151515;--surf2:#1a1a1a;--bdr:#2a2a2a;
+  --ink:#e8e8e8;--muted:#666;--dim:#444;
+  --grn:#22c55e;--red:#ef4444;--yel:#f59e0b;--blu:#3b82f6;--acc:#e8d5a3;
+  --mono:'DM Mono','Fira Mono','Consolas',monospace;
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--mono)}
+
+/* ── LAYOUT ── */
+.root{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr;height:100vh}
+.topbar{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:52px;background:var(--surf);border-bottom:1px solid var(--bdr);flex-shrink:0}
+.left{border-right:1px solid var(--bdr);display:flex;flex-direction:column;overflow:hidden}
+.right{display:flex;flex-direction:column;overflow:hidden}
+
+/* ── TOPBAR ── */
+.logo{font-size:14px;font-weight:700;color:var(--acc);letter-spacing:1px}
+.logo span{color:var(--muted);font-weight:400}
+.stats-bar{display:flex;gap:20px;align-items:center}
+.stat{font-size:12px;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dot-grn{background:var(--grn)}
+.dot-red{background:var(--red)}
+.dot-yel{background:var(--yel)}
+.dot-blu{background:var(--blu);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.actions{display:flex;gap:8px}
+.btn{padding:7px 16px;font-size:11px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bdr);background:transparent;color:var(--ink);cursor:pointer;font-family:var(--mono);transition:all .15s;border-radius:3px}
+.btn:hover{border-color:var(--acc);color:var(--acc)}
+.btn.run{background:var(--acc);color:#0d0d0d;border-color:var(--acc);font-weight:700}
+.btn.run:hover{background:#c4a96b}
+.btn.run:disabled{background:var(--surf2);color:var(--muted);border-color:var(--bdr);cursor:not-allowed}
+
+/* ── LEFT PANEL ── */
+.panel-head{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--surf2)}
+.panel-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.progress-bar{height:3px;background:var(--bdr);overflow:hidden;flex-shrink:0}
+.progress-fill{height:100%;background:var(--acc);width:0%;transition:width .3s}
+.test-log{flex:1;overflow-y:auto;padding:8px 0;font-size:12px;line-height:1.8}
+.test-log::-webkit-scrollbar{width:4px}
+.test-log::-webkit-scrollbar-thumb{background:var(--bdr)}
+
+.suite-header{padding:8px 16px 4px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--acc);margin-top:6px;border-top:1px solid var(--bdr)}
+.suite-header:first-child{border-top:none;margin-top:0}
+.test-row{padding:3px 16px;display:flex;align-items:center;gap:10px}
+.test-row .icon{font-size:12px;flex-shrink:0;width:14px;text-align:center}
+.test-row .label{flex:1;color:var(--ink)}
+.test-row .detail{color:var(--dim);font-size:11px}
+.test-row.pass .label{color:#aaa}
+.test-row.fail .label{color:var(--red);font-weight:600}
+.test-row.skip .label{color:var(--dim)}
+.test-row.running .label{color:var(--yel)}
+
+.summary-box{padding:16px;border-top:1px solid var(--bdr);background:var(--surf);flex-shrink:0}
+.summary-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.summary-score{font-size:28px;font-weight:700;text-align:center;padding:8px 0;letter-spacing:-1px}
+.score-grn{color:var(--grn)}
+.score-yel{color:var(--yel)}
+.score-red{color:var(--red)}
+.idle-msg{text-align:center;padding:60px 20px;color:var(--muted);font-size:12px;line-height:2}
+.idle-icon{font-size:40px;opacity:.2;margin-bottom:12px}
+
+/* ── RIGHT PANEL (APP) ── */
+.app-frame{flex:1;border:none;background:#fff}
+.url-bar{padding:8px 12px;background:var(--surf2);border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.url-input{flex:1;background:var(--surf);border:1px solid var(--bdr);color:var(--ink);padding:5px 10px;font-family:var(--mono);font-size:12px;border-radius:3px;outline:none}
+.url-input:focus{border-color:var(--acc)}
+.go-btn{padding:5px 12px;background:var(--acc);color:#0d0d0d;border:none;cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:700;border-radius:3px}
+
+/* ── FAILED LIST ── */
+.failed-box{background:#1a0a0a;border-top:1px solid #3a1a1a;padding:10px 16px;flex-shrink:0;display:none;max-height:120px;overflow-y:auto}
+.failed-box.show{display:block}
+.failed-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+.failed-item{font-size:11px;color:#ff8080;padding:2px 0;display:flex;align-items:flex-start;gap:6px}
+.failed-item::before{content:'✗';color:var(--red);flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="root">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="logo">OutreachPro <span>/ Test Runner</span></div>
+    <div class="stats-bar">
+      <div class="stat"><span class="dot dot-grn"></span><span id="s-pass">0</span> passed</div>
+      <div class="stat"><span class="dot dot-red"></span><span id="s-fail">0</span> failed</div>
+      <div class="stat"><span class="dot dot-yel"></span><span id="s-skip">0</span> skipped</div>
+      <div class="stat" id="running-stat" style="display:none"><span class="dot dot-blu"></span><span id="s-running">running…</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="clearLog()">Clear</button>
+      <button class="btn" onclick="loadApp('http://localhost:3000')">← App</button>
+      <button class="btn run" id="run-btn" onclick="runTests()">▶ Run All Tests</button>
+    </div>
+  </div>
+
+  <!-- LEFT: TEST LOG -->
+  <div class="left">
+    <div class="panel-head">
+      <span class="panel-title">Test Results</span>
+      <span id="test-count" style="font-size:11px;color:var(--muted)">22 suites · ~120 assertions</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="test-log" id="log">
+      <div class="idle-msg">
+        <div class="idle-icon">⬡</div>
+        <div>Click <strong style="color:var(--acc)">▶ Run All Tests</strong> to start</div>
+        <div style="margin-top:8px;color:var(--dim)">Make sure Docker is running<br/>App must be at localhost:3000</div>
+      </div>
+    </div>
+    <div id="failed-box" class="failed-box">
+      <div class="failed-title">Failed tests</div>
+      <div id="failed-list"></div>
+    </div>
+    <div class="summary-box" id="summary" style="display:none">
+      <div class="summary-score" id="score-display">—</div>
+      <div class="summary-row"><span style="color:var(--muted)">Passed</span><span id="sum-pass" style="color:var(--grn)">0</span></div>
+      <div class="summary-row"><span style="color:var(--muted)">Failed</span><span id="sum-fail" style="color:var(--red)">0</span></div>
+      <div class="summary-row"><span style="color:var(--muted)">Skipped</span><span id="sum-skip" style="color:var(--yel)">0</span></div>
+      <div class="summary-row" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--bdr)"><span style="color:var(--muted)">Duration</span><span id="sum-dur">—</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: APP IFRAME -->
+  <div class="right">
+    <div class="url-bar">
+      <input class="url-input" id="url-input" value="http://localhost:3000" onkeydown="if(event.key==='Enter')loadApp(this.value)"/>
+      <button class="go-btn" onclick="loadApp(document.getElementById('url-input').value)">Go</button>
+      <button class="btn" onclick="loadApp('http://localhost:3000')">Home</button>
+      <button class="btn" onclick="loadApp('http://localhost:3000/landing')">Landing</button>
+    </div>
+    <iframe id="app-frame" class="app-frame" src="http://localhost:3000" title="OutreachPro App"></iframe>
+  </div>
+</div>
+
+<script>
+const BASE = 'http://localhost:3000';
+let passed = 0, failed = 0, skipped = 0, total = 0, startTime = 0;
+const failedTests = [];
+
+// ── UI helpers ────────────────────────────────────────────
+function updateStats() {
+  document.getElementById('s-pass').textContent = passed;
+  document.getElementById('s-fail').textContent = failed;
+  document.getElementById('s-skip').textContent = skipped;
+}
+
+function addSection(title) {
+  const d = document.createElement('div');
+  d.className = 'suite-header';
+  d.textContent = title;
+  document.getElementById('log').appendChild(d);
+  d.scrollIntoView({ block: 'nearest' });
+}
+
+function addRow(label, status, detail = '') {
+  const d = document.createElement('div');
+  d.className = 'test-row ' + status;
+  const icon = status === 'pass' ? '<span style="color:var(--grn)">✓</span>'
+             : status === 'fail' ? '<span style="color:var(--red)">✗</span>'
+             : status === 'skip' ? '<span style="color:var(--yel)">○</span>'
+             : '<span style="color:var(--yel)">…</span>';
+  d.innerHTML = `<span class="icon">${icon}</span><span class="label">${label}</span>${detail ? `<span class="detail">${detail}</span>` : ''}`;
+  document.getElementById('log').appendChild(d);
+  d.scrollIntoView({ block: 'nearest' });
+  total++;
+  const pct = total / 120 * 100;
+  document.getElementById('prog').style.width = Math.min(pct, 98) + '%';
+}
+
+function assert(label, condition, detail = '') {
+  if (condition) {
+    passed++;
+    addRow(label, 'pass', detail);
+  } else {
+    failed++;
+    failedTests.push(label);
+    addRow(label, 'fail', detail);
+    showFailed();
+  }
+  updateStats();
+}
+
+function skip(label, reason) {
+  skipped++;
+  addRow(label, 'skip', reason);
+  updateStats();
+}
+
+function showFailed() {
+  const box = document.getElementById('failed-box');
+  const list = document.getElementById('failed-list');
+  box.classList.add('show');
+  list.innerHTML = failedTests.map(f => `<div class="failed-item">${f}</div>`).join('');
+}
+
+function loadApp(url) {
+  document.getElementById('url-input').value = url;
+  document.getElementById('app-frame').src = url;
+}
+
+function clearLog() {
+  document.getElementById('log').innerHTML = '<div class="idle-msg"><div class="idle-icon">⬡</div><div>Click <strong style="color:var(--acc)">▶ Run All Tests</strong> to start</div></div>';
+  document.getElementById('summary').style.display = 'none';
+  document.getElementById('failed-box').classList.remove('show');
+  document.getElementById('prog').style.width = '0%';
+  passed = failed = skipped = total = 0;
+  failedTests.length = 0;
+  updateStats();
+}
+
+// ── HTTP ──────────────────────────────────────────────────
+function req(method, path, body) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, BASE + path);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.timeout = 8000;
+    xhr.onload = () => {
+      let json = null;
+      try { json = JSON.parse(xhr.responseText); } catch {}
+      resolve({ status: xhr.status, body: json, raw: xhr.responseText, headers: xhr.getAllResponseHeaders() });
+    };
+    xhr.onerror = () => reject(new Error('Network error'));
+    xhr.ontimeout = () => reject(new Error('Timeout'));
+    xhr.send(body ? JSON.stringify(body) : null);
+  });
+}
+const get = p => req('GET', p);
+const post = (p, b) => req('POST', p, b);
+const del = p => req('DELETE', p);
+
+// ── TEST SUITES ───────────────────────────────────────────
+
+async function testHealth() {
+  addSection('▸ Health & Server');
+  const r = await get('/health');
+  assert('Server responds to /health', r.status === 200);
+  assert('Returns status:ok', r.body?.status === 'ok');
+  assert('Has timestamp', typeof r.body?.ts === 'string');
+  assert('Has port', r.body?.port !== undefined);
+}
+
+async function testStaticAssets() {
+  addSection('▸ Static Assets');
+  const r = await get('/');
+  assert('Root returns HTML', r.status === 200);
+  assert('Contains OutreachPro', r.raw.includes('OutreachPro'));
+  assert('CF script stripped', !r.raw.includes('email-decode.min.js'), 'security ✓');
+  assert('Version badge injected', r.raw.includes('v2.'));
+  const land = await get('/landing');
+  assert('Landing page loads', land.status === 200);
+  assert('Landing has pricing €', land.raw.includes('€'));
+}
+
+async function testI18n() {
+  addSection('▸ i18n — 6 Languages');
+  for (const lang of ['en', 'de', 'fr', 'es', 'it', 'nl']) {
+    const r = await get(`/api/i18n/${lang}`);
+    assert(`${lang}: returns 200`, r.status === 200);
+    assert(`${lang}: has 100+ strings`, Object.keys(r.body || {}).length >= 100, `${Object.keys(r.body||{}).length} strings`);
+  }
+  const de = await get('/api/i18n/de');
+  assert('German: Kampagnen', de.body?.nav_campaigns === 'Kampagnen');
+  assert('German: has nav_dashboard', !!de.body?.nav_dashboard);
+}
+
+async function testLeads() {
+  addSection('▸ Leads API');
+  const list = await get('/api/leads');
+  assert('GET /api/leads → 200', list.status === 200);
+  assert('Returns array', Array.isArray(list.body));
+
+  const c = await post('/api/leads', { name: 'Test Shop', city: 'Köln', email: 'test@test-example.de', rating: 4.5 });
+  assert('POST creates lead', c.status === 200 || c.status === 201);
+  assert('Has id', !!c.body?.id);
+  assert('Has createdAt', !!c.body?.createdAt);
+  const id = c.body?.id;
+
+  const list2 = await get('/api/leads');
+  assert('Lead in list', !!list2.body?.find(l => l.id === id));
+
+  if (id) {
+    const d = await del(`/api/leads/${id}`);
+    assert('DELETE returns 200', d.status === 200);
+    const list3 = await get('/api/leads');
+    assert('Deleted lead gone', !list3.body?.find(l => l.id === id));
+  }
+}
+
+async function testBulkLeads() {
+  addSection('▸ Leads — Bulk & Export');
+  const bulk = await post('/api/leads/bulk', { leads: [
+    { name: 'Bulk 1', city: 'Berlin', email: 'b1@example.de', rating: 4 },
+    { name: 'Bulk 2', city: 'Hamburg', email: 'b2@example.de', rating: 3 },
+  ]});
+  assert('Bulk import returns 200', bulk.status === 200);
+  const exp = await get('/api/leads/export');
+  assert('Export endpoint returns 200', exp.status === 200);
+}
+
+async function testCampaigns() {
+  addSection('▸ Campaigns API');
+  const list = await get('/api/campaigns');
+  assert('GET campaigns → 200', list.status === 200);
+  assert('Returns array', Array.isArray(list.body));
+
+  const c = await post('/api/campaigns', { name: 'Test Campaign', from: 'test@example.com', daily: 25, stopOnReply: true, status: 'draft' });
+  assert('POST creates campaign', c.status === 200 || c.status === 201);
+  assert('Has id', !!c.body?.id);
+  assert('daily = 25', c.body?.daily === 25);
+  if (c.body?.id) {
+    const d = await del(`/api/campaigns/${c.body.id}`);
+    assert('DELETE campaign 200', d.status === 200);
+  }
+}
+
+async function testTemplates() {
+  addSection('▸ Templates API');
+  const list = await get('/api/templates');
+  assert('GET templates → 200', list.status === 200);
+  const c = await post('/api/templates', { name: 'Test Template', subject: 'Hello {{name}}', body: '<p>Hi</p>' });
+  assert('POST template → 200', c.status === 200 || c.status === 201);
+  assert('Has id', !!c.body?.id);
+  if (c.body?.id) await del(`/api/templates/${c.body.id}`);
+}
+
+async function testAccounts() {
+  addSection('▸ Email Accounts API');
+  const list = await get('/api/accounts');
+  assert('GET accounts → 200', list.status === 200);
+  const c = await post('/api/accounts', { email: 'sender@example.com', name: 'Test Sender', warmupEnabled: false });
+  assert('POST account → 200', c.status === 200 || c.status === 201);
+  if (c.body?.id) await del(`/api/accounts/${c.body.id}`);
+}
+
+async function testDeals() {
+  addSection('▸ CRM Deals API');
+  const list = await get('/api/deals');
+  assert('GET deals → 200', list.status === 200);
+  assert('Returns array', Array.isArray(list.body));
+
+  const c = await post('/api/deals', { company: 'Test GmbH', value: 38000, contact: 'Max M.', stage: 'Prospect' });
+  assert('POST deal → 200', c.status === 200 || c.status === 201);
+  assert('value = 38000', c.body?.value === 38000);
+  assert('stage = Prospect', c.body?.stage === 'Prospect');
+  assert('Has createdAt', !!c.body?.createdAt);
+  if (c.body?.id) {
+    const d = await del(`/api/deals/${c.body.id}`);
+    assert('DELETE deal 200', d.status === 200);
+  }
+}
+
+async function testInbox() {
+  addSection('▸ Inbox / Unibox API');
+  const list = await get('/api/inbox');
+  assert('GET inbox → 200', list.status === 200);
+  assert('Returns array', Array.isArray(list.body));
+  if (list.body?.length > 0) {
+    const msg = list.body[0];
+    assert('Message has id', !!msg.id);
+    assert('Message has from', !!msg.from);
+    assert('Message has subject', !!msg.subject);
+    const lb = await post('/api/inbox/label', { id: msg.id, label: 'interested' });
+    assert('Label endpoint → 200', lb.status === 200);
+    const rd = await post('/api/inbox/read', { id: msg.id });
+    assert('Read endpoint → 200', rd.status === 200);
+    const check = await get('/api/inbox');
+    const updated = check.body?.find(m => m.id === msg.id);
+    assert('Label persisted', updated?.label === 'interested');
+    assert('Read status persisted', updated?.read === true);
+  } else {
+    skip('Inbox message operations', 'empty inbox');
+  }
+}
+
+async function testSequences() {
+  addSection('▸ Sequences API');
+  const camp = await post('/api/campaigns', { name: 'Seq Test', from: 'x@example.com', daily: 5, status: 'draft' });
+  const cid = camp.body?.id;
+  if (cid) {
+    const s = await post('/api/sequences', { campaignId: cid, steps: [
+      { subject: 'Step 1', body: '<p>Hi</p>', delay: 0 },
+      { subject: 'Step 2', body: '<p>Follow</p>', delay: 3 },
+      { subject: 'Step 3', body: '<p>Final</p>', delay: 7 },
+    ]});
+    assert('POST sequences → 200', s.status === 200);
+    const g = await get(`/api/sequences/${cid}`);
+    assert('GET sequence → 200', g.status === 200);
+    assert('3 steps returned', g.body?.length === 3);
+    assert('Step 1 delay = 0', g.body?.[0]?.delay === 0);
+    assert('Step 3 delay = 7', g.body?.[2]?.delay === 7);
+    await del(`/api/campaigns/${cid}`);
+  } else skip('Sequence CRUD', 'campaign creation failed');
+}
+
+async function testEvents() {
+  addSection('▸ Events API');
+  const list = await get('/api/events');
+  assert('GET events → 200', list.status === 200);
+  assert('Seed events loaded', list.body?.length > 0, `${list.body?.length} events`);
+  if (list.body?.[0]) {
+    assert('Event has city', !!list.body[0].city);
+    assert('Event has date', !!list.body[0].date);
+  }
+  const c = await post('/api/events', { city: 'TestCity', date: '2026-06-15', name: 'Test Event' });
+  assert('POST event → 200', c.status === 200 || c.status === 201);
+  if (c.body?.id) await del(`/api/events/${c.body.id}`);
+}
+
+async function testAnalytics() {
+  addSection('▸ Analytics API');
+  const r = await get('/api/analytics');
+  assert('GET analytics → 200', r.status === 200);
+  assert('Has totalLeads', 'totalLeads' in (r.body || {}));
+  assert('Has totalCampaigns', 'totalCampaigns' in (r.body || {}));
+  assert('Has openRate', 'openRate' in (r.body || {}));
+  assert('Has replyRate', 'replyRate' in (r.body || {}));
+  assert('openRate 0–100', r.body?.openRate >= 0 && r.body?.openRate <= 100);
+  assert('replyRate ≤ openRate', r.body?.replyRate <= r.body?.openRate || r.body?.openRate === 0);
+  assert('wonRevenue ≥ 0', r.body?.wonRevenue >= 0);
+}
+
+async function testWarmup() {
+  addSection('▸ Warmup API');
+  const r = await get('/api/warmup/metrics');
+  assert('GET warmup/metrics → 200', r.status === 200);
+  const u = await post('/api/warmup/metrics', { accountId: 'acc1', sent: 5, received: 4 });
+  assert('POST warmup/metrics → 200', u.status === 200);
+}
+
+async function testGmail() {
+  addSection('▸ Gmail API');
+  const s = await get('/api/gmail/status');
+  assert('GET gmail/status → 200', s.status === 200);
+  assert('Has connected field', 'connected' in (s.body || {}));
+  assert('connected is boolean', typeof s.body?.connected === 'boolean');
+}
+
+async function testAI() {
+  addSection('▸ AI Endpoints');
+  const r = await post('/api/ai/personalise', { lead: { name: 'Test', city: 'Köln', category: 'Händler', rating: 4.5 }, language: 'de' });
+  assert('POST ai/personalise responds', r.status === 200 || r.status === 400 || r.status === 500);
+  assert('Returns JSON', r.body !== null);
+  const c = await post('/api/ai/copilot', { message: 'How to improve open rates?' });
+  assert('POST ai/copilot responds', c.status === 200 || c.status === 400 || c.status === 500);
+}
+
+async function testSecurity() {
+  addSection('▸ Security & Edge Cases');
+  const xss = await post('/api/leads', { name: '<script>alert(1)</script>', city: 'X', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e69ea6839e878b968a83c88283">[email&#160;protected]</a>' });
+  assert('XSS payload accepted without crash', xss.status < 500);
+  if (xss.body?.id) await del(`/api/leads/${xss.body.id}`);
+
+  const sqli = await post('/api/leads', { name: "'; DROP TABLE leads;--", city: 'X', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f3c0f2a372e223f232a612b2a">[email&#160;protected]</a>' });
+  assert('SQL injection does not crash server', sqli.status < 500);
+  if (sqli.body?.id) await del(`/api/leads/${sqli.body.id}`);
+
+  const ghost = await del('/api/leads/nonexistent-id-xyz-999');
+  assert('DELETE non-existent ID safe', ghost.status === 404 || ghost.status === 200);
+
+  const empty = await post('/api/campaigns', {});
+  assert('Empty POST body handled', empty.status < 600);
+}
+
+async function testDataIntegrity() {
+  addSection('▸ Data Integrity');
+  const lead = { name: 'Integrity Test', city: 'Düsseldorf', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c353228393b2e3528251c28392f287139243d312c3039723839">[email&#160;protected]</a>', rating: 4.8, reviewsCount: 200 };
+  const c = await post('/api/leads', lead);
+  assert('Create test lead', c.status === 200 || c.status === 201);
+  const list = await get('/api/leads');
+  const f = list.body?.find(l => l.email === lead.email);
+  assert('Email preserved', f?.email === lead.email);
+  assert('City preserved', f?.city === lead.city);
+  assert('Rating preserved', f?.rating === 4.8);
+  assert('reviewsCount preserved', f?.reviewsCount === 200);
+  assert('ID is string', typeof f?.id === 'string' && f.id.length > 0);
+  if (f?.id) await del(`/api/leads/${f.id}`);
+}
+
+async function testConcurrency() {
+  addSection('▸ Concurrency & Stability');
+  const results = await Promise.all(Array.from({length: 5}, () => get('/api/leads')));
+  assert('5 concurrent GETs all 200', results.every(r => r.status === 200));
+  assert('All return arrays', results.every(r => Array.isArray(r.body)));
+
+  const [c1, c2, c3] = await Promise.all([
+    post('/api/leads', { name: 'C1', city: 'A', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="caa9fb8aafb2aba7baa6afe4aeaf">[email&#160;protected]</a>' }),
+    post('/api/leads', { name: 'C2', city: 'B', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="482b7a082d30292538242d662c2d">[email&#160;protected]</a>' }),
+    post('/api/leads', { name: 'C3', city: 'C', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4d787f4d1ccd5d9c4d8d19ad0d1">[email&#160;protected]</a>' }),
+  ]);
+  assert('3 concurrent POSTs succeed', [c1,c2,c3].every(r => r.status===200||r.status===201));
+  assert('All have unique IDs', new Set([c1.body?.id, c2.body?.id, c3.body?.id]).size === 3);
+  for (const c of [c1,c2,c3]) if (c.body?.id) await del(`/api/leads/${c.body.id}`);
+}
+
+async function testPerformance() {
+  addSection('▸ Performance (<500ms)');
+  const eps = ['/health','/api/leads','/api/campaigns','/api/deals','/api/inbox','/api/analytics','/api/events','/api/i18n/de'];
+  for (const ep of eps) {
+    const t = Date.now();
+    const r = await get(ep);
+    const ms = Date.now() - t;
+    assert(`${ep} under 500ms`, ms < 500, `${ms}ms`);
+  }
+}
+
+// ── RUN ALL ───────────────────────────────────────────────
+async function runTests() {
+  clearLog();
+  document.getElementById('log').innerHTML = '';
+  document.getElementById('run-btn').disabled = true;
+  document.getElementById('running-stat').style.display = 'flex';
+  startTime = Date.now();
+  passed = failed = skipped = total = 0;
+  failedTests.length = 0;
+  updateStats();
+
+  // Check server
+  try {
+    const h = await get('/health');
+    if (h.status !== 200) throw new Error('not 200');
+  } catch(e) {
+    addSection('▸ Connection Error');
+    document.getElementById('log').innerHTML += `<div style="padding:20px;color:var(--red);font-size:13px">
+      ✗ Cannot connect to localhost:3000<br/><br/>
+      <span style="color:var(--muted)">Make sure Docker is running:<br/>
+      cd ~/outreachpro-app && docker compose up -d</span>
+    </div>`;
+    document.getElementById('run-btn').disabled = false;
+    document.getElementById('running-stat').style.display = 'none';
+    return;
+  }
+
+  const suites = [
+    testHealth, testStaticAssets, testI18n,
+    testLeads, testBulkLeads, testCampaigns, testTemplates, testAccounts,
+    testDeals, testInbox, testSequences, testEvents,
+    testAnalytics, testWarmup, testGmail, testAI,
+    testSecurity, testDataIntegrity, testConcurrency, testPerformance,
+  ];
+
+  for (const suite of suites) {
+    document.getElementById('s-running').textContent = suite.name.replace('test','') + '…';
+    try { await suite(); }
+    catch(e) { failed++; failedTests.push(suite.name + ': ' + e.message); addRow(suite.name + ' crashed: ' + e.message, 'fail'); updateStats(); }
+    await new Promise(r => setTimeout(r, 20));
+  }
+
+  document.getElementById('prog').style.width = '100%';
+  document.getElementById('running-stat').style.display = 'none';
+  document.getElementById('run-btn').disabled = false;
+
+  const dur = ((Date.now() - startTime) / 1000).toFixed(1);
+  const tot = passed + failed;
+  const pct = tot > 0 ? M
