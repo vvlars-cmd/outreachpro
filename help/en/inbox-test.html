@@ -1,19 +1,31 @@
 <h2>Inbox Placement Tester</h2>
-<p>Test your email subject and body against spam filters before sending a campaign.</p>
-<h3>How It Works</h3>
-<p>Enter your subject line and email body snippet, then click <strong>Run Placement Test</strong>. The system analyses:</p>
+<p>The Inbox Tester checks whether your emails will land in the primary inbox, promotions tab, or spam folder — before you send a campaign.</p>
+
+<h3>Domain Health Dashboard (Killer Feature #1)</h3>
+<p>The most important deliverability check. Enter your sending domain and OutreachPro checks:</p>
 <ul>
-  <li>Spam trigger words in subject and body</li>
-  <li>SPF / DKIM / DMARC DNS record validity</li>
-  <li>Text-to-HTML ratio (too much HTML = spam risk)</li>
-  <li>Presence of an unsubscribe link</li>
-  <li>URL shorteners (avoid bit.ly etc.)</li>
+  <li><strong>SPF</strong> — authorises your server to send on behalf of the domain</li>
+  <li><strong>DKIM</strong> — cryptographically signs your emails to prove authenticity</li>
+  <li><strong>DMARC</strong> — tells email providers what to do with emails that fail SPF/DKIM</li>
+  <li><strong>MX Records</strong> — your domain can receive replies</li>
+  <li><strong>Spamhaus Blacklist</strong> — your domain isn't on the global spam blocklist</li>
 </ul>
-<h3>Score Interpretation</h3>
+<p>Each check is scored: 5 passes = 100/100 Grade A. Fix any failing checks before sending campaigns.</p>
+
+<h3>Setting Up SPF</h3>
+<p>Add this TXT record to your domain's DNS:</p>
+<pre>v=spf1 include:_spf.google.com ~all</pre>
+<p>(Adjust for your email provider — Fastmail, Outlook, custom SMTP, etc.)</p>
+
+<h3>Setting Up DMARC</h3>
+<p>Add this TXT record at <code>_dmarc.yourdomain.com</code>:</p>
+<pre>v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com</pre>
+<p>Start with <code>p=none</code> (monitoring only), then move to <code>p=quarantine</code> after 2 weeks of clean reports.</p>
+
+<h3>What to Do If You Fail Checks</h3>
 <ul>
-  <li><strong>80–100</strong> — Low risk, safe to send</li>
-  <li><strong>60–79</strong> — Medium risk, review warnings</li>
-  <li><strong>Below 60</strong> — High risk, do not send until issues are fixed</li>
+  <li><strong>No SPF</strong> — add the TXT record above to your domain DNS (propagates in 24h)</li>
+  <li><strong>No DKIM</strong> — enable DKIM signing in your email provider (Google Workspace: Admin → Apps → Gmail → Authenticate Email)</li>
+  <li><strong>No DMARC</strong> — add the TXT record above</li>
+  <li><strong>Blacklisted</strong> — request delisting at mxtoolbox.com/blacklists. Takes 24–48h.</li>
 </ul>
-<h3>Common Fixes</h3>
-<p>Remove words like "free", "guarantee", "buy now", "click here". Add an unsubscribe link. Configure DMARC record for your domain. Keep image-to-text ratio below 40%.</p>
