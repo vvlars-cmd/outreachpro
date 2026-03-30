@@ -1,0 +1,52 @@
+<h2>Meeting Scheduler — Built-in Calendly Replacement</h2>
+<p>Give every lead a booking link. They pick a slot from your availability, and OutreachPro automatically creates a CRM deal, sends a confirmation, and logs the meeting. No Calendly subscription needed — €0/month vs Calendly's €16/month.</p>
+
+<h3>Setting Up Your Scheduler</h3>
+<ol>
+  <li>Go to <strong>Settings → Meeting Scheduler</strong></li>
+  <li>Set your meeting name (e.g. "30-Min CycleWASH Demo")</li>
+  <li>Set duration (15, 30, or 60 minutes)</li>
+  <li>Set your timezone</li>
+  <li>Configure available time slots per day</li>
+  <li>Customise the confirmation message template</li>
+  <li>Click Save</li>
+</ol>
+
+<h3>Adding Your Booking Link to Emails</h3>
+<p>Include your booking URL in any email template:</p>
+<pre>Hi {{name}},
+
+I'd love to show you the CycleWASH Pro in action.
+Pick any slot that works for you:
+
+👉 yoursite.com/scheduler
+
+It's a quick 30-minute demo — I'll show you
+exactly how it works in a shop like {{name}}'s.
+
+Best,
+[Your name]</pre>
+
+<h3>What Happens When a Lead Books</h3>
+<ol>
+  <li>Lead visits <code>/scheduler</code> and picks a time slot</li>
+  <li>Slot is instantly marked as booked (no double-booking possible)</li>
+  <li>CRM deal is automatically created in "Meeting" stage with the lead's details</li>
+  <li>Confirmation message is displayed on screen</li>
+  <li>You see the new deal in your CRM Pipeline immediately</li>
+</ol>
+
+<h3>Booking Link in Sequences</h3>
+<p>Add the booking URL as the CTA in any sequence step. Pair it with a Smart Sequence condition: if a lead clicks the booking link, immediately advance them to "Meeting" stage in CRM and skip remaining email steps.</p>
+
+<h3>Availability Configuration Example</h3>
+<pre>Mon–Thu: 09:00, 10:00, 11:00, 14:00, 15:00, 16:00
+Friday:  09:00, 10:00, 11:00
+Weekend: (no slots)</pre>
+
+<h3>API</h3>
+<pre>GET  /api/scheduler/config    → current availability settings
+POST /api/scheduler/config    → update availability
+GET  /api/scheduler/available → next 14 days of open slots
+POST /api/scheduler/book      → book a slot {slotId, name, email, company}
+GET  /scheduler               → public booking page (share this URL)</pre>
