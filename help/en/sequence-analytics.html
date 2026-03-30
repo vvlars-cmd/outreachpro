@@ -1,0 +1,34 @@
+<h2>Sequence Step Analytics</h2>
+<p>See exactly which step of every Smart Sequence gets the best open rates, click rates, and reply rates. Find the drop-off point where leads stop engaging — and fix it. Most tools don't show step-level data. Salesforce includes this at $175+/user/month.</p>
+
+<h3>What Gets Tracked Per Step</h3>
+<ul>
+  <li><strong>Sent</strong> — how many leads received this step</li>
+  <li><strong>Opened</strong> — pixel tracking fires, recorded as an open event</li>
+  <li><strong>Clicked</strong> — lead clicked a link in this step</li>
+  <li><strong>Replied</strong> — lead replied at this step</li>
+  <li><strong>Open rate</strong> — opened ÷ sent × 100</li>
+  <li><strong>Reply rate</strong> — replied ÷ sent × 100 — the most important metric</li>
+</ul>
+
+<h3>Reading the Data</h3>
+<ul>
+  <li><strong>High open, low reply on Step 1</strong> — subject line works, but body copy or CTA is weak. Rewrite the ask.</li>
+  <li><strong>Step 2 open rate drops sharply vs Step 1</strong> — too long a delay, or subject line for Step 2 is poor.</li>
+  <li><strong>Step 3 has the highest reply rate</strong> — common. Third touch gets replies. Make sure you're sending Step 3.</li>
+  <li><strong>LinkedIn step has high conversion</strong> — multichannel is working. Add LinkedIn to other sequences.</li>
+</ul>
+
+<h3>Using This to Optimise</h3>
+<ol>
+  <li>Go to <strong>Analytics → Sequence Performance</strong></li>
+  <li>Sort by reply rate — which step is your best performer?</li>
+  <li>The "Best Step" field shows the single highest-converting step in each sequence</li>
+  <li>Clone that step's approach into Step 1 of your next sequence</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/analytics/sequences
+→ { sequences: [{ name, enrolled, converted, conversionRate,
+    stepBreakdown: [{ stepName, sent, openRate, replyRate }],
+    bestStep }] }</pre>
