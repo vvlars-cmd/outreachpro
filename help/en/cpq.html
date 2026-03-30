@@ -1,0 +1,39 @@
+<h2>CPQ — Product Catalogue & Pricing Calculator</h2>
+<p>Configure your products, prices, and discount rules once. When generating a proposal or quote, OutreachPro calculates the total automatically — applying volume discounts, deal-specific discounts, and a global discount if needed. Salesforce CPQ is a $75/user/month add-on. In OutreachPro it's built in.</p>
+
+<h3>Default Product Catalogue (CycleWASH)</h3>
+<ul>
+  <li><strong>CycleWASH Pro Platinum</strong> — €38,000 base price. 5% volume discount from qty 2, 10% from qty 5.</li>
+  <li><strong>CycleWASH Mini Platinum</strong> — €27,500 base price. 5% volume discount from qty 2.</li>
+  <li><strong>Extended Warranty (5yr)</strong> — €3,500. No volume discount.</li>
+  <li><strong>Installation & Training</strong> — €1,200. No volume discount.</li>
+</ul>
+
+<h3>Configuring Products</h3>
+<ol>
+  <li>Go to <strong>Settings → Product Catalogue</strong></li>
+  <li>Click <strong>Add Product</strong></li>
+  <li>Set name, base price, currency, category, and discount rules</li>
+  <li>Discount rules: <code>[{ minQty: 2, discountPct: 5 }, { minQty: 5, discountPct: 10 }]</code></li>
+</ol>
+
+<h3>Building a Quote</h3>
+<ol>
+  <li>Go to <strong>CRM → Deal → Build Quote</strong> or <strong>Proposal Generator</strong></li>
+  <li>Select products and quantities</li>
+  <li>Add a deal-specific manual discount if applicable</li>
+  <li>OutreachPro calculates: line totals, applied discounts, subtotal, and final total</li>
+  <li>Total feeds into the Proposal Generator automatically</li>
+</ol>
+
+<h3>Discount Priority</h3>
+<pre>Volume discount (from rules) + Manual discount (per line) + Global discount
+= Total discount per line item (capped at 40%)</pre>
+
+<h3>API</h3>
+<pre>GET    /api/products              → list product catalogue
+POST   /api/products              → add product
+POST   /api/cpq/calculate
+  Body: { items: [{productId, qty, manualDiscountPct}], globalDiscountPct }
+  → { lineItems[], subtotal, total, currency, validDays }
+DELETE /api/products/:id          → remove product</pre>
