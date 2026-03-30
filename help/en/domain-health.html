@@ -1,0 +1,31 @@
+<h2>Domain Health Dashboard</h2>
+<p>Before sending a single cold email, your sending domain needs to pass 5 technical checks. The Domain Health Dashboard runs all checks in seconds and gives you a score (A–F) so you know exactly what to fix.</p>
+
+<h3>Running a Check</h3>
+<ol>
+  <li>Go to <strong>Inbox Tester → Domain Health</strong></li>
+  <li>Enter your sending domain (e.g. <code>yourbrand.com</code> — not the full email address)</li>
+  <li>Click <strong>Run Check</strong></li>
+  <li>Results appear within 3–5 seconds</li>
+</ol>
+
+<h3>The 5 Checks</h3>
+<ul>
+  <li><strong>MX Records</strong> — can your domain receive replies? Required for two-way email.</li>
+  <li><strong>SPF</strong> — is your sending server authorised? Prevents spoofing.</li>
+  <li><strong>DKIM</strong> — are your emails cryptographically signed? Proves authenticity.</li>
+  <li><strong>DMARC</strong> — what happens when emails fail SPF/DKIM? Controls spam handling.</li>
+  <li><strong>Spamhaus</strong> — is your domain on a global blacklist? Instant inbox death if yes.</li>
+</ul>
+
+<h3>Grading</h3>
+<ul>
+  <li><strong>A (90–100)</strong> — all checks pass. Safe to send campaigns.</li>
+  <li><strong>B (70–89)</strong> — minor issues. Fix before sending at scale.</li>
+  <li><strong>C (50–69)</strong> — significant issues. Do not send campaigns yet.</li>
+  <li><strong>F (below 50)</strong> — critical failures. Fix immediately.</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET /api/domain-health/:domain
+→ { domain, score, grade, checks: { spf, dkim, dmarc, mx, blacklist } }</pre>
