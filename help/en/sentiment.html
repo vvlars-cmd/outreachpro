@@ -1,0 +1,28 @@
+<h2>Email Sentiment Detection</h2>
+<p>When a lead replies, Claude reads their message and classifies it: Interested, Not Now, Objection, Meeting Request, or Unsubscribe. It extracts the specific objection type (budget, timing, competitor, no need), suggests the next action, and extracts a follow-up date if mentioned. The Unibox label updates automatically. Salesforce calls this "Einstein Email Insights" and includes it at $350/user/month. Free in OutreachPro.</p>
+
+<h3>Labels and What They Mean</h3>
+<ul>
+  <li><strong>Interested 🟢</strong> — positive reply, wants to know more. Suggested action: book a demo immediately.</li>
+  <li><strong>Meeting Request 🔥</strong> — explicitly asking for a call or meeting. Urgency: hot. Send booking link immediately.</li>
+  <li><strong>Not Now 🟡</strong> — timing issue, not a no. Memory CRM creates a follow-up automatically.</li>
+  <li><strong>Objection 🟠</strong> — specific concern raised. Objection type extracted (budget, timing, competitor, no need).</li>
+  <li><strong>Unsubscribe 🔴</strong> — wants off the list. All sequences stop automatically via workflow.</li>
+  <li><strong>Neutral ⚪</strong> — informational reply, no clear buying signal.</li>
+</ul>
+
+<h3>Objection Handling Suggestions</h3>
+<ul>
+  <li><strong>Budget objection</strong> → send ROI calculation + financing options if available</li>
+  <li><strong>Timing objection</strong> → Memory CRM follow-up for their stated date</li>
+  <li><strong>Competitor objection</strong> → send comparison table + your differentiators</li>
+  <li><strong>No need objection</strong> → re-qualify: ask about their specific pain point</li>
+</ul>
+
+<h3>Triggering Analysis</h3>
+<p>Analysis runs automatically when you click <strong>Analyse</strong> on any Unibox message, or call the API directly. The result updates the Unibox label, logs an activity to the lead's timeline, and triggers any matching workflows (e.g. "Unsubscribe → stop all sequences").</p>
+
+<h3>API</h3>
+<pre>POST /api/inbox/analyse
+  Body: { messageId, text, leadId }
+  → { sentiment, intent, label, objection, urgency, followUpDate, suggestedAction }</pre>
