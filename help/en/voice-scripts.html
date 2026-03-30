@@ -1,0 +1,52 @@
+<h2>Voice Message Script Generator</h2>
+<p>Claude writes personalised voicemail and WhatsApp voice message scripts for each lead. The script is tailored to their specific business — using their name, city, category, star rating, and review count to make the message feel researched, not templated. Includes [PAUSE] and [EMPHASISE] markers for natural, confident delivery.</p>
+
+<h3>Why Voice Still Works in 2026</h3>
+<p>HubSpot's 2026 State of Sales report found that 42% of B2B prospects respond better to social and voice outreach than email. A 30-second voicemail after 2 unanswered emails can unlock leads who've been ignoring your emails — the channel switch alone signals persistence and professionalism.</p>
+
+<h3>Generating a Script</h3>
+<ol>
+  <li>Go to <strong>Email Composer → Voice Scripts</strong></li>
+  <li>Select a lead from the dropdown</li>
+  <li>Choose duration: 30 sec (connection request) or 60 sec (full pitch)</li>
+  <li>Choose tone: friendly, professional, direct, or warm</li>
+  <li>Choose language: de, en, fr, es, etc.</li>
+  <li>Click <strong>Generate Script</strong></li>
+  <li>Review and edit — then record via your phone or WhatsApp</li>
+</ol>
+
+<h3>Example Output — 30-Second German Voicemail</h3>
+<pre>[PAUSE 1s]
+Hallo, hier spricht [NAME] von CycleWASH. [PAUSE 0.5s]
+
+Ich rufe wegen Fahrrad Müller in Köln an. [PAUSE 0.5s]
+Mit Ihren [EMPHASISE] 342 Bewertungen und 4,8 Sternen [PAUSE 0.5s]
+gehören Sie zu den besten Fahrradhändlern der Stadt. [PAUSE 0.5s]
+
+Ich würde Ihnen gerne zeigen, wie Sie [EMPHASISE] jedes Fahrrad
+in unter 4 Minuten [PAUSE 0.5s] professionell reinigen können. [PAUSE 0.5s]
+
+Meine Nummer ist [THEIR NUMBER]. [PAUSE 0.5s]
+Ich freue mich auf Ihr Feedback. [PAUSE 0.5s] Auf Wiederhören.</pre>
+
+<h3>Best Practices for Voice Outreach</h3>
+<ul>
+  <li><strong>Call timing</strong> — Tuesday–Thursday, 10–11am and 2–4pm have the highest answer rates</li>
+  <li><strong>Leave a voicemail</strong> — if no answer, always leave the script. 27% of voicemails generate a callback</li>
+  <li><strong>WhatsApp voice</strong> — in Germany, WhatsApp voice messages have an 85%+ listen rate. Higher than email open rates</li>
+  <li><strong>Reference your email</strong> — always mention you sent an email, so they can find it if interested</li>
+  <li><strong>Maximum 30 seconds</strong> — anything longer gets deleted without finishing</li>
+</ul>
+
+<h3>The 3-Touch Sequence with Voice</h3>
+<pre>Day 0  — Email: personalised pitch
+Day 3  — Voicemail: 30-second personal script
+Day 5  — WhatsApp: same script as voice note
+Day 7  — Email: follow-up referencing "I left you a voicemail"
+Day 14 — LinkedIn: connection request</pre>
+
+<h3>API</h3>
+<pre>POST /api/voice/script   → {lead, duration, tone, language, purpose}
+                           → {script, words, estimatedSeconds}
+POST /api/voice/batch    → {leadIds[], duration, tone, language}
+                           → {scripts[{leadId, script}]}</pre>
