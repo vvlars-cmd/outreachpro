@@ -1,0 +1,42 @@
+<h2>Activity Timeline</h2>
+<p>Every interaction with a lead — email sent, opened, clicked, replied, call logged, meeting booked, LinkedIn message sent — is automatically recorded on a unified timeline per lead. No more hunting across Unibox, Campaigns, and CRM to understand a lead's history. One lead, one timeline, every touchpoint in order.</p>
+
+<h3>What Gets Logged Automatically</h3>
+<ul>
+  <li><strong>email_sent</strong> — every campaign email dispatched</li>
+  <li><strong>email_opened</strong> — pixel tracking fires (see Buying Signals)</li>
+  <li><strong>email_clicked</strong> — link click recorded</li>
+  <li><strong>replied</strong> — Unibox reply received</li>
+  <li><strong>meeting_booked</strong> — scheduler slot confirmed</li>
+  <li><strong>linkedin_sent</strong> — LinkedIn step executed</li>
+  <li><strong>signal_detected</strong> — buying signal triggered</li>
+  <li><strong>workflow_action</strong> — automation fired</li>
+</ul>
+
+<h3>Logging a Call or Meeting</h3>
+<ol>
+  <li>Open any lead in Lead Finder</li>
+  <li>Click <strong>Log Activity</strong></li>
+  <li>Select type: Call, Meeting, Note</li>
+  <li>Write your notes — e.g. "Spoke with Max, interested but wants Q3 budget approval. Said to call back October."</li>
+  <li>Click <strong>Save</strong></li>
+</ol>
+<p>Claude extracts: summary, next steps, sentiment, and — if a date is mentioned — automatically creates a Memory CRM follow-up reminder for that date.</p>
+
+<h3>Use Case: CycleWASH</h3>
+<pre>Lead: Fahrrad Müller, Köln
+
+Timeline:
+10 Mar — email_sent: "Ihre 342 Bewertungen..."
+11 Mar — email_opened (30 pts signal)
+12 Mar — email_clicked: booking link (60 pts signal)
+12 Mar — meeting_booked: 30-min demo, 14 Mar
+14 Mar — call_logged: "Demo done. Very interested.
+           Budget approved in May. Call back 1 May."
+           → Memory CRM: follow-up queued May 1
+14 Mar — deal_moved: Prospect → Meeting</pre>
+
+<h3>API</h3>
+<pre>GET  /api/leads/:id/timeline    → full timeline for one lead
+POST /api/activities/log        → {leadId, type, notes, subject, duration}
+GET  /api/activities/recent     → last 50 activities across all leads</pre>
