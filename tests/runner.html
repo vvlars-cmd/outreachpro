@@ -456,11 +456,11 @@ async function testAI() {
 
 async function testSecurity() {
   addSection('▸ Security & Edge Cases');
-  const xss = await post('/api/leads', { name: '<script>alert(1)</script>', city: 'X', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e69ea6839e878b968a83c88283">[email&#160;protected]</a>' });
+  const xss = await post('/api/leads', { name: '<script>alert(1)</script>', city: 'X', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3048705548515d405c551e5455">[email&#160;protected]</a>' });
   assert('XSS payload accepted without crash', xss.status < 500);
   if (xss.body?.id) await del(`/api/leads/${xss.body.id}`);
 
-  const sqli = await post('/api/leads', { name: "'; DROP TABLE leads;--", city: 'X', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f3c0f2a372e223f232a612b2a">[email&#160;protected]</a>' });
+  const sqli = await post('/api/leads', { name: "'; DROP TABLE leads;--", city: 'X', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d2e1d38253c302d3138733938">[email&#160;protected]</a>' });
   assert('SQL injection does not crash server', sqli.status < 500);
   if (sqli.body?.id) await del(`/api/leads/${sqli.body.id}`);
 
@@ -473,7 +473,7 @@ async function testSecurity() {
 
 async function testDataIntegrity() {
   addSection('▸ Data Integrity');
-  const lead = { name: 'Integrity Test', city: 'Düsseldorf', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5c353228393b2e3528251c28392f287139243d312c3039723839">[email&#160;protected]</a>', rating: 4.8, reviewsCount: 200 };
+  const lead = { name: 'Integrity Test', city: 'Düsseldorf', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ddb4b3a9b8baafb4a9a49da9b8aea9f0b8a5bcb0adb1b8f3b9b8">[email&#160;protected]</a>', rating: 4.8, reviewsCount: 200 };
   const c = await post('/api/leads', lead);
   assert('Create test lead', c.status === 200 || c.status === 201);
   const list = await get('/api/leads');
@@ -493,9 +493,9 @@ async function testConcurrency() {
   assert('All return arrays', results.every(r => Array.isArray(r.body)));
 
   const [c1, c2, c3] = await Promise.all([
-    post('/api/leads', { name: 'C1', city: 'A', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="caa9fb8aafb2aba7baa6afe4aeaf">[email&#160;protected]</a>' }),
-    post('/api/leads', { name: 'C2', city: 'B', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="482b7a082d30292538242d662c2d">[email&#160;protected]</a>' }),
-    post('/api/leads', { name: 'C3', city: 'C', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b4d787f4d1ccd5d9c4d8d19ad0d1">[email&#160;protected]</a>' }),
+    post('/api/leads', { name: 'C1', city: 'A', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f093c1b09588919d809c95de9495">[email&#160;protected]</a>' }),
+    post('/api/leads', { name: 'C2', city: 'B', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="90f3a2d0f5e8f1fde0fcf5bef4f5">[email&#160;protected]</a>' }),
+    post('/api/leads', { name: 'C3', city: 'C', email: '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2d4e1e6d48554c405d4148034948">[email&#160;protected]</a>' }),
   ]);
   assert('3 concurrent POSTs succeed', [c1,c2,c3].every(r => r.status===200||r.status===201));
   assert('All have unique IDs', new Set([c1.body?.id, c2.body?.id, c3.body?.id]).size === 3);
