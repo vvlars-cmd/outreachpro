@@ -1,0 +1,43 @@
+<h2>AI Call Scripts</h2>
+<p>Before every sales call, generate a full personalised phone script using the lead's Google Business data. Claude writes an opener, hook, pitch, objection handlers, CTA, and closing — all tailored to the specific business. Salesforce AI includes this at $350+/user/month. Free in OutreachPro.</p>
+
+<h3>Generating a Script</h3>
+<ol>
+  <li>Open any lead → click <strong>Call Script</strong></li>
+  <li>Select call goal: book demo, qualify, follow-up after email, post-demo close</li>
+  <li>Select language (de, en, fr...)</li>
+  <li>If you know their objection type, select it — Claude tailors the handler</li>
+  <li>Click Generate — script ready in ~3 seconds</li>
+</ol>
+
+<h3>Script Structure</h3>
+<ul>
+  <li><strong>Opener</strong> — get the right person on the line</li>
+  <li><strong>Hook</strong> — reference their specific Google rating/reviews to show you've done research</li>
+  <li><strong>Pitch</strong> — 1-sentence value proposition tailored to their business type</li>
+  <li><strong>Objection handlers</strong> — budget, timing, competitor, no need — each specific to this lead</li>
+  <li><strong>CTA</strong> — clear next step ask, referencing their city and a peer reference</li>
+  <li><strong>Closing</strong> — confirm the next step and exit cleanly</li>
+</ul>
+
+<h3>Example Output — Cold Call, Bike Dealer, German</h3>
+<pre>OPENER: "Guten Tag, hier spricht [NAME]. Spreche ich mit dem
+Verantwortlichen von Fahrrad Müller?"
+
+HOOK: "Ich habe Ihre 342 Google-Bewertungen gesehen —
+4,8 Sterne ist eine beeindruckende Leistung. Darf ich kurz
+fragen, wie viel Zeit Ihr Team täglich mit Reinigung verbringt?"
+
+PITCH: "Genau das ist unser Thema — CycleWASH Pro bringt das
+von 15 Minuten auf unter 4 Minuten pro Fahrrad."
+
+BUDGET OBJECTION: "Ich verstehe. Bei einem ähnlichen Betrieb
+in Köln hat sich die Anlage in 14 Monaten gerechnet — darf
+ich Ihnen das kurz zeigen?"
+
+CTA: "Hätten Sie nächste Woche 30 Minuten für eine Demo?"</pre>
+
+<h3>API</h3>
+<pre>POST /api/leads/:id/call-script
+  Body: { callGoal, language, objectionType? }
+  → { opener, hook, pitch, objectionHandlers, cta, closing, talkingPoints[] }</pre>
