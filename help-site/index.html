@@ -3,121 +3,82 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>OutreachPro v3 — Documentation & Architecture</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<title>OutreachPro v3.1 — Documentation</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
-:root{--bg:#0d0f1a;--surf:#12152a;--surf2:#1a1f35;--bdr:#232845;--bdr2:#2d3455;--ink:#e8eaf6;--ink2:#9fa8c7;--mu:#5a6391;--acc:#6c63ff;--ac2:#a5b4fc;--grn:#22c55e;--red:#ef4444;--yel:#f59e0b;--H:'Syne',sans-serif;--M:'DM Mono',monospace}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--M);font-size:14px;line-height:1.65;min-height:100vh;display:flex}
-nav{width:248px;flex-shrink:0;background:var(--surf);border-right:1px solid var(--bdr);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
-nav::-webkit-scrollbar{width:3px}nav::-webkit-scrollbar-thumb{background:var(--bdr2)}
-main{margin-left:248px;flex:1;padding-bottom:120px}
-.nb{padding:18px 20px 14px;border-bottom:1px solid var(--bdr)}
-.nb h1{font-family:var(--H);font-size:16px;font-weight:800;color:var(--ac2);letter-spacing:-.3px}
-.nb small{font-size:10px;color:var(--mu);letter-spacing:1px;display:block;margin-top:2px}
-.ns{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);padding:11px 20px 3px;margin-top:3px}
-nav a{display:block;padding:6px 20px;font-size:12px;color:var(--ink2);text-decoration:none;cursor:pointer;transition:all .12s;border-left:2px solid transparent;line-height:1.4}
-nav a:hover{color:var(--ink);background:rgba(108,99,255,.06)}
-nav a.act{color:var(--ac2);border-left-color:var(--acc);background:rgba(108,99,255,.1);font-weight:500}
-.nbg{font-size:9px;background:var(--acc);color:#fff;padding:1px 5px;border-radius:2px;margin-left:5px;vertical-align:middle}
-.nbg3{background:#059669}
-.hero{background:linear-gradient(135deg,#0d0f1a 0%,#10132a 60%,#0a0d20 100%);border-bottom:1px solid var(--bdr);padding:52px 60px 44px;position:relative;overflow:hidden}
-.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 65%);pointer-events:none}
-.ey{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ac2);margin-bottom:10px}
-.hero h2{font-family:var(--H);font-size:44px;font-weight:800;color:var(--ink);line-height:1.05;margin-bottom:14px}
-.hero p{font-size:15px;color:var(--ink2);max-width:580px;line-height:1.7}
-.vp{display:inline-flex;align-items:center;gap:6px;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);padding:3px 12px;border-radius:16px;font-size:11px;color:var(--ac2);margin-bottom:18px}
-.vd{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:blink 2s infinite}
+:root{--bg:#0d0f1a;--s:#12152a;--s2:#1a1f35;--b:#232845;--b2:#2d3455;--i:#e8eaf6;--i2:#9fa8c7;--m:#5a6391;--a:#6c63ff;--a2:#a5b4fc;--g:#22c55e;--H:"Syne",sans-serif;--M:"DM Mono",monospace}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--i);font-family:var(--M);font-size:13px;line-height:1.6;display:flex;min-height:100vh}
+nav{width:236px;flex-shrink:0;background:var(--s);border-right:1px solid var(--b);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;scrollbar-width:thin;scrollbar-color:var(--b2) transparent}
+main{margin-left:236px;flex:1;padding-bottom:80px}
+.nb{padding:16px 18px 14px;border-bottom:1px solid var(--b)}
+.nb h1{font-family:var(--H);font-size:15px;font-weight:800;color:var(--a2)}
+.nb small{font-size:10px;color:var(--m);letter-spacing:1px;display:block;margin-top:1px}
+.ns{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--m);padding:10px 18px 3px;margin-top:2px}
+nav a{display:block;padding:5px 18px;font-size:11px;color:var(--i2);cursor:pointer;transition:all .1s;border-left:2px solid transparent;line-height:1.4;text-decoration:none}
+nav a:hover{color:var(--i);background:rgba(108,99,255,.06)}
+nav a.act{color:var(--a2);border-left-color:var(--a);background:rgba(108,99,255,.1)}
+.nbg{font-size:9px;background:var(--a);color:#fff;padding:1px 4px;border-radius:2px;margin-left:4px;vertical-align:middle}
+.nbg2{background:#059669}
+.hero{background:linear-gradient(135deg,#0d0f1a,#10132a,#0a0d20);border-bottom:1px solid var(--b);padding:44px 56px 38px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;top:-60px;right:-60px;width:400px;height:400px;background:radial-gradient(circle,rgba(108,99,255,.12),transparent 65%);pointer-events:none}
+.ey{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--a2);margin-bottom:8px}
+.hero h2{font-family:var(--H);font-size:38px;font-weight:800;color:var(--i);line-height:1.05;margin-bottom:10px}
+.hero p{font-size:14px;color:var(--i2);max-width:560px;line-height:1.7}
+.vp{display:inline-flex;align-items:center;gap:5px;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);padding:2px 10px;border-radius:14px;font-size:10px;color:var(--a2);margin-bottom:14px}
+.vd{width:5px;height:5px;border-radius:50%;background:var(--g);animation:blink 2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
-.sec{padding:48px 60px;border-bottom:1px solid var(--bdr)}
-.sec:last-child{border-bottom:none}
-.sey{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:10px}
-.sth{font-family:var(--H);font-size:28px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.1}
-.sp{font-size:14px;color:var(--ink2);line-height:1.75;margin-bottom:20px;max-width:640px}
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin:24px 0}
-.stat{background:var(--surf);padding:16px;text-align:center}
-.sv{font-family:var(--H);font-size:26px;font-weight:800;color:var(--ac2);line-height:1}
-.sl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);margin-top:4px}
-.arch{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:28px;margin:20px 0;overflow-x:auto}
-.atl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:20px}
-.layer{margin-bottom:14px}
-.ll{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);padding-bottom:6px;display:flex;align-items:center;gap:8px}
-.ll::after{content:'';flex:1;height:1px;background:var(--bdr)}
-.lr{display:flex;gap:5px;flex-wrap:wrap}
-.nd{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 13px;border-radius:7px;font-size:11px;font-weight:600;text-align:center;min-width:88px;gap:3px}
-.ni{font-size:17px}.nl{font-size:11px;font-weight:600}.ns2{font-size:10px;font-weight:400;opacity:.65}
-.nb_={background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);color:#c4beff}
-.ng{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#86efac}
-.ny{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.22);color:#fcd34d}
-.nd2{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.22);color:#93c5fd}
-.np{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.22);color:#d8b4fe}
-.nf{background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.22);color:#5eead4}
-.nr{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);color:#fca5a5}
-.arr{text-align:center;color:var(--mu);font-size:15px;padding:3px 0}
-.rg{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
-.rc{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;overflow:hidden}
-.rch{padding:10px 14px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);background:var(--surf2);border-bottom:1px solid var(--bdr)}
-.ri{display:flex;align-items:flex-start;gap:8px;padding:8px 14px;border-bottom:1px solid var(--bdr);font-size:11px}
-.ri:last-child{border-bottom:none}
-.m{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 5px;border-radius:3px;flex-shrink:0;margin-top:1px}
-.mG{background:rgba(34,197,94,.18);color:#86efac}.mP{background:rgba(108,99,255,.18);color:#c4beff}.mD{background:rgba(239,68,68,.18);color:#fca5a5}
-.rp{color:var(--ac2);font-size:10px;font-family:var(--M)}.rd{color:var(--ink2);font-size:10px;margin-top:1px}
-.hg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
-.hg2{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
-.hc{background:var(--surf);border:1px solid var(--bdr);border-radius:7px;padding:13px;cursor:pointer;transition:all .18s;display:block;text-decoration:none}
-.hc:hover{border-color:var(--ac2);background:rgba(108,99,255,.05)}
-.hc.kf{border-color:rgba(108,99,255,.22)}
-.hc.kf3{border-color:rgba(5,150,105,.25);background:rgba(5,150,105,.04)}
-.hc h4{font-family:var(--H);font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
-.hc p{font-size:11px;color:var(--mu);line-height:1.45}
-.hc .hi{font-size:17px;margin-bottom:5px}
-.nb2{font-size:9px;background:var(--acc);color:#fff;padding:1px 5px;border-radius:2px;margin-left:4px}
-.nb3{font-size:9px;background:#059669;color:#fff;padding:1px 5px;border-radius:2px;margin-left:4px}
-.hca{background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:28px;margin-top:14px;display:none}
-.hca.v{display:block}
-.hca h2{font-family:var(--H);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px}
-.hca h3{font-size:14px;font-weight:600;color:var(--ink);margin:18px 0 7px}
-.hca p{font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:10px}
-.hca ul,.hca ol{padding-left:18px;margin:7px 0 10px;color:var(--ink2);font-size:13px;line-height:2}
-.hca pre{background:#090b17;border:1px solid var(--bdr);border-left:3px solid var(--acc);padding:14px 18px;border-radius:6px;font-size:11px;line-height:1.85;color:#a5b4fc;overflow-x:auto;margin:10px 0;white-space:pre;font-family:var(--M)}
-.hca code{font-family:var(--M);font-size:11px;background:rgba(108,99,255,.15);padding:1px 5px;border-radius:3px;color:var(--ac2)}
-.hca blockquote{border-left:3px solid var(--acc);padding:12px 18px;background:rgba(108,99,255,.06);margin:12px 0;font-size:13px;color:var(--ink2);font-style:italic;border-radius:0 6px 6px 0}
-.bk{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--mu);cursor:pointer;margin-bottom:16px;letter-spacing:1px;text-transform:uppercase}
-.bk:hover{color:var(--ink2)}
-.code{background:#090b17;border:1px solid var(--bdr);border-left:3px solid var(--acc);border-radius:6px;padding:18px 22px;font-size:12px;line-height:1.9;color:#a5b4fc;overflow-x:auto;margin:14px 0;white-space:pre;font-family:var(--M)}
-.co{color:var(--mu)}
-.cl{display:flex;gap:10px;padding:12px 16px;border-radius:7px;margin:14px 0;font-size:13px;line-height:1.6}
-.tip{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18);color:#86efac}
-.inf{background:rgba(108,99,255,.07);border:1px solid rgba(108,99,255,.18);color:#c4beff}
-.warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);color:#fcd34d}
-.flow{display:flex;align-items:center;flex-wrap:wrap;margin:18px 0;gap:2px}
-.fs{text-align:center}
-.fb{background:var(--surf2);border:1px solid var(--bdr);padding:9px 13px;border-radius:7px;font-size:11px;color:var(--ink2);min-width:84px}
-.fb strong{display:block;color:var(--ink);font-size:12px;margin-bottom:1px}
-.fa{font-size:17px;color:var(--mu);margin:0 3px}
-.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:12px}
-.tbl th{background:var(--surf2);padding:10px 12px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--bdr)}
-.tbl td{padding:10px 12px;border-bottom:1px solid var(--bdr);color:var(--ink2)}
+.sec{padding:40px 56px;border-bottom:1px solid var(--b)}
+.sey{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--a2);margin-bottom:8px}
+.sth{font-family:var(--H);font-size:24px;font-weight:700;color:var(--i);margin-bottom:10px;line-height:1.1}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--b);border:1px solid var(--b);border-radius:9px;overflow:hidden;margin:20px 0}
+.stat{background:var(--s);padding:14px;text-align:center}
+.sv{font-family:var(--H);font-size:22px;font-weight:800;color:var(--a2);line-height:1}
+.sl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--m);margin-top:3px}
+.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:11px}
+.tbl th{background:var(--s2);padding:9px 12px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--m);border-bottom:1px solid var(--b)}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--b);color:var(--i2)}
 .tbl tr:last-child td{border-bottom:none}
-.pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600}
-.p-grn{background:rgba(34,197,94,.15);color:#86efac}
-.p-yel{background:rgba(245,158,11,.15);color:#fcd34d}
-.p-red{background:rgba(239,68,68,.15);color:#fca5a5}
-@media(max-width:900px){nav{display:none}main{margin-left:0}.rg,.hg,.hg2{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.sec,.hero{padding:28px 20px}}
-::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px}
+.pill{display:inline-block;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.pg{background:rgba(34,197,94,.15);color:#86efac}
+.pp{background:rgba(108,99,255,.15);color:#c4beff}
+.py{background:rgba(245,158,11,.15);color:#fcd34d}
+.hg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0}
+.hg3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.hc{background:var(--s);border:1px solid var(--b);border-radius:7px;padding:12px;cursor:pointer;transition:all .15s}
+.hc:hover{border-color:var(--a2);background:rgba(108,99,255,.05)}
+.hc.kf{border-color:rgba(108,99,255,.22)}
+.hc.sf{border-color:rgba(245,158,11,.22);background:rgba(245,158,11,.03)}
+.hc h4{font-family:var(--H);font-size:12px;font-weight:700;color:var(--i);margin-bottom:2px}
+.hc p{font-size:10px;color:var(--m);line-height:1.4}
+.hc .hi{font-size:16px;margin-bottom:4px}
+.nb2{font-size:9px;background:var(--a);color:#fff;padding:1px 4px;border-radius:2px;margin-left:3px}
+.nb3{font-size:9px;background:#059669;color:#fff;padding:1px 4px;border-radius:2px;margin-left:3px}
+.nb4{font-size:9px;background:#d97706;color:#fff;padding:1px 4px;border-radius:2px;margin-left:3px}
+.hca{background:var(--s);border:1px solid var(--b);border-radius:9px;padding:24px;margin-top:12px;display:none}
+.hca.v{display:block}
+.hca h2{font-family:var(--H);font-size:20px;font-weight:700;color:var(--i);margin-bottom:8px}
+.hca h3{font-size:13px;font-weight:600;color:var(--i);margin:16px 0 6px}
+.hca p{font-size:12px;color:var(--i2);line-height:1.75;margin-bottom:8px}
+.hca ul,.hca ol{padding-left:16px;margin:6px 0 10px;color:var(--i2);font-size:12px;line-height:1.9}
+.hca pre{background:#090b17;border:1px solid var(--b);border-left:3px solid var(--a);padding:12px 16px;border-radius:5px;font-size:11px;line-height:1.8;color:#a5b4fc;overflow-x:auto;margin:8px 0;white-space:pre;font-family:var(--M)}
+.hca code{font-family:var(--M);font-size:11px;background:rgba(108,99,255,.15);padding:1px 4px;border-radius:3px;color:var(--a2)}
+.hca blockquote{border-left:3px solid var(--a);padding:10px 14px;background:rgba(108,99,255,.06);margin:10px 0;font-size:12px;color:var(--i2);font-style:italic;border-radius:0 5px 5px 0}
+.bk{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--m);cursor:pointer;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase}
+.bk:hover{color:var(--i2)}
+.code{background:#090b17;border:1px solid var(--b);border-left:3px solid var(--a);border-radius:5px;padding:16px 20px;font-size:11px;line-height:1.85;color:#a5b4fc;overflow-x:auto;margin:12px 0;white-space:pre;font-family:var(--M)}
+.co{color:var(--m)}
+@media(max-width:800px){nav{display:none}main{margin-left:0}.hg,.hg3{grid-template-columns:1fr 1fr}.stats{grid-template-columns:repeat(3,1fr)}.sec,.hero{padding:24px 20px}}
 </style>
 </head>
 <body>
-
 <nav>
-  <div class="nb"><h1>OutreachPro</h1><small>v3.0 Documentation</small></div>
+  <div class="nb"><h1>OutreachPro</h1><small>v3.1 — 55 articles</small></div>
   <div class="ns">Overview</div>
-  <a onclick="sc('arch')" class="act" id="na-arch">System Architecture</a>
-  <a onclick="sc('flow')" id="na-flow">Data Flow</a>
-  <a onclick="sc('api')" id="na-api">API Reference</a>
-  <a onclick="sc('competitive')" id="na-competitive">vs Competitors</a>
-  <div class="ns">Core Features</div>
+  <a onclick="sc('arch')" class="act">System Architecture</a>
+  <a onclick="sc('vs')">vs Salesforce</a>
+  <a onclick="sc('api')">API Reference</a>
+  <div class="ns">Core</div>
   <a onclick="lh('campaigns')">📧 Campaigns</a>
   <a onclick="lh('sequences')">📨 Sequences</a>
   <a onclick="lh('apify')">🗺 Lead Scraper</a>
@@ -127,297 +88,218 @@ nav a.act{color:var(--ac2);border-left-color:var(--acc);background:rgba(108,99,2
   <a onclick="lh('warmup')">🔥 Email Warmup</a>
   <a onclick="lh('analytics')">📊 Analytics</a>
   <a onclick="lh('inbox-test')">🧪 Inbox Tester</a>
-  <div class="ns">Killer Features v2.5 <span class="nbg">10</span></div>
+  <div class="ns">v2.5 Features <span class="nbg">10</span></div>
   <a onclick="lh('domain-health')">🏥 Domain Health</a>
   <a onclick="lh('icp')">🎯 ICP Builder</a>
   <a onclick="lh('ab-testing')">🔄 A/B Testing</a>
   <a onclick="lh('intent-signals')">📊 Intent Signals</a>
   <a onclick="lh('memory')">🧠 Memory CRM</a>
-  <a onclick="lh('apify')">🏙 Bulk Scraper</a>
   <a onclick="lh('linkedin')">💼 LinkedIn</a>
   <a onclick="lh('workspaces')">🏢 Workspaces</a>
   <a onclick="lh('ai-sdr')">🤖 AI SDR</a>
   <a onclick="lh('video-thumbnails')">🎬 Video Thumbnails</a>
-  <div class="ns">Killer Features v3.0 <span class="nbg nbg3">10 NEW</span></div>
+  <a onclick="lh('apify')">🏙 Bulk Scraper</a>
+  <div class="ns">v3.0 Features <span class="nbg nbg2">10</span></div>
   <a onclick="lh('smart-sequences')">🔀 Smart Sequences</a>
-  <a onclick="lh('scheduler')">📅 Meeting Scheduler</a>
+  <a onclick="lh('scheduler')">📅 Scheduler</a>
   <a onclick="lh('buying-signals')">⚡ Buying Signals</a>
   <a onclick="lh('spintax')">🎲 Spintax + Liquid</a>
-  <a onclick="lh('email-verification')">✅ Email Verification</a>
+  <a onclick="lh('email-verification')">✅ Email Verify</a>
   <a onclick="lh('inbox-rotation')">🔁 Inbox Rotation</a>
   <a onclick="lh('forecasting')">📈 Forecasting</a>
-  <a onclick="lh('competitor-monitor')">👁 Competitor Monitor</a>
+  <a onclick="lh('competitor-monitor')">👁 Competitors</a>
   <a onclick="lh('voice-scripts')">🎤 Voice Scripts</a>
-  <a onclick="lh('proposals')">📋 Proposal Generator</a>
+  <a onclick="lh('proposals')">📋 Proposals</a>
+  <div class="ns">Salesforce Features <span class="nbg" style="background:#d97706">20</span></div>
+  <a onclick="lh('activity-timeline')">🕐 Activity Timeline</a>
+  <a onclick="lh('opportunity-scoring')">🎯 Opp. Scoring</a>
+  <a onclick="lh('pipeline-inspection')">🔍 Pipeline Inspect</a>
+  <a onclick="lh('workflows')">⚡ Workflow Automation</a>
+  <a onclick="lh('daily-tasks')">📋 Daily Task Queue</a>
+  <a onclick="lh('sentiment')">💬 Email Sentiment</a>
+  <a onclick="lh('account-research')">🗺 Account Research</a>
+  <a onclick="lh('cpq')">💰 CPQ + Pricing</a>
+  <a onclick="lh('coaching')">📊 Coaching Dashboard</a>
+  <a onclick="lh('lead-prioritisation')">🏆 Lead Priority</a>
+  <a onclick="lh('quota')">💎 Quota + Commission</a>
+  <a onclick="lh('win-rate')">📉 Win Rate Analytics</a>
+  <a onclick="lh('call-scripts')">📞 Call Scripts</a>
+  <a onclick="lh('segmentation')">🗂 Segmentation</a>
+  <a onclick="lh('sequence-analytics')">📊 Seq. Analytics</a>
+  <a onclick="lh('meeting-summary')">📝 Meeting Summary</a>
+  <a onclick="lh('goals')">🎯 Goals Tracker</a>
+  <a onclick="lh('playbooks')">📖 Playbooks</a>
+  <a onclick="lh('winback')">🔁 Win-Back</a>
+  <a onclick="lh('template-library')">📂 Templates</a>
   <div class="ns">Setup</div>
-  <a onclick="sc('deploy')">🐳 Docker Deploy</a>
-  <a onclick="sc('env')">🔑 Environment Vars</a>
-  <a onclick="sc('npm')">📦 npm / CLI</a>
+  <a onclick="sc('deploy')">🐳 Docker</a>
+  <a onclick="sc('env')">🔑 Env Vars</a>
+  <a onclick="sc('npm')">📦 npm CLI</a>
 </nav>
 
 <main>
-
 <div class="hero">
-  <div class="vp"><span class="vd"></span> v3.0 — Latest</div>
+  <div class="vp"><span class="vd"></span>v3.1 — Latest</div>
   <div class="ey">Documentation & Architecture</div>
   <h2>OutreachPro</h2>
-  <p>AI-powered B2B sales engagement. Self-hosted with Claude AI, Apify scraping, Gmail OAuth2, <strong>20 killer features</strong>, 6-language i18n, and no per-seat limits.</p>
+  <p>AI-powered B2B sales engagement. Self-hosted with Claude AI, Apify scraping, Gmail OAuth2, <strong>40 killer features</strong>, and no per-seat limits. Replaces Salesforce at $350+/user/month.</p>
 </div>
 
-<!-- STATS -->
 <div class="sec" id="arch">
   <div class="sey">At a glance</div>
   <div class="stats">
-    <div class="stat"><div class="sv">60+</div><div class="sl">API Routes</div></div>
-    <div class="stat"><div class="sv">20</div><div class="sl">Killer Features</div></div>
-    <div class="stat"><div class="sv">29</div><div class="sl">Help Articles</div></div>
+    <div class="stat"><div class="sv">40</div><div class="sl">Features</div></div>
+    <div class="stat"><div class="sv">205</div><div class="sl">API Routes</div></div>
+    <div class="stat"><div class="sv">55</div><div class="sl">Help Articles</div></div>
+    <div class="stat"><div class="sv">4665</div><div class="sl">Lines</div></div>
     <div class="stat"><div class="sv">6</div><div class="sl">Languages</div></div>
-    <div class="stat"><div class="sv">2581</div><div class="sl">Lines server.js</div></div>
-    <div class="stat"><div class="sv">€0</div><div class="sl">Per-seat cost</div></div>
-  </div>
-
-  <div class="sey" style="margin-top:32px">System Architecture</div>
-  <div class="sth">How OutreachPro is built</div>
-  <div class="sp">Docker-first Node.js. Single Alpine container. JSON data on Docker volume. No database. Server injection patches the frontend on every request — index.html is never touched directly.</div>
-
-  <div class="arch">
-    <div class="atl">Architecture — OutreachPro v3.0</div>
-    <div class="layer"><div class="ll">Client</div><div class="lr">
-      <div class="nd nb_"><span class="ni">🌐</span><span class="nl">Browser SPA</span><span class="ns2">16 views</span></div>
-      <div class="nd nb_"><span class="ni">📅</span><span class="nl">Scheduler</span><span class="ns2">/scheduler</span></div>
-      <div class="nd nb_"><span class="ni">📋</span><span class="nl">Proposals</span><span class="ns2">HTML proposals</span></div>
-      <div class="nd nb_"><span class="ni">📖</span><span class="nl">Help Site</span><span class="ns2">/help</span></div>
-      <div class="nd nb_"><span class="ni">🧪</span><span class="nl">Test Runner</span><span class="ns2">/tests</span></div>
-    </div></div>
-    <div class="arr">↕ HTTP + SSE real-time streams</div>
-    <div class="layer"><div class="ll">Web layer — Express.js :3000</div><div class="lr">
-      <div class="nd ng"><span class="ni">⚡</span><span class="nl">Express.js</span><span class="ns2">Node 20 Alpine</span></div>
-      <div class="nd ng"><span class="ni">💉</span><span class="nl">Server Inject</span><span class="ns2">CSS+JS patches</span></div>
-      <div class="nd ng"><span class="ni">🔁</span><span class="nl">SSE Streams</span><span class="ns2">Live progress</span></div>
-      <div class="nd ng"><span class="ni">📤</span><span class="nl">Multer</span><span class="ns2">CSV import</span></div>
-      <div class="nd ng"><span class="ni">🎲</span><span class="nl">Spintax Engine</span><span class="ns2">Built-in</span></div>
-      <div class="nd ng"><span class="ni">✅</span><span class="nl">Email Verify</span><span class="ns2">MX+disposable</span></div>
-    </div></div>
-    <div class="arr">↕ Route handlers (60+ endpoints)</div>
-    <div class="layer"><div class="ll">API route groups</div><div class="lr">
-      <div class="nd ng"><span class="ni">👥</span><span class="nl">Leads</span><span class="ns2">CRUD+score+verify</span></div>
-      <div class="nd ng"><span class="ni">📧</span><span class="nl">Campaigns</span><span class="ns2">+A/B+rotation</span></div>
-      <div class="nd ng"><span class="ni">🔀</span><span class="nl">Smart Seqs</span><span class="ns2">If/else branches</span></div>
-      <div class="nd ng"><span class="ni">📅</span><span class="nl">Scheduler</span><span class="ns2">Slots+booking</span></div>
-      <div class="nd ng"><span class="ni">⚡</span><span class="nl">Signals</span><span class="ns2">Pixel+hot queue</span></div>
-      <div class="nd ng"><span class="ni">📈</span><span class="nl">Forecast</span><span class="ns2">AI revenue pred.</span></div>
-      <div class="nd ng"><span class="ni">📋</span><span class="nl">Proposals</span><span class="ns2">AI HTML gen.</span></div>
-      <div class="nd ng"><span class="ni">🎤</span><span class="nl">Voice Scripts</span><span class="ns2">Claude-written</span></div>
-    </div></div>
-    <div class="arr">↕ Async calls to external services</div>
-    <div class="layer"><div class="ll">AI & integrations</div><div class="lr">
-      <div class="nd ny"><span class="ni">🤖</span><span class="nl">Claude Sonnet</span><span class="ns2">Personalise+SDR+Memory+Forecast</span></div>
-      <div class="nd np"><span class="ni">🗺</span><span class="nl">Apify</span><span class="ns2">Google Maps scraper</span></div>
-      <div class="nd np"><span class="ni">📮</span><span class="nl">Gmail API</span><span class="ns2">OAuth2 send+scrape</span></div>
-      <div class="nd np"><span class="ni">🌐</span><span class="nl">DNS Resolver</span><span class="ns2">Domain health+verify</span></div>
-      <div class="nd np"><span class="ni">📡</span><span class="nl">Tracking Pixel</span><span class="ns2">1×1 GIF opens</span></div>
-    </div></div>
-    <div class="arr">↕ readJSON / writeJSON</div>
-    <div class="layer"><div class="ll">Data layer — JSON files on Docker volume /app/data</div><div class="lr">
-      <div class="nd nd2"><span class="ni">👥</span><span class="nl">leads.json</span></div>
-      <div class="nd nd2"><span class="ni">📧</span><span class="nl">campaigns.json</span></div>
-      <div class="nd nd2"><span class="ni">🔀</span><span class="nl">smart-sequences.json</span></div>
-      <div class="nd nd2"><span class="ni">📅</span><span class="nl">scheduler.json</span></div>
-      <div class="nd nd2"><span class="ni">⚡</span><span class="nl">buying-signals.json</span></div>
-      <div class="nd nd2"><span class="ni">🧠</span><span class="nl">memories.json</span></div>
-      <div class="nd nd2"><span class="ni">📈</span><span class="nl">deals.json</span></div>
-      <div class="nd nd2"><span class="ni">📋</span><span class="nl">proposals.json</span></div>
-      <div class="nd nd2"><span class="ni">🔄</span><span class="nl">ab-tests.json</span></div>
-      <div class="nd nd2"><span class="ni">🏢</span><span class="nl">workspaces/</span></div>
-      <div class="nd nd2"><span class="ni">🔁</span><span class="nl">rotation.json</span></div>
-      <div class="nd nd2"><span class="ni">👁</span><span class="nl">competitors.json</span></div>
-    </div></div>
-    <div class="arr">↕ Container runtime</div>
-    <div class="layer"><div class="ll">Infrastructure</div><div class="lr">
-      <div class="nd nr"><span class="ni">🐳</span><span class="nl">Docker Compose</span><span class="ns2">Node 20 Alpine</span></div>
-      <div class="nd nr"><span class="ni">💾</span><span class="nl">Docker Volume</span><span class="ns2">Data persists</span></div>
-      <div class="nd nr"><span class="ni">🔒</span><span class="nl">.env Secrets</span><span class="ns2">Never in code</span></div>
-      <div class="nd nr"><span class="ni">📦</span><span class="nl">npm v3.0.0</span><span class="ns2">npx outreachpro</span></div>
-    </div></div>
-
-    <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--bdr)">
-      <div class="ll">v2.5 killer features (10)</div>
-      <div class="lr">
-        <div class="nd nf"><span class="ni">🏥</span><span class="nl">Domain Health</span></div>
-        <div class="nd nf"><span class="ni">🎯</span><span class="nl">ICP Builder</span></div>
-        <div class="nd nf"><span class="ni">🔄</span><span class="nl">A/B Testing</span></div>
-        <div class="nd nf"><span class="ni">🔥</span><span class="nl">Intent Signals</span></div>
-        <div class="nd nf"><span class="ni">🧠</span><span class="nl">Memory CRM</span></div>
-        <div class="nd nf"><span class="ni">🏙</span><span class="nl">Bulk Scraper</span></div>
-        <div class="nd nf"><span class="ni">💼</span><span class="nl">LinkedIn</span></div>
-        <div class="nd nf"><span class="ni">🏢</span><span class="nl">Workspaces</span></div>
-        <div class="nd nf"><span class="ni">🤖</span><span class="nl">AI SDR</span></div>
-        <div class="nd nf"><span class="ni">🎬</span><span class="nl">Video Thumbs</span></div>
-      </div>
-    </div>
-    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed rgba(5,150,105,.3)">
-      <div class="ll" style="color:#34d399">v3.0 killer features (10 NEW)</div>
-      <div class="lr">
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🔀</span><span class="nl">Smart Sequences</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">📅</span><span class="nl">Scheduler</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">⚡</span><span class="nl">Buying Signals</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🎲</span><span class="nl">Spintax+Liquid</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">✅</span><span class="nl">Email Verify</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🔁</span><span class="nl">Inbox Rotation</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">📈</span><span class="nl">Forecasting</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,109,.25);color:#6ee7b7"><span class="ni">👁</span><span class="nl">Competitor Mon.</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🎤</span><span class="nl">Voice Scripts</span></div>
-        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">📋</span><span class="nl">Proposals</span></div>
-      </div>
-    </div>
+    <div class="stat"><div class="sv">€0</div><div class="sl">Per seat</div></div>
   </div>
 </div>
 
-<!-- DATA FLOW -->
-<div class="sec" id="flow">
-  <div class="sey">Data Flow</div>
-  <div class="sth">Complete outreach pipeline v3.0</div>
-  <div class="flow">
-    <div class="fs"><div class="fb"><strong>🎯 ICP</strong>Auto-scrape</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>✅ Verify</strong>MX+disposable</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>🎲 Spintax</strong>Render copy</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>🤖 Claude</strong>Personalise</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>🔁 Rotate</strong>Pick inbox</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>📧 Gmail</strong>Send+pixel</div></div>
-  </div>
-  <div class="flow">
-    <div class="fs"><div class="fb"><strong>⚡ Signal</strong>Open/click</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>🔀 Branch</strong>Smart seq.</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>📅 Book</strong>Scheduler</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>🏆 CRM</strong>Meeting stage</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>📋 Proposal</strong>1-click gen.</div></div><div class="fa">→</div>
-    <div class="fs"><div class="fb"><strong>📈 Forecast</strong>Revenue pred.</div></div>
-  </div>
-  <div class="cl inf" style="margin-top:20px;color:var(--ink2);font-size:13px">
-    💉 <strong style="color:var(--ac2)">Server Injection:</strong> Every page load strips Cloudflare email-decode script, then injects: CSS overrides, v3.0 badge, hard reset button, nav tooltips, and i18n loader. index.html is never modified directly.
-  </div>
-</div>
-
-<!-- COMPETITIVE -->
-<div class="sec" id="competitive">
-  <div class="sey">vs The Market</div>
-  <div class="sth">What OutreachPro replaces</div>
-  <div class="sp">All of these features are bundled in OutreachPro at zero extra cost — versus paying separately for each tool.</div>
+<div class="sec" id="vs">
+  <div class="sey">Competitive</div>
+  <div class="sth">OutreachPro vs Salesforce — feature for feature</div>
   <table class="tbl">
-    <thead><tr><th>Feature</th><th>What others charge</th><th>OutreachPro</th><th>Saving</th></tr></thead>
+    <thead><tr><th>Feature</th><th>Salesforce cost</th><th>OutreachPro</th></tr></thead>
     <tbody>
-      <tr><td>Smart Conditional Sequences</td><td>Skylead $100/mo</td><td><span class="pill p-grn">Built in</span></td><td>$100/mo</td></tr>
-      <tr><td>Meeting Scheduler</td><td>Calendly $16/mo</td><td><span class="pill p-grn">Built in</span></td><td>$16/mo</td></tr>
-      <tr><td>Email Verification</td><td>NeverBounce $30–100/mo</td><td><span class="pill p-grn">Built in</span></td><td>$50/mo</td></tr>
-      <tr><td>Inbox Rotation (3 inboxes)</td><td>Instantly $97/mo</td><td><span class="pill p-grn">Built in</span></td><td>$97/mo</td></tr>
-      <tr><td>Spintax + Liquid Syntax</td><td>Skylead/Lemlist $79–100/mo</td><td><span class="pill p-grn">Built in</span></td><td>$79/mo</td></tr>
-      <tr><td>Revenue Forecasting</td><td>Clari $$$</td><td><span class="pill p-grn">Built in</span></td><td>$200+/mo</td></tr>
-      <tr><td>Proposal Generator</td><td>PandaDoc $35/mo</td><td><span class="pill p-grn">Built in</span></td><td>$35/mo</td></tr>
-      <tr><td>A/B Subject Testing</td><td>Lemlist $109/mo</td><td><span class="pill p-grn">Built in</span></td><td>$109/mo</td></tr>
-      <tr><td>Memory CRM / Follow-up AI</td><td>No equivalent</td><td><span class="pill p-grn">Unique</span></td><td>—</td></tr>
-      <tr><td>Per-seat pricing</td><td>$47–$100/seat/mo</td><td><span class="pill p-grn">Unlimited seats</span></td><td>$100+/mo per user</td></tr>
-      <tr><td style="font-weight:600">Total equivalent cost</td><td style="font-weight:600;color:#fca5a5">$686–$900+/mo</td><td style="font-weight:600;color:#86efac">Self-hosted: ~$20/mo API costs</td><td style="font-weight:600;color:#86efac">$666–$880/mo</td></tr>
+      <tr><td>Activity Timeline (Einstein Activity Capture)</td><td>$175/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Opportunity Scoring (Einstein)</td><td>$175/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Pipeline Inspection</td><td>$175/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Workflow Automation (Salesforce Flow)</td><td>$100/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Sales Workspace / Daily Task Queue</td><td>$175/user/mo (Spring '26)</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Email Sentiment (Einstein Email Insights)</td><td>$350/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Account Research (Relationship Insights)</td><td>$350/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>CPQ — Configure Price Quote</td><td>$75/user/mo add-on</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Coaching Dashboard</td><td>$350/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Lead Prioritisation (Einstein Lead Scoring)</td><td>$175/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Quota + Commission Tracker (SPM)</td><td>$350/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Win Rate Analytics</td><td>$175/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>AI Call Scripts</td><td>$350/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Lead Segmentation + Export</td><td>$175/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Meeting Summary + Follow-up Draft (AI)</td><td>$350/user/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Sales Goals Tracker</td><td>$350/user/mo (SPM)</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Sales Playbooks (Enablement)</td><td>$150/user/mo add-on</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Win-Back Campaigns</td><td>Requires custom Flow</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Smart Conditional Sequences</td><td>Skylead $100/mo</td><td><span class="pill pg">Built in</span></td></tr>
+      <tr><td>Per-seat pricing</td><td>$175–550/user/mo</td><td><span class="pill pg">Unlimited seats</span></td></tr>
+      <tr style="background:rgba(34,197,94,.04)"><td><strong>Total equivalent cost (5-seat team)</strong></td><td style="color:#fca5a5"><strong>$875–1750/mo</strong></td><td><span class="pill pg">~€20/mo API costs</span></td></tr>
     </tbody>
   </table>
 </div>
 
-<!-- API REFERENCE -->
 <div class="sec" id="api">
   <div class="sey">Reference</div>
-  <div class="sth">API Routes — 60+ endpoints</div>
-  <div class="sp">All routes return JSON. Base: <code style="background:rgba(108,99,255,.15);padding:1px 6px;border-radius:3px;color:var(--ac2);font-size:12px">http://localhost:3000</code></div>
-  <div class="rg">
-    <div class="rc"><div class="rch">Smart Sequences</div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/smart-sequences</div><div class="rd">List all smart sequences</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/smart-sequences</div><div class="rd">Create sequence with steps+conditions</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/smart-sequences/:id/enroll</div><div class="rd">Enroll leads {leadIds[]}</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/smart-sequences/:id/event</div><div class="rd">Record {leadId, stepId, event}</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/smart-sequences/:id/enrollments</div><div class="rd">Get enrolled leads + branch state</div></div></div>
-    </div>
-    <div class="rc"><div class="rch">Meeting Scheduler</div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/scheduler/config</div><div class="rd">Availability settings</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/scheduler/config</div><div class="rd">Update availability slots</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/scheduler/available</div><div class="rd">Next 14 days open slots</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/scheduler/book</div><div class="rd">Book slot → creates CRM deal</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/scheduler</div><div class="rd">Public booking page (share URL)</div></div></div>
-    </div>
-    <div class="rc"><div class="rch">Buying Signals</div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/signals</div><div class="rd">All tracked signals</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/signals/track</div><div class="rd">Record open/click/reply event</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/signals/hot</div><div class="rd">Leads scoring 60+ not actioned</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/signals/:id/action</div><div class="rd">Mark signal actioned</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/t/:leadId/:campaignId</div><div class="rd">Tracking pixel (1×1 GIF)</div></div></div>
-    </div>
-    <div class="rc"><div class="rch">Spintax + Email Verify</div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/spintax/preview</div><div class="rd">Generate 3 preview renders</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/spintax/render</div><div class="rd">Render once for one lead</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/spintax/batch</div><div class="rd">Render for all leads in array</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/verify/email</div><div class="rd">Verify single email</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/verify/bulk</div><div class="rd">Verify up to 100 emails</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/verify/leads</div><div class="rd">Verify + flag all leads in DB</div></div></div>
-    </div>
-    <div class="rc"><div class="rch">Inbox Rotation + Forecast</div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/rotation/config</div><div class="rd">Rotation settings</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/rotation/config</div><div class="rd">Update accounts + strategy</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/rotation/next-sender</div><div class="rd">Get next inbox for send</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/rotation/stats</div><div class="rd">Per-inbox sent/remaining today</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/forecast</div><div class="rd">30/60/90-day revenue + stale deals</div></div></div>
-    </div>
-    <div class="rc"><div class="rch">Voice Scripts + Proposals</div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/voice/script</div><div class="rd">Generate one voice script</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/voice/batch</div><div class="rd">Batch scripts for multiple leads</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/proposals/generate</div><div class="rd">Generate HTML proposal</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/proposals</div><div class="rd">List all proposals</div></div></div>
-      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/competitors</div><div class="rd">List tracked competitors</div></div></div>
-      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/competitors/scan</div><div class="rd">Scan competitor pricing pages</div></div></div>
-    </div>
-  </div>
+  <div class="sth">205 API Routes — key endpoints</div>
+  <div class="code"><span class="co"># Activity & CRM Intelligence</span>
+GET  /api/leads/:id/timeline          <span class="co">→ full activity timeline per lead</span>
+POST /api/activities/log              <span class="co">→ log call/meeting/note + AI extract</span>
+GET  /api/activities/recent           <span class="co">→ last 50 activities all leads</span>
+GET  /api/deals/scored                <span class="co">→ deals sorted by 1-99 win probability</span>
+GET  /api/pipeline/inspection         <span class="co">→ weekly delta: new/moved/stalled/won</span>
+GET  /api/tasks/today                 <span class="co">→ unified priority queue + AI briefing</span>
+POST /api/inbox/analyse               <span class="co">→ sentiment + objection + next action</span>
+POST /api/leads/:id/account-research  <span class="co">→ Claude account brief</span>
+POST /api/leads/:id/call-script       <span class="co">→ AI phone script</span>
+GET  /api/leads/prioritised           <span class="co">→ hot/warm/cold tiers</span>
+GET  /api/segments                    <span class="co">→ auto segments by city/category/rating</span>
+POST /api/segments/export             <span class="co">→ segment CSV export</span>
+POST /api/meetings/summarise          <span class="co">→ meeting notes → summary + draft email</span>
+
+<span class="co"># Quota, Goals & Analytics</span>
+GET  /api/quota                       <span class="co">→ quota progress + commission calc</span>
+POST /api/quota                       <span class="co">→ update targets + rates</span>
+GET  /api/goals                       <span class="co">→ all goals with real-time progress</span>
+POST /api/goals                       <span class="co">→ create custom goal</span>
+GET  /api/analytics/win-rate          <span class="co">→ win rate by period + by campaign</span>
+GET  /api/analytics/sequences         <span class="co">→ per-step open/reply rates</span>
+GET  /api/coaching/dashboard          <span class="co">→ manager view + AI coaching insight</span>
+GET  /api/forecast                    <span class="co">→ 30/60/90-day revenue prediction</span>
+
+<span class="co"># Workflows & Automation</span>
+GET  /api/workflows                   <span class="co">→ list all workflows</span>
+POST /api/workflows                   <span class="co">→ create trigger→action rule</span>
+POST /api/workflows/evaluate          <span class="co">→ fire workflows for an event</span>
+POST /api/workflows/:id/toggle        <span class="co">→ enable/disable</span>
+
+<span class="co"># CPQ & Products</span>
+GET  /api/products                    <span class="co">→ product catalogue</span>
+POST /api/cpq/calculate               <span class="co">→ quote with volume discounts</span>
+
+<span class="co"># Playbooks & Win-Back</span>
+GET  /api/playbooks                   <span class="co">→ list battle cards</span>
+GET  /api/playbooks/:trigger          <span class="co">→ get by trigger (budget|timing...)</span>
+GET  /api/winback/candidates          <span class="co">→ lost deals + cold leads to re-engage</span>
+POST /api/winback/generate            <span class="co">→ AI win-back email draft</span></div>
 </div>
 
-<!-- HELP ARTICLES -->
 <div class="sec" id="help">
   <div class="sey">Documentation</div>
-  <div class="sth">Help Articles — 29 guides</div>
+  <div class="sth">55 Help Articles</div>
 
-  <div style="font-size:10px;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Core Features (9)</div>
-  <div class="hg">
-    <div class="hc" onclick="lh('campaigns')"><div class="hi">📧</div><h4>Campaigns</h4><p>A/B testing, daily limits, stop-on-reply, activation</p></div>
-    <div class="hc" onclick="lh('sequences')"><div class="hi">📨</div><h4>Sequences</h4><p>Multi-step flows, best practices, timing</p></div>
-    <div class="hc" onclick="lh('apify')"><div class="hi">🗺</div><h4>Lead Scraper</h4><p>Apify setup, scoring, bulk import</p></div>
-    <div class="hc" onclick="lh('composer')"><div class="hi">✍</div><h4>Email Composer</h4><p>AI personalisation, tokens, batch</p></div>
-    <div class="hc" onclick="lh('gmail')"><div class="hi">📮</div><h4>Gmail Integration</h4><p>OAuth2, send, drafts, scraper</p></div>
-    <div class="hc" onclick="lh('crm')"><div class="hi">🏆</div><h4>CRM Pipeline</h4><p>Kanban, Memory CRM, intent signals</p></div>
-    <div class="hc" onclick="lh('warmup')"><div class="hi">🔥</div><h4>Email Warmup</h4><p>Sender reputation, schedule, multi-inbox</p></div>
-    <div class="hc" onclick="lh('analytics')"><div class="hi">📊</div><h4>Analytics</h4><p>KPIs, A/B results, pipeline, revenue</p></div>
-    <div class="hc" onclick="lh('inbox-test')"><div class="hi">🧪</div><h4>Inbox Tester</h4><p>Domain health, SPF/DKIM setup guides</p></div>
+  <div style="font-size:10px;color:var(--m);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Core (9)</div>
+  <div class="hg3">
+    <div class="hc" onclick="lh('campaigns')"><div class="hi">📧</div><h4>Campaigns</h4><p>A/B testing, limits, activation</p></div>
+    <div class="hc" onclick="lh('sequences')"><div class="hi">📨</div><h4>Sequences</h4><p>Multi-step flows, best practices</p></div>
+    <div class="hc" onclick="lh('apify')"><div class="hi">🗺</div><h4>Lead Scraper</h4><p>Apify, scoring, bulk import</p></div>
+    <div class="hc" onclick="lh('composer')"><div class="hi">✍</div><h4>Email Composer</h4><p>AI personalisation, tokens</p></div>
+    <div class="hc" onclick="lh('gmail')"><div class="hi">📮</div><h4>Gmail Integration</h4><p>OAuth2, send, scraper</p></div>
+    <div class="hc" onclick="lh('crm')"><div class="hi">🏆</div><h4>CRM Pipeline</h4><p>Kanban, Memory, intent signals</p></div>
+    <div class="hc" onclick="lh('warmup')"><div class="hi">🔥</div><h4>Email Warmup</h4><p>Reputation, schedule</p></div>
+    <div class="hc" onclick="lh('analytics')"><div class="hi">📊</div><h4>Analytics</h4><p>KPIs, A/B results, revenue</p></div>
+    <div class="hc" onclick="lh('inbox-test')"><div class="hi">🧪</div><h4>Inbox Tester</h4><p>Domain health, SPF/DKIM</p></div>
   </div>
 
-  <div style="font-size:10px;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px">Killer Features v2.5 (10)</div>
+  <div style="font-size:10px;color:var(--a2);letter-spacing:2px;text-transform:uppercase;margin:18px 0 8px">v2.5 Killer Features (10) <span class="nbg">NEW</span></div>
   <div class="hg">
-    <div class="hc kf" onclick="lh('domain-health')"><div class="hi">🏥</div><h4>Domain Health <span class="nb2">v2.5</span></h4><p>SPF, DKIM, DMARC, MX, Spamhaus — A–F grade</p></div>
-    <div class="hc kf" onclick="lh('icp')"><div class="hi">🎯</div><h4>ICP Builder <span class="nb2">v2.5</span></h4><p>Define once, auto-scrape weekly</p></div>
-    <div class="hc kf" onclick="lh('ab-testing')"><div class="hi">🔄</div><h4>A/B Testing <span class="nb2">v2.5</span></h4><p>Two variants, auto-promotes winner</p></div>
-    <div class="hc kf" onclick="lh('intent-signals')"><div class="hi">📊</div><h4>Intent Signals <span class="nb2">v2.5</span></h4><p>Google review growth = hot lead</p></div>
-    <div class="hc kf" onclick="lh('memory')"><div class="hi">🧠</div><h4>Memory CRM <span class="nb2">v2.5</span></h4><p>"Call me in Q4" → auto-reminder Oct 1</p></div>
-    <div class="hc kf" onclick="lh('linkedin')"><div class="hi">💼</div><h4>LinkedIn Outreach <span class="nb2">v2.5</span></h4><p>Connection requests in sequences</p></div>
-    <div class="hc kf" onclick="lh('workspaces')"><div class="hi">🏢</div><h4>White-Label Workspaces <span class="nb2">v2.5</span></h4><p>Isolated data per client</p></div>
-    <div class="hc kf" onclick="lh('ai-sdr')"><div class="hi">🤖</div><h4>AI SDR Autonomous <span class="nb2">v2.5</span></h4><p>Claude picks targets, sends on autopilot</p></div>
-    <div class="hc kf" onclick="lh('video-thumbnails')"><div class="hi">🎬</div><h4>Video Thumbnails <span class="nb2">v2.5</span></h4><p>Personalised SVG play buttons — 3× CTR</p></div>
-    <div class="hc kf" onclick="lh('apify')"><div class="hi">🏙</div><h4>Bulk Scraper+Scoring <span class="nb2">v2.5</span></h4><p>50 cities, auto-scored, top 20% imported</p></div>
+    <div class="hc kf" onclick="lh('domain-health')"><div class="hi">🏥</div><h4>Domain Health <span class="nb2">v2.5</span></h4><p>SPF/DKIM/DMARC grade A–F</p></div>
+    <div class="hc kf" onclick="lh('icp')"><div class="hi">🎯</div><h4>ICP Builder <span class="nb2">v2.5</span></h4><p>Auto-scrape weekly</p></div>
+    <div class="hc kf" onclick="lh('ab-testing')"><div class="hi">🔄</div><h4>A/B Testing <span class="nb2">v2.5</span></h4><p>Auto-promotes winner</p></div>
+    <div class="hc kf" onclick="lh('intent-signals')"><div class="hi">📊</div><h4>Intent Signals <span class="nb2">v2.5</span></h4><p>Review growth = hot lead</p></div>
+    <div class="hc kf" onclick="lh('memory')"><div class="hi">🧠</div><h4>Memory CRM <span class="nb2">v2.5</span></h4><p>"Call me in Q4" → Oct 1</p></div>
+    <div class="hc kf" onclick="lh('linkedin')"><div class="hi">💼</div><h4>LinkedIn <span class="nb2">v2.5</span></h4><p>Connection requests in sequences</p></div>
+    <div class="hc kf" onclick="lh('workspaces')"><div class="hi">🏢</div><h4>Workspaces <span class="nb2">v2.5</span></h4><p>White-label client isolation</p></div>
+    <div class="hc kf" onclick="lh('ai-sdr')"><div class="hi">🤖</div><h4>AI SDR <span class="nb2">v2.5</span></h4><p>Autonomous outreach mode</p></div>
+    <div class="hc kf" onclick="lh('video-thumbnails')"><div class="hi">🎬</div><h4>Video Thumbnails <span class="nb2">v2.5</span></h4><p>3× CTR lift — base64 SVG</p></div>
+    <div class="hc kf" onclick="lh('apify')"><div class="hi">🏙</div><h4>Bulk Scraper <span class="nb2">v2.5</span></h4><p>50 cities, auto-scored</p></div>
   </div>
 
-  <div style="font-size:10px;color:#34d399;letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px">Killer Features v3.0 — NEW (10)</div>
-  <div class="hg2">
-    <div class="hc kf3" onclick="lh('smart-sequences')"><div class="hi">🔀</div><h4>Smart Sequences <span class="nb3">NEW</span></h4><p>If/else branches per lead action. Skylead charges $100/mo.</p></div>
-    <div class="hc kf3" onclick="lh('scheduler')"><div class="hi">📅</div><h4>Meeting Scheduler <span class="nb3">NEW</span></h4><p>Built-in Calendly. Leads book slots, CRM auto-updates.</p></div>
-    <div class="hc kf3" onclick="lh('buying-signals')"><div class="hi">⚡</div><h4>Buying Signals <span class="nb3">NEW</span></h4><p>Pixel tracking → hot lead queue → immediate action.</p></div>
-    <div class="hc kf3" onclick="lh('spintax')"><div class="hi">🎲</div><h4>Spintax + Liquid Syntax <span class="nb3">NEW</span></h4><p>Randomised words + conditional copy. Zero spam filters.</p></div>
-    <div class="hc kf3" onclick="lh('email-verification')"><div class="hi">✅</div><h4>Email Verification <span class="nb3">NEW</span></h4><p>MX check + disposable domain + role-based flagging.</p></div>
-    <div class="hc kf3" onclick="lh('inbox-rotation')"><div class="hi">🔁</div><h4>Inbox Rotation <span class="nb3">NEW</span></h4><p>150 emails/day safely across 3 inboxes. Instantly $97/mo.</p></div>
-    <div class="hc kf3" onclick="lh('forecasting')"><div class="hi">📈</div><h4>Revenue Forecasting <span class="nb3">NEW</span></h4><p>30/60/90-day AI predictions + stale deal alerts.</p></div>
-    <div class="hc kf3" onclick="lh('competitor-monitor')"><div class="hi">👁</div><h4>Competitor Monitor <span class="nb3">NEW</span></h4><p>Track competitor pricing weekly. Unique to OutreachPro.</p></div>
-    <div class="hc kf3" onclick="lh('voice-scripts')"><div class="hi">🎤</div><h4>Voice Message Scripts <span class="nb3">NEW</span></h4><p>Claude writes voicemail scripts. 42% prefer voice.</p></div>
-    <div class="hc kf3" onclick="lh('proposals')"><div class="hi">📋</div><h4>Proposal Generator <span class="nb3">NEW</span></h4><p>1-click branded HTML proposal. PandaDoc €35/mo.</p></div>
+  <div style="font-size:10px;color:#34d399;letter-spacing:2px;text-transform:uppercase;margin:18px 0 8px">v3.0 Killer Features (10) <span class="nbg nbg2">NEW</span></div>
+  <div class="hg">
+    <div class="hc sf" onclick="lh('smart-sequences')"><div class="hi">🔀</div><h4>Smart Sequences <span class="nb3">v3.0</span></h4><p>If/else branches — Skylead $100/mo</p></div>
+    <div class="hc sf" onclick="lh('scheduler')"><div class="hi">📅</div><h4>Scheduler <span class="nb3">v3.0</span></h4><p>Built-in Calendly</p></div>
+    <div class="hc sf" onclick="lh('buying-signals')"><div class="hi">⚡</div><h4>Buying Signals <span class="nb3">v3.0</span></h4><p>Pixel → hot lead queue</p></div>
+    <div class="hc sf" onclick="lh('spintax')"><div class="hi">🎲</div><h4>Spintax + Liquid <span class="nb3">v3.0</span></h4><p>Randomised copy, zero spam</p></div>
+    <div class="hc sf" onclick="lh('email-verification')"><div class="hi">✅</div><h4>Email Verify <span class="nb3">v3.0</span></h4><p>MX + disposable + role-based</p></div>
+    <div class="hc sf" onclick="lh('inbox-rotation')"><div class="hi">🔁</div><h4>Inbox Rotation <span class="nb3">v3.0</span></h4><p>150/day safely — Instantly $97/mo</p></div>
+    <div class="hc sf" onclick="lh('forecasting')"><div class="hi">📈</div><h4>Forecasting <span class="nb3">v3.0</span></h4><p>30/60/90-day AI prediction</p></div>
+    <div class="hc sf" onclick="lh('competitor-monitor')"><div class="hi">👁</div><h4>Competitors <span class="nb3">v3.0</span></h4><p>Track pricing weekly</p></div>
+    <div class="hc sf" onclick="lh('voice-scripts')"><div class="hi">🎤</div><h4>Voice Scripts <span class="nb3">v3.0</span></h4><p>WhatsApp/voicemail AI scripts</p></div>
+    <div class="hc sf" onclick="lh('proposals')"><div class="hi">📋</div><h4>Proposals <span class="nb3">v3.0</span></h4><p>1-click branded HTML — PandaDoc €35/mo</p></div>
+  </div>
+
+  <div style="font-size:10px;color:#fcd34d;letter-spacing:2px;text-transform:uppercase;margin:18px 0 8px">Salesforce Features (20) <span class="nbg" style="background:#d97706">SF</span></div>
+  <div class="hg">
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('activity-timeline')"><div class="hi">🕐</div><h4>Activity Timeline <span class="nb4">SF</span></h4><p>Every touchpoint logged — $175/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('opportunity-scoring')"><div class="hi">🎯</div><h4>Opp. Scoring <span class="nb4">SF</span></h4><p>1–99 win probability — $175/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('pipeline-inspection')"><div class="hi">🔍</div><h4>Pipeline Inspect <span class="nb4">SF</span></h4><p>Weekly delta view — $175/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('workflows')"><div class="hi">⚡</div><h4>Workflow Auto. <span class="nb4">SF</span></h4><p>Trigger→action rules — $100/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('daily-tasks')"><div class="hi">📋</div><h4>Daily Task Queue <span class="nb4">SF</span></h4><p>Sales Workspace — $175/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('sentiment')"><div class="hi">💬</div><h4>Email Sentiment <span class="nb4">SF</span></h4><p>AI reply classification — $350/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('account-research')"><div class="hi">🗺</div><h4>Account Research <span class="nb4">SF</span></h4><p>AI brief before calls — $350/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('cpq')"><div class="hi">💰</div><h4>CPQ + Pricing <span class="nb4">SF</span></h4><p>Volume discounts — $75/mo add-on</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('coaching')"><div class="hi">📊</div><h4>Coaching Dashboard <span class="nb4">SF</span></h4><p>Manager view + AI insight — $350/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('lead-prioritisation')"><div class="hi">🏆</div><h4>Lead Priority <span class="nb4">SF</span></h4><p>Hot/Warm/Cold tiers — $175/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('quota')"><div class="hi">💎</div><h4>Quota + Commission <span class="nb4">SF</span></h4><p>SPM tracker — $350/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('win-rate')"><div class="hi">📉</div><h4>Win Rate <span class="nb4">SF</span></h4><p>Won vs lost analytics — $175/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('call-scripts')"><div class="hi">📞</div><h4>AI Call Scripts <span class="nb4">SF</span></h4><p>Pre-call AI brief — $350/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('segmentation')"><div class="hi">🗂</div><h4>Segmentation <span class="nb4">SF</span></h4><p>City/category/rating export — $175/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('sequence-analytics')"><div class="hi">📊</div><h4>Seq. Analytics <span class="nb4">SF</span></h4><p>Per-step open/reply rates</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('meeting-summary')"><div class="hi">📝</div><h4>Meeting Summary <span class="nb4">SF</span></h4><p>Notes → summary + draft — $350/mo</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('goals')"><div class="hi">🎯</div><h4>Goals Tracker <span class="nb4">SF</span></h4><p>Monthly targets + projections</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('playbooks')"><div class="hi">📖</div><h4>Playbooks <span class="nb4">SF</span></h4><p>Battle cards — $150/mo add-on</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('winback')"><div class="hi">🔁</div><h4>Win-Back Campaigns <span class="nb4">SF</span></h4><p>AI re-engagement for lost deals</p></div>
+    <div class="hc" style="border-color:rgba(245,158,11,.22)" onclick="lh('template-library')"><div class="hi">📂</div><h4>Template Library <span class="nb4">SF</span></h4><p>Save + AI variant generation</p></div>
   </div>
 
   <div class="hca" id="hca">
@@ -426,47 +308,31 @@ nav a.act{color:var(--ac2);border-left-color:var(--acc);background:rgba(108,99,2
   </div>
 </div>
 
-<!-- DEPLOY -->
 <div class="sec" id="deploy">
   <div class="sey">Deployment</div><div class="sth">Docker Setup</div>
-  <div class="code"><span class="co"># 1. Clone</span>
-git clone https://github.com/vvlars-cmd/outreachpro && cd outreachpro
-<span class="co"># 2. Configure</span>
+  <div class="code">git clone https://github.com/vvlars-cmd/outreachpro && cd outreachpro
 cp .env.example .env && nano .env
-<span class="co"># 3. Build and start</span>
 docker compose up --build -d
-<span class="co"># 4. Verify</span>
-curl http://localhost:3000/health
-<span class="co"># → {"status":"ok","ts":"...","port":"3000"}</span>
-open http://localhost:3000/help  <span class="co"># this docs site</span></div>
+curl http://localhost:3000/health  <span class="co"># verify</span>
+open http://localhost:3000/help    <span class="co"># this docs site</span></div>
 </div>
 
-<!-- ENV -->
 <div class="sec" id="env">
-  <div class="sey">Configuration</div><div class="sth">Environment Variables</div>
-  <div class="code"><span class="co"># AI — personalisation, SDR, memory, forecast, proposals, voice scripts</span>
-ANTHROPIC_API_KEY=sk-ant-api03-...
-<span class="co"># Scraping — Apify Google Maps, ICP builder, bulk scraper, competitor monitor</span>
-APIFY_TOKEN=apify_api_...
-<span class="co"># Email — Gmail OAuth2 send, draft, inbox scraper</span>
-GOOGLE_CLIENT_ID=....apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=GOCSPX-...
+  <div class="sey">Config</div><div class="sth">Environment Variables</div>
+  <div class="code">ANTHROPIC_API_KEY=sk-ant-api03-...   <span class="co"># AI features</span>
+APIFY_TOKEN=apify_api_...           <span class="co"># Lead scraping</span>
+GOOGLE_CLIENT_ID=...                <span class="co"># Gmail OAuth2</span>
+GOOGLE_CLIENT_SECRET=...
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/gmail/callback
-<span class="co"># Optional</span>
-PORT=3000
-NODE_ENV=production</div>
+PORT=3000</div>
 </div>
 
-<!-- NPM -->
 <div class="sec" id="npm">
-  <div class="sey">npm Package</div><div class="sth">CLI — npx outreachpro</div>
-  <div class="code">npx outreachpro init    <span class="co"># create .env</span>
+  <div class="sey">npm</div><div class="sth">CLI</div>
+  <div class="code">npx outreachpro init    <span class="co"># setup .env</span>
 npx outreachpro start   <span class="co"># start :3000</span>
-npx outreachpro docker  <span class="co"># docker compose up --build -d</span>
-npx outreachpro help    <span class="co"># show commands</span>
-<span class="co"># npmjs.com/package/outreachpro</span></div>
+npx outreachpro docker  <span class="co"># docker compose up</span></div>
 </div>
-
 </main>
 
 <script>
@@ -502,6 +368,85 @@ Subject B: 28 sends, 7 opens → 25.0% open rate
 POST   /api/ab-tests                    → create test
 POST   /api/ab-tests/:id/record         → record event {variant, event}
 DELETE /api/ab-tests/:id                → delete test</pre>
+`,
+"account-research":`<h2>Account Research</h2>
+<p>Before calling or emailing a lead, you should know: who the decision maker likely is, what their pain points are, what buying signals their Google profile shows, and how hot they are. OutreachPro's Account Research uses Claude to generate a strategic brief for any lead in one click. Salesforce calls this "Relationship Insights" and charges for it in their Unlimited tier at $350+/user/month.</p>
+
+<h3>What the Brief Includes</h3>
+<ul>
+  <li><strong>Decision maker title</strong> — likely title of the person who signs off on purchases (e.g. "Inhaber", "Geschäftsführer")</li>
+  <li><strong>Business size</strong> — inferred from review count and category (solo, small, medium, large)</li>
+  <li><strong>Buying signals</strong> — positive indicators from their profile (e.g. "Excellent reputation suggests premium positioning", "High review growth = actively investing in business")</li>
+  <li><strong>Pain points</strong> — likely problems your product solves for this type of business</li>
+  <li><strong>Talking points</strong> — specific angles for your opening line, tailored to this business</li>
+  <li><strong>Competitor risk</strong> — how likely they already have a competing solution (low/medium/high)</li>
+  <li><strong>Overall rating</strong> — cold / warm / hot</li>
+</ul>
+
+<h3>Generating a Brief</h3>
+<ol>
+  <li>Open any lead in Lead Finder</li>
+  <li>Click <strong>Account Research</strong></li>
+  <li>Claude analyses their Google Business profile data (name, city, category, rating, reviews, website) and returns the brief in ~3 seconds</li>
+  <li>Brief is cached on the lead — no repeated API calls</li>
+</ol>
+
+<h3>Using the Brief Before a Call</h3>
+<pre>Brief: Fahrrad Müller, Köln
+Decision maker: Inhaber / Geschäftsführer
+Business size: Medium (342 reviews)
+Buying signals: "342 reviews + 4.8★ = premium operation with high volume"
+Pain points: "Time spent manually cleaning bikes limits throughput"
+Talking point: "With your review volume, every minute saved per bike = real money"
+Overall: HOT</pre>
+
+<h3>API</h3>
+<pre>POST /api/leads/:id/account-research
+→ { decisionMakerTitle, businessSize, buyingSignals[], painPoints[],
+    talkingPoints[], competitorRisk, overallRating, reasoning }</pre>
+`,
+"activity-timeline":`<h2>Activity Timeline</h2>
+<p>Every interaction with a lead — email sent, opened, clicked, replied, call logged, meeting booked, LinkedIn message sent — is automatically recorded on a unified timeline per lead. No more hunting across Unibox, Campaigns, and CRM to understand a lead's history. One lead, one timeline, every touchpoint in order.</p>
+
+<h3>What Gets Logged Automatically</h3>
+<ul>
+  <li><strong>email_sent</strong> — every campaign email dispatched</li>
+  <li><strong>email_opened</strong> — pixel tracking fires (see Buying Signals)</li>
+  <li><strong>email_clicked</strong> — link click recorded</li>
+  <li><strong>replied</strong> — Unibox reply received</li>
+  <li><strong>meeting_booked</strong> — scheduler slot confirmed</li>
+  <li><strong>linkedin_sent</strong> — LinkedIn step executed</li>
+  <li><strong>signal_detected</strong> — buying signal triggered</li>
+  <li><strong>workflow_action</strong> — automation fired</li>
+</ul>
+
+<h3>Logging a Call or Meeting</h3>
+<ol>
+  <li>Open any lead in Lead Finder</li>
+  <li>Click <strong>Log Activity</strong></li>
+  <li>Select type: Call, Meeting, Note</li>
+  <li>Write your notes — e.g. "Spoke with Max, interested but wants Q3 budget approval. Said to call back October."</li>
+  <li>Click <strong>Save</strong></li>
+</ol>
+<p>Claude extracts: summary, next steps, sentiment, and — if a date is mentioned — automatically creates a Memory CRM follow-up reminder for that date.</p>
+
+<h3>Use Case: CycleWASH</h3>
+<pre>Lead: Fahrrad Müller, Köln
+
+Timeline:
+10 Mar — email_sent: "Ihre 342 Bewertungen..."
+11 Mar — email_opened (30 pts signal)
+12 Mar — email_clicked: booking link (60 pts signal)
+12 Mar — meeting_booked: 30-min demo, 14 Mar
+14 Mar — call_logged: "Demo done. Very interested.
+           Budget approved in May. Call back 1 May."
+           → Memory CRM: follow-up queued May 1
+14 Mar — deal_moved: Prospect → Meeting</pre>
+
+<h3>API</h3>
+<pre>GET  /api/leads/:id/timeline    → full timeline for one lead
+POST /api/activities/log        → {leadId, type, notes, subject, duration}
+GET  /api/activities/recent     → last 50 activities across all leads</pre>
 `,
 "ai-sdr":`<h2>AI SDR — Autonomous Outreach Mode</h2>
 <p>The AI SDR is OutreachPro's most powerful feature. Claude acts as a virtual Sales Development Representative — analysing your leads, deciding who to target, writing personalised emails, and (in autopilot mode) sending them automatically.</p>
@@ -649,6 +594,50 @@ GET  /api/signals/hot             → leads scoring 60+ not yet actioned
 POST /api/signals/:id/action      → mark signal as actioned
 GET  /t/:leadId/:campaignId       → tracking pixel (returns 1x1 GIF)</pre>
 `,
+"call-scripts":`<h2>AI Call Scripts</h2>
+<p>Before every sales call, generate a full personalised phone script using the lead's Google Business data. Claude writes an opener, hook, pitch, objection handlers, CTA, and closing — all tailored to the specific business. Salesforce AI includes this at $350+/user/month. Free in OutreachPro.</p>
+
+<h3>Generating a Script</h3>
+<ol>
+  <li>Open any lead → click <strong>Call Script</strong></li>
+  <li>Select call goal: book demo, qualify, follow-up after email, post-demo close</li>
+  <li>Select language (de, en, fr...)</li>
+  <li>If you know their objection type, select it — Claude tailors the handler</li>
+  <li>Click Generate — script ready in ~3 seconds</li>
+</ol>
+
+<h3>Script Structure</h3>
+<ul>
+  <li><strong>Opener</strong> — get the right person on the line</li>
+  <li><strong>Hook</strong> — reference their specific Google rating/reviews to show you've done research</li>
+  <li><strong>Pitch</strong> — 1-sentence value proposition tailored to their business type</li>
+  <li><strong>Objection handlers</strong> — budget, timing, competitor, no need — each specific to this lead</li>
+  <li><strong>CTA</strong> — clear next step ask, referencing their city and a peer reference</li>
+  <li><strong>Closing</strong> — confirm the next step and exit cleanly</li>
+</ul>
+
+<h3>Example Output — Cold Call, Bike Dealer, German</h3>
+<pre>OPENER: "Guten Tag, hier spricht [NAME]. Spreche ich mit dem
+Verantwortlichen von Fahrrad Müller?"
+
+HOOK: "Ich habe Ihre 342 Google-Bewertungen gesehen —
+4,8 Sterne ist eine beeindruckende Leistung. Darf ich kurz
+fragen, wie viel Zeit Ihr Team täglich mit Reinigung verbringt?"
+
+PITCH: "Genau das ist unser Thema — CycleWASH Pro bringt das
+von 15 Minuten auf unter 4 Minuten pro Fahrrad."
+
+BUDGET OBJECTION: "Ich verstehe. Bei einem ähnlichen Betrieb
+in Köln hat sich die Anlage in 14 Monaten gerechnet — darf
+ich Ihnen das kurz zeigen?"
+
+CTA: "Hätten Sie nächste Woche 30 Minuten für eine Demo?"</pre>
+
+<h3>API</h3>
+<pre>POST /api/leads/:id/call-script
+  Body: { callGoal, language, objectionType? }
+  → { opener, hook, pitch, objectionHandlers, cta, closing, talkingPoints[] }</pre>
+`,
 "campaigns":`<h2>Campaigns</h2>
 <p>A campaign is a container for a sequence of emails sent to a list of leads. OutreachPro handles scheduling, daily limits, stop-on-reply, and A/B subject testing automatically.</p>
 
@@ -681,6 +670,36 @@ Subject B: "Saw your {{rating}}★ reviews — impressive"</pre>
 
 <h3>LinkedIn Steps</h3>
 <p>Add LinkedIn connection requests as steps in any sequence (Killer Feature #7). After connecting, follow-up messages can be added as later steps. Claude generates personalised connection notes based on the lead's business profile.</p>
+`,
+"coaching":`<h2>Sales Coaching Dashboard</h2>
+<p>The coaching dashboard gives managers a real-time view of pipeline health, team performance, best-performing campaigns, A/B test winners, and overdue follow-ups. Claude generates a specific coaching insight based on the actual numbers. Salesforce includes this in their Unlimited tier at $350/user/month. Free in OutreachPro.</p>
+
+<h3>What the Dashboard Shows</h3>
+<ul>
+  <li><strong>Deal conversion funnel</strong> — count and value at each pipeline stage (Prospect → Won)</li>
+  <li><strong>Best campaign</strong> — highest reply rate campaign and its performance</li>
+  <li><strong>A/B test winners</strong> — all completed tests with the winning subject line</li>
+  <li><strong>Overdue follow-ups</strong> — Memory CRM reminders that are past due</li>
+  <li><strong>Activity breakdown</strong> — how many calls, emails, meetings logged across all leads</li>
+  <li><strong>AI coaching insight</strong> — Claude's specific, actionable coaching recommendation based on actual pipeline data</li>
+</ul>
+
+<h3>Example Coaching Insight</h3>
+<blockquote><em>"Your pipeline has 8 deals stuck in Contacted with no activity in 7+ days — prioritise follow-up calls this week. Your Tuesday email sends have a 38% open rate vs 21% on Monday, so reschedule next week's campaign launches to Tuesday mornings."</em></blockquote>
+
+<h3>Using It as a Manager</h3>
+<ol>
+  <li>Open <strong>Analytics → Coaching Dashboard</strong> every Monday</li>
+  <li>Check the funnel — where are deals stacking up? That stage needs attention.</li>
+  <li>Review A/B test winners — update all active campaigns to use the winning subject</li>
+  <li>Check overdue follow-ups — assign or action them before the day ends</li>
+  <li>Read the AI insight — one specific thing to improve this week</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/coaching/dashboard
+→ { bestCampaign, completedAbTests[], funnel[], overdueFollowUps,
+    activityBreakdown, coachingInsight }</pre>
 `,
 "competitor-monitor":`<h2>Competitor Price Monitor</h2>
 <p>Track your competitors' pricing pages and get alerted when they change their prices, launch new features, or run promotions. OutreachPro is the only sales engagement tool with this built in. Use it to stay one step ahead in every sales conversation and auto-update your email copy when the competitive landscape shifts.</p>
@@ -769,6 +788,320 @@ DELETE /api/competitors/:id      → remove competitor</pre>
   <li>Test two subject variants using A/B testing before mass sending</li>
 </ul>
 `,
+"cpq":`<h2>CPQ — Product Catalogue & Pricing Calculator</h2>
+<p>Configure your products, prices, and discount rules once. When generating a proposal or quote, OutreachPro calculates the total automatically — applying volume discounts, deal-specific discounts, and a global discount if needed. Salesforce CPQ is a $75/user/month add-on. In OutreachPro it's built in.</p>
+
+<h3>Default Product Catalogue (CycleWASH)</h3>
+<ul>
+  <li><strong>CycleWASH Pro Platinum</strong> — €38,000 base price. 5% volume discount from qty 2, 10% from qty 5.</li>
+  <li><strong>CycleWASH Mini Platinum</strong> — €27,500 base price. 5% volume discount from qty 2.</li>
+  <li><strong>Extended Warranty (5yr)</strong> — €3,500. No volume discount.</li>
+  <li><strong>Installation & Training</strong> — €1,200. No volume discount.</li>
+</ul>
+
+<h3>Configuring Products</h3>
+<ol>
+  <li>Go to <strong>Settings → Product Catalogue</strong></li>
+  <li>Click <strong>Add Product</strong></li>
+  <li>Set name, base price, currency, category, and discount rules</li>
+  <li>Discount rules: <code>[{ minQty: 2, discountPct: 5 }, { minQty: 5, discountPct: 10 }]</code></li>
+</ol>
+
+<h3>Building a Quote</h3>
+<ol>
+  <li>Go to <strong>CRM → Deal → Build Quote</strong> or <strong>Proposal Generator</strong></li>
+  <li>Select products and quantities</li>
+  <li>Add a deal-specific manual discount if applicable</li>
+  <li>OutreachPro calculates: line totals, applied discounts, subtotal, and final total</li>
+  <li>Total feeds into the Proposal Generator automatically</li>
+</ol>
+
+<h3>Discount Priority</h3>
+<pre>Volume discount (from rules) + Manual discount (per line) + Global discount
+= Total discount per line item (capped at 40%)</pre>
+
+<h3>API</h3>
+<pre>GET    /api/products              → list product catalogue
+POST   /api/products              → add product
+POST   /api/cpq/calculate
+  Body: { items: [{productId, qty, manualDiscountPct}], globalDiscountPct }
+  → { lineItems[], subtotal, total, currency, validDays }
+DELETE /api/products/:id          → remove product</pre>
+`,
+"crm-hubspot":`<h2>HubSpot Integration</h2>
+<p>Connect OutreachPro to HubSpot to sync leads as contacts, create deals automatically when meetings are booked, log outreach activity as notes, and keep your HubSpot pipeline up to date without manual data entry.</p>
+
+<h3>Getting Your HubSpot API Key</h3>
+<ol>
+  <li>Log in to HubSpot → Click your account name (top right) → <strong>Profile & Preferences</strong></li>
+  <li>Go to <strong>Integrations → Private Apps</strong></li>
+  <li>Click <strong>Create a private app</strong></li>
+  <li>Give it a name (e.g. "OutreachPro Sync")</li>
+  <li>Under <strong>Scopes</strong>, enable: <code>crm.objects.contacts.write</code>, <code>crm.objects.deals.write</code>, <code>crm.objects.notes.write</code>, <code>crm.objects.contacts.read</code>, <code>crm.objects.deals.read</code></li>
+  <li>Click <strong>Create app</strong> → copy the access token</li>
+  <li>In OutreachPro: Settings → CRM → HubSpot → paste token → <strong>Test Connection</strong></li>
+</ol>
+
+<h3>What Gets Synced</h3>
+<ul>
+  <li>Lead name → HubSpot Contact (firstname + lastname split automatically)</li>
+  <li>Lead email, phone, website → Contact properties</li>
+  <li>Lead city → Contact city property</li>
+  <li>Lead status → hs_lead_status = "NEW"</li>
+  <li>Company name → HubSpot Company (associated to contact)</li>
+</ul>
+
+<h3>Automatically Create Deals When Meetings Are Booked</h3>
+<p>When a lead books a meeting via the Meeting Scheduler, OutreachPro can automatically create a HubSpot deal in "Appointment Scheduled" stage. Configure this in <strong>Settings → Scheduler → On booking: Create HubSpot deal</strong>.</p>
+
+<h3>Log Outreach as HubSpot Notes</h3>
+<p>After sending a campaign email, OutreachPro can log it as a HubSpot note on the contact record — including subject, send time, and campaign name. Enable this in <strong>Settings → CRM → HubSpot → Log sent emails as notes</strong>.</p>
+
+<h3>HubSpot Deal Stages</h3>
+<p>OutreachPro maps its CRM stages to HubSpot deal stages automatically:</p>
+<pre>OutreachPro Stage → HubSpot Stage
+Contacted         → appointmentscheduled
+Replied           → qualifiedtobuy
+Meeting           → presentationscheduled
+Proposal          → decisionmakerboughtin
+Won               → closedwon
+Lost              → closedlost</pre>
+
+<h3>Use Case: CycleWASH Pipeline</h3>
+<p>Scrape 50 bike dealers with Apify → Score leads → Sync top 20 to HubSpot → Run OutreachPro campaign → When a dealer replies, automatically move their HubSpot contact to "Replied" stage → When they book a demo, auto-create a deal in "Appointment Scheduled" with €38,000 value.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/hubspot/config    → {apiKey, portalId}
+POST /api/crm/hubspot/test      → test connection
+GET  /api/crm/hubspot/contacts  → list contacts
+POST /api/crm/hubspot/contacts  → create contact
+GET  /api/crm/hubspot/deals     → list deals
+POST /api/crm/hubspot/deals     → create deal
+POST /api/crm/hubspot/notes     → add note to contact/deal
+POST /api/crm/hubspot/sync      → sync OutreachPro leads → HubSpot</pre>
+`,
+"crm-integrations":`<h2>CRM Integrations — Overview</h2>
+<p>OutreachPro connects directly to the five most popular CRM tools used by marketers and sales teams. Once configured, you can push leads, sync deals, create contacts, log notes, and keep everything in sync — without ever leaving OutreachPro.</p>
+
+<h3>Supported CRMs</h3>
+<ul>
+  <li>🟠 <strong>HubSpot</strong> — contacts, companies, deals, notes (API v3)</li>
+  <li>🔵 <strong>Pipedrive</strong> — persons, organizations, deals, activities (API v2)</li>
+  <li>☁️ <strong>Salesforce</strong> — leads, opportunities, contacts, SOQL queries (REST API v59)</li>
+  <li>🟢 <strong>Zoho CRM</strong> — leads, deals, contacts, bulk sync (API v6)</li>
+  <li>⚪ <strong>Notion</strong> — CRM-as-database, pages, properties (REST API)</li>
+</ul>
+
+<h3>Quick Setup Flow</h3>
+<ol>
+  <li>Go to <strong>Settings → CRM Integrations</strong></li>
+  <li>Click the CRM you want to connect</li>
+  <li>Paste your API key / credentials</li>
+  <li>Click <strong>Test Connection</strong> — green = connected</li>
+  <li>Click <strong>Sync Leads</strong> to push your OutreachPro leads to that CRM</li>
+</ol>
+
+<h3>One-Button Sync All</h3>
+<p>Go to <strong>Settings → CRM Integrations → Sync All CRMs</strong>. OutreachPro pushes your leads to every connected CRM simultaneously. Useful after a big Apify scrape — import the leads, score them, then sync the top-scoring ones to all your CRMs in one click.</p>
+
+<h3>Sync Log</h3>
+<p>Every sync is logged with: CRM name, number synced, number failed, and timestamp. Go to <strong>Settings → CRM Integrations → Sync History</strong> to see the full log. Useful for auditing what's been pushed where.</p>
+
+<h3>API — Status Check</h3>
+<pre>GET /api/crm/status
+→ {
+    hubspot:    { configured: true },
+    pipedrive:  { configured: false },
+    salesforce: { configured: true },
+    zoho:       { configured: false },
+    notion:     { configured: true }
+  }
+
+POST /api/crm/sync-all
+  Body: { limit: 25, leadIds?: [] }
+  → { results: { hubspot: {...}, pipedrive: {...}, ... } }
+
+GET /api/crm/sync-log
+  → [{crm, synced, failed, ts}]</pre>
+`,
+"crm-notion":`<h2>Notion CRM Integration</h2>
+<p>Many teams use Notion as their CRM — a database where each row is a lead or deal, with custom properties for status, rating, city, website, and notes. OutreachPro connects directly to your Notion CRM database to sync leads, update statuses, and keep everything in one place.</p>
+
+<h3>Setting Up Your Notion CRM Database</h3>
+<p>First, create a Notion database with these properties (OutreachPro will map to them automatically by name):</p>
+<pre>Name     — Title (required)
+Email    — Email
+Phone    — Phone number
+Company  — Text
+City     — Text
+Status   — Select (options: New, Contacted, Replied, Meeting, Won, Lost)
+Rating   — Number
+Website  — URL
+Category — Select
+Notes    — Text</pre>
+<p>You can add extra properties — OutreachPro will only write to the ones it knows about.</p>
+
+<h3>Creating a Notion Integration Token</h3>
+<ol>
+  <li>Go to <strong>notion.so/my-integrations</strong> → New integration</li>
+  <li>Name it "OutreachPro", select your workspace</li>
+  <li>Capabilities: Read content, Update content, Insert content</li>
+  <li>Copy the <strong>Internal Integration Token</strong> (starts with <code>secret_</code>)</li>
+  <li>In your Notion database: click <strong>···</strong> → <strong>Add connections</strong> → select your OutreachPro integration</li>
+  <li>Copy the <strong>Database ID</strong> from the database URL: <code>notion.so/workspace/<strong>DATABASE_ID</strong>?v=...</code></li>
+  <li>In OutreachPro: Settings → CRM → Notion → paste token + database ID → Test</li>
+</ol>
+
+<h3>How It Works</h3>
+<p>Each OutreachPro lead becomes a page (row) in your Notion database. The lead's name, email, phone, city, rating, website, and category are mapped to Notion properties. When a lead's status changes in OutreachPro, you can sync the update back to Notion to keep both in sync.</p>
+
+<h3>Use Case: Solo Founder / Small Team</h3>
+<p>If you already live in Notion for notes, tasks, and planning — use it as your CRM too. OutreachPro handles all the outreach automation; Notion is your relationship memory. After every call, add notes directly in Notion. Use Notion's filter views to see all leads in "Meeting" stage, all leads from Köln, or all leads with rating above 4.5.</p>
+
+<h3>Use Case: Content + Outbound Team</h3>
+<p>Marketing team uses Notion for content planning. Sales team uses OutreachPro for outreach. Sync OutreachPro leads to a shared Notion database — marketing sees who's being targeted, adds context (blog posts the lead might like, relevant case studies), and both teams stay aligned without Slack threads.</p>
+
+<h3>API</h3>
+<pre>POST  /api/crm/notion/config        → {apiKey, databaseId}
+POST  /api/crm/notion/test          → test connection
+GET   /api/crm/notion/pages         → list database entries
+POST  /api/crm/notion/pages         → create page (lead entry)
+PATCH /api/crm/notion/pages/:pageId → update status/notes
+POST  /api/crm/notion/sync          → sync leads → Notion database</pre>
+`,
+"crm-pipedrive":`<h2>Pipedrive Integration</h2>
+<p>Pipedrive is built for sales teams who manage deals in visual pipelines. OutreachPro connects to Pipedrive to sync your scraped leads as persons and organizations, push deals when prospects advance in your sequence, and log activities to keep your Pipedrive pipeline accurate.</p>
+
+<h3>Getting Your Pipedrive API Token</h3>
+<ol>
+  <li>Log in to Pipedrive → Click your avatar (top right) → <strong>Personal preferences</strong></li>
+  <li>Go to the <strong>API</strong> tab</li>
+  <li>Copy your personal API token</li>
+  <li>Your company domain is the subdomain from your Pipedrive URL: <code>yourcompany.pipedrive.com</code> → domain = <code>yourcompany</code></li>
+  <li>In OutreachPro: Settings → CRM → Pipedrive → paste token + domain → <strong>Test Connection</strong></li>
+</ol>
+
+<h3>Data Mapping</h3>
+<pre>OutreachPro Lead → Pipedrive
+name             → Person name + Organization name
+email            → Person email (label: work)
+phone            → Person phone
+city             → (in person notes)
+website          → Organization website
+status           → (deal stage when synced as deal)</pre>
+
+<h3>How Sync Works</h3>
+<p>When you sync a lead to Pipedrive, OutreachPro creates two records:</p>
+<ol>
+  <li><strong>Organization</strong> — the business (e.g. "Fahrrad Müller Köln")</li>
+  <li><strong>Person</strong> — linked to the organization, with email and phone</li>
+</ol>
+<p>You can then manually create a Deal linked to the person/org in Pipedrive, or use OutreachPro's deal creation API to auto-create it when a lead reaches "Proposal" stage.</p>
+
+<h3>Logging Activities from OutreachPro</h3>
+<p>When you send an email, OutreachPro can log a Pipedrive activity: type = "Email", subject = your email subject, due date = send date. This gives your Pipedrive timeline a complete record of all outreach. Enable in <strong>Settings → CRM → Pipedrive → Log emails as activities</strong>.</p>
+
+<h3>Use Case: Trade Show Follow-Up</h3>
+<p>After a trade show (e.g. Eurobike Köln), import the attendee list into OutreachPro → run a personalised follow-up sequence → sync all engaged leads (opened or replied) to Pipedrive → create deals for everyone who books a demo.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/pipedrive/config         → {apiKey, domain}
+POST /api/crm/pipedrive/test           → test connection
+GET  /api/crm/pipedrive/persons        → list persons
+POST /api/crm/pipedrive/persons        → create person
+POST /api/crm/pipedrive/organizations  → create org
+GET  /api/crm/pipedrive/deals          → list deals
+POST /api/crm/pipedrive/deals          → create deal
+POST /api/crm/pipedrive/activities     → log activity
+POST /api/crm/pipedrive/sync           → sync leads → persons + orgs</pre>
+`,
+"crm-salesforce":`<h2>Salesforce Integration</h2>
+<p>Connect OutreachPro to Salesforce to push scraped leads as Salesforce Leads, convert hot prospects into Opportunities, and run SOQL queries directly from OutreachPro. Supports both Username-Password OAuth2 (simplest for self-hosted) and direct access token.</p>
+
+<h3>Getting Salesforce Credentials</h3>
+<p>Use the <strong>Username-Password OAuth2 flow</strong> for self-hosted OutreachPro:</p>
+<ol>
+  <li>In Salesforce: <strong>Setup → App Manager → New Connected App</strong></li>
+  <li>Check <strong>Enable OAuth Settings</strong></li>
+  <li>Callback URL: <code>http://localhost:3000/api/crm/salesforce/callback</code></li>
+  <li>Selected OAuth Scopes: <code>api</code>, <code>refresh_token</code></li>
+  <li>Save → wait 10 minutes for propagation</li>
+  <li>Copy <strong>Consumer Key</strong> (= Client ID) and <strong>Consumer Secret</strong></li>
+  <li>Your password for the API: <code>your_sf_password + your_security_token</code> (concatenated, no space)</li>
+  <li>In OutreachPro: Settings → CRM → Salesforce → fill in all fields → Test</li>
+</ol>
+<p>Alternatively, if you already have an access token from Salesforce Workbench or Postman, you can enter it directly in the <strong>Access Token</strong> field along with your Instance URL.</p>
+
+<h3>Lead Data Mapping</h3>
+<pre>OutreachPro → Salesforce Lead
+name        → LastName + FirstName (split by space)
+email       → Email
+phone       → Phone
+city        → City
+website     → Website
+category    → Description (with rating + review count)
+source      → LeadSource = "OutreachPro"
+status      → Status = "Open - Not Contacted"</pre>
+
+<h3>SOQL Queries from OutreachPro</h3>
+<p>Run any SOQL query against your Salesforce org directly from OutreachPro's interface. Useful for pulling back converted leads, checking deal progress, or building reports. Go to <strong>CRM → Salesforce → Query</strong>.</p>
+<pre>-- Example queries:
+SELECT Id, Name, Email, Status FROM Lead WHERE Status = 'Working - Contacted'
+SELECT Id, Name, Amount, StageName FROM Opportunity WHERE StageName != 'Closed Lost'
+SELECT Id, Name, Account.Name FROM Contact WHERE CreatedDate = LAST_N_DAYS:30</pre>
+
+<h3>Use Case: Enterprise Sales Team</h3>
+<p>Your Salesforce is the system of record. Use OutreachPro for prospecting and outreach — it's faster, cheaper, and more personalised than Salesforce's native outreach tools. When a lead is qualified, sync them to Salesforce as a Lead. When they convert, create an Opportunity from OutreachPro's CRM Proposal generator and push it straight to Salesforce.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/salesforce/config       → {clientId, clientSecret, username, password, instanceUrl}
+POST /api/crm/salesforce/test         → test connection
+POST /api/crm/salesforce/leads        → create Salesforce Lead
+POST /api/crm/salesforce/opportunities → create Opportunity
+POST /api/crm/salesforce/query        → {query: "SELECT ..."} → SOQL results
+POST /api/crm/salesforce/sync         → sync leads → SF Leads</pre>
+`,
+"crm-zoho":`<h2>Zoho CRM Integration</h2>
+<p>Zoho CRM is popular with SMEs and growing sales teams, especially in European and Indian markets. OutreachPro connects via OAuth2 to sync leads, create deals, and push bulk records efficiently — Zoho's API supports up to 100 records per request, making it the fastest CRM to bulk-sync to.</p>
+
+<h3>Getting Zoho OAuth Credentials</h3>
+<ol>
+  <li>Go to <strong>api-console.zoho.com</strong> (or <code>.eu</code>, <code>.in</code> depending on your region)</li>
+  <li>Click <strong>Add Client → Self Client</strong></li>
+  <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong></li>
+  <li>Click <strong>Generate Code</strong> → Scope: <code>ZohoCRM.modules.ALL,ZohoCRM.settings.ALL</code></li>
+  <li>Set time: 10 minutes → Generate</li>
+  <li>Under <strong>Generate Access Token</strong> → paste the code → your account server region</li>
+  <li>Copy the <strong>refresh_token</strong> from the response (save it — you can only see it once)</li>
+  <li>In OutreachPro: Settings → CRM → Zoho → enter clientId, clientSecret, refreshToken, region → Test</li>
+</ol>
+<p><strong>Regions:</strong> <code>com</code> (US), <code>eu</code> (Europe), <code>in</code> (India), <code>com.au</code> (Australia), <code>jp</code> (Japan)</p>
+
+<h3>Bulk Sync — 100 Leads at Once</h3>
+<p>Zoho's API supports up to 100 records per request. OutreachPro automatically batches your leads into groups of 50 for reliable bulk sync. A list of 200 leads syncs in 4 API calls — much faster than HubSpot or Salesforce which process one record at a time.</p>
+
+<h3>Data Mapping</h3>
+<pre>OutreachPro → Zoho CRM Lead
+name        → Last_Name (+ First_Name split)
+email       → Email
+phone       → Phone
+city        → City
+website     → Website
+category    → Description
+source      → Lead_Source = "OutreachPro"
+rating+reviews → Description field</pre>
+
+<h3>Use Case: European SME Sales</h3>
+<p>Zoho CRM is particularly popular with German Mittelstand companies. If your prospects use Zoho, sync your OutreachPro leads directly into their Zoho instance when doing partnership or channel sales. Or use Zoho as your own CRM alongside OutreachPro — let OutreachPro handle prospecting and email, Zoho handle deal tracking and invoicing.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/zoho/config    → {clientId, clientSecret, refreshToken, region}
+POST /api/crm/zoho/test      → test connection
+GET  /api/crm/zoho/leads     → list Zoho leads
+POST /api/crm/zoho/leads     → create lead
+POST /api/crm/zoho/deals     → create deal
+POST /api/crm/zoho/sync      → bulk sync leads → Zoho (batches of 50)</pre>
+`,
 "crm":`<h2>CRM Pipeline</h2>
 <p>The CRM Kanban board tracks every lead from first contact to closed deal. Drag cards between stages to update deal status. Revenue updates automatically as deals move to Won.</p>
 
@@ -837,6 +1170,38 @@ DELETE /api/competitors/:id      → remove competitor</pre>
   <li>Click <strong>Run SDR</strong> — Claude analyses your leads and generates personalised subject + opening for each</li>
 </ol>
 <p>In Suggest mode, you get a review screen before anything sends. In Autopilot, Claude sends directly up to the daily limit.</p>
+`,
+"daily-tasks":`<h2>Daily Task Queue — Sales Workspace</h2>
+<p>Salesforce's Spring '26 headline feature is "Sales Workspace" — a command centre showing every rep exactly what to do today. OutreachPro's Daily Task Queue does the same thing: one prioritised list combining follow-up reminders, hot signals, stale deals, sequence steps due, and A/B tests to review. Claude writes a personalised daily briefing at the top.</p>
+
+<h3>What Appears in the Queue</h3>
+<ul>
+  <li><strong>Priority 1 — Follow-ups due (high urgency)</strong> — Memory CRM reminders that are due today or overdue. A lead said "call me in May" and it's May — they're at the top.</li>
+  <li><strong>Priority 2 — Hot buying signals (high urgency)</strong> — leads who clicked a link or opened an email recently. Strike while it's hot.</li>
+  <li><strong>Priority 3 — Stale deals (medium urgency)</strong> — CRM deals with no activity in 7–30 days. These are quietly dying without attention.</li>
+  <li><strong>Priority 4 — Sequence steps due (medium urgency)</strong> — Smart Sequence next steps that are ready to send today.</li>
+  <li><strong>Priority 5 — A/B test results (low urgency)</strong> — completed tests waiting for review and winner confirmation.</li>
+</ul>
+
+<h3>Daily Briefing</h3>
+<p>Claude reads your task list and writes a 1-sentence action-oriented briefing: <em>"You have 3 overdue follow-ups from warm leads and 2 hot signals from this week — focus on the follow-ups first, then the clicked-email leads before end of day."</em></p>
+
+<h3>Using the Queue</h3>
+<ol>
+  <li>Open OutreachPro every morning → <strong>Dashboard → Today's Tasks</strong></li>
+  <li>Start with Priority 1 (follow-ups) — these are leads who gave you a specific date</li>
+  <li>Work through hot signals (Priority 2) — call or email within 2 hours of a click</li>
+  <li>Check stale deals (Priority 3) — one touch each, quick</li>
+  <li>Send sequence steps (Priority 4) — review and fire</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/tasks/today
+→ {
+    taskCount, highUrgency,
+    briefing: "Claude's daily briefing",
+    tasks: [{type, priority, urgency, title, detail, action, leadId?}]
+  }</pre>
 `,
 "domain-health":`<h2>Domain Health Dashboard</h2>
 <p>Before sending a single cold email, your sending domain needs to pass 5 technical checks. The Domain Health Dashboard runs all checks in seconds and gives you a score (A–F) so you know exactly what to fix.</p>
@@ -988,6 +1353,36 @@ Proposal  → 75% probability</pre>
   <li><strong>"Redirect URI mismatch"</strong> — make sure your Google Cloud OAuth settings include exactly <code>http://localhost:3000/api/gmail/callback</code></li>
 </ul>
 `,
+"goals":`<h2>Sales Goals & Progress Tracker</h2>
+<p>Set monthly targets for revenue, leads, demos, and emails sent. OutreachPro tracks real-time progress against each goal and flags whether you're on pace. Goals feed into the Coaching Dashboard and Daily Task Queue.</p>
+
+<h3>Default Goals</h3>
+<ul>
+  <li><strong>Monthly Revenue</strong> — sum of deals marked Won this month vs target</li>
+  <li><strong>New Leads per Month</strong> — leads added to the database this month</li>
+  <li><strong>Demos Booked</strong> — meeting_booked activity events this month</li>
+  <li><strong>Emails Sent</strong> — email_sent activity events this month</li>
+</ul>
+
+<h3>On-Track Logic</h3>
+<p>OutreachPro compares your current % of goal to how far through the month you are. If you're on Day 15 (50% through the month) and you've hit 56% of your revenue goal — you're on track. If you've only hit 30% — you need to accelerate.</p>
+
+<h3>Projected End of Month</h3>
+<p>OutreachPro extrapolates your current pace to project your end-of-month result: <em>"At current pace, you'll close €56,000 by month end (target: €50,000)"</em>. This lets you decide whether to push harder or adjust targets early.</p>
+
+<h3>Adding Custom Goals</h3>
+<ol>
+  <li>Go to <strong>Analytics → Goals</strong></li>
+  <li>Click <strong>New Goal</strong></li>
+  <li>Set name, type (revenue/leads/meetings/emails_sent), period, and target</li>
+  <li>Save — progress calculates automatically</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET    /api/goals              → all goals with current progress + projections
+POST   /api/goals              → create {name, type, period, target, currency?}
+DELETE /api/goals/:id          → delete goal</pre>
+`,
 "icp":`<h2>ICP Builder — Ideal Customer Profile</h2>
 <p>Define your ideal customer profile once and OutreachPro automatically finds and imports matching leads on a weekly schedule. No more manual scraping.</p>
 
@@ -1128,6 +1523,41 @@ GET  /api/rotation/stats          → per-inbox sent today / remaining</pre>
 POST /api/intent-signals/scan         → run scan {limit: 20}
 POST /api/intent-signals/:id/action   → mark actioned</pre>
 `,
+"lead-prioritisation":`<h2>Lead Prioritisation</h2>
+<p>Every lead in your database gets a priority score from 0–100 and is bucketed into Hot, Warm, or Cold. The score combines: base lead quality score (from scraping), buying signals, email verification status, email engagement history, and Memory CRM follow-up flags. Sorted highest first — work the hot leads, skip the cold ones. Salesforce's "Einstein Lead Scoring" charges $175+/user/month for this.</p>
+
+<h3>Priority Score Factors</h3>
+<ul>
+  <li><strong>Base score</strong> — from lead scraper: rating, reviews, website, email, phone (0–100)</li>
+  <li><strong>Buying signals (+15–30pts)</strong> — open = +15, click = +30, reply = +45</li>
+  <li><strong>Email verified (+10pts)</strong> — MX records confirmed, not disposable</li>
+  <li><strong>High-risk email (−20pts)</strong> — disposable or no MX = penalised heavily</li>
+  <li><strong>Has replied (+30pts)</strong> — biggest boost: already engaged</li>
+  <li><strong>Email opened (+10pts)</strong> — showed interest</li>
+  <li><strong>Memory CRM follow-up queued</strong> — flagged in the list (no score change)</li>
+</ul>
+
+<h3>Tier Definitions</h3>
+<ul>
+  <li><strong>Hot (70–100)</strong> — reach out today. These are your best-converting prospects.</li>
+  <li><strong>Warm (40–69)</strong> — solid leads, worth outreach. Personalise your approach.</li>
+  <li><strong>Cold (0–39)</strong> — low priority. Either improve the data (get a better email) or skip.</li>
+</ul>
+
+<h3>Daily Workflow</h3>
+<ol>
+  <li>Go to <strong>Lead Finder → Prioritised View</strong></li>
+  <li>Filter to Hot leads — start your day here</li>
+  <li>Cross-reference with Daily Task Queue — any hot leads with overdue follow-ups?</li>
+  <li>Run Account Research on your top 5 before calling</li>
+  <li>Enrol Warm leads in sequences; Cold leads in ICP-triggered bulk scraping batches</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/leads/prioritised
+→ { total, hot, warm, cold,
+    leads: [{ ...lead, priorityScore, tier: 'hot|warm|cold', factors[] }] }</pre>
+`,
 "linkedin":`<h2>LinkedIn Outreach</h2>
 <p>Add LinkedIn connection requests and messages as steps in your outreach sequences. Claude generates personalised connection notes for each lead — staying within LinkedIn's 300-character limit for connection requests.</p>
 
@@ -1168,6 +1598,51 @@ POST /api/linkedin/generate          → generate message for lead
   Body: { lead, templateId, type: 'connection'|'message' }
   → { message, charCount }</pre>
 `,
+"meeting-summary":`<h2>Meeting Summary & Follow-Up Drafter</h2>
+<p>Paste your meeting notes after any call or demo — Claude writes a structured summary, extracts next steps and objections, assesses deal health, and drafts a personalised follow-up email ready to send. Salesforce AI includes meeting summaries at $350+/user/month.</p>
+
+<h3>Using It After a Meeting</h3>
+<ol>
+  <li>Go to <strong>Lead → Log Activity → Meeting Notes</strong></li>
+  <li>Paste your raw notes — bullet points, messy sentences, keywords all work</li>
+  <li>Select language for the follow-up email</li>
+  <li>Click <strong>Summarise</strong></li>
+  <li>Review the AI-generated summary, next steps, and follow-up email</li>
+  <li>Copy the follow-up email → Gmail → send</li>
+</ol>
+
+<h3>What Claude Extracts</h3>
+<ul>
+  <li><strong>Summary</strong> — 2-sentence plain-English recap of the meeting</li>
+  <li><strong>Key points</strong> — the most important things discussed</li>
+  <li><strong>Next steps</strong> — specific actions agreed on, auto-queued in Memory CRM</li>
+  <li><strong>Objections</strong> — concerns raised that need addressing in follow-up</li>
+  <li><strong>Sentiment</strong> — positive / neutral / negative read on the conversation</li>
+  <li><strong>Deal health</strong> — hot / warm / cold / dead assessment</li>
+  <li><strong>Follow-up email</strong> — full draft referencing the discussion, with CTA</li>
+  <li><strong>Proposal recommended?</strong> — Claude flags if it's time to send a proposal</li>
+</ul>
+
+<h3>Example</h3>
+<pre>Raw notes: "Spoke with Max. Very interested. Budget ready Q2.
+           Mentioned they use a competitor but not happy with
+           support. Wants to see our Pro model. Call back 1 May."
+
+Summary: "Max at Fahrrad Müller is interested and has Q2 budget
+          approved, but is currently using a competitor they're
+          dissatisfied with."
+Next steps: ["Send Pro Platinum brochure", "Follow-up call May 1"]
+Objection: Competitor (dissatisfied — opening exists)
+Deal health: Hot
+Proposal recommended: true
+Memory CRM: Follow-up queued May 1</pre>
+
+<h3>API</h3>
+<pre>POST /api/meetings/summarise
+  Body: { leadId, notes, duration, language }
+  → { summary, keyPoints[], nextSteps[], objections[],
+      sentiment, dealHealth, followUpEmail, proposalRecommended }</pre>
+`,
 "memory":`<h2>Memory CRM — AI Follow-up Reminders</h2>
 <p>Memory CRM uses Claude to extract follow-up timing from reply emails and automatically queue re-engagement messages. Never forget a "call me back in Q4" again.</p>
 
@@ -1202,6 +1677,102 @@ GET  /api/memory/due       → due today or overdue
 POST /api/memory           → create {leadId, messageText, followUpDate?}
 POST /api/memory/:id/action → mark actioned {note?}
 DELETE /api/memory/:id     → delete</pre>
+`,
+"opportunity-scoring":`<h2>Opportunity Scoring</h2>
+<p>Every active CRM deal gets a score from 1–99 showing how likely it is to close. The score is calculated from stage, deal value vs average, activity recency, and email engagement. Positive and negative factors are shown so you know exactly why a deal scored the way it did. Salesforce charges $175/user/month for this. It's built into OutreachPro.</p>
+
+<h3>Scoring Factors</h3>
+<ul>
+  <li><strong>Stage (up to 40pts)</strong> — Proposal stage scores 32pts, Replied scores 14pts, Prospect scores 2pts</li>
+  <li><strong>Deal value vs average (up to 20pts)</strong> — deals above 1.5× average get full 20pts, below 0.5× average lose 5pts</li>
+  <li><strong>Activity recency (up to 20pts)</strong> — activity in last 3 days = 20pts; no activity in 14+ days = −10pts</li>
+  <li><strong>Email engagement (up to 15pts)</strong> — replied = 15pts, meeting booked = 12pts, opened = 5pts</li>
+  <li><strong>Stage velocity</strong> — if stuck in stage too long, −5pts</li>
+</ul>
+
+<h3>Risk Tiers</h3>
+<ul>
+  <li><strong>Score 70–99</strong> — Low risk. Likely to close. Focus here first.</li>
+  <li><strong>Score 40–69</strong> — Medium risk. Needs attention to progress.</li>
+  <li><strong>Score 0–39</strong> — High risk. Likely to stall or go cold.</li>
+</ul>
+
+<h3>How to Use Scores Daily</h3>
+<ol>
+  <li>Go to <strong>CRM → Scored Deals</strong> — sorted highest to lowest</li>
+  <li>Focus calls and follow-ups on 70+ scores first</li>
+  <li>Check 40–69 scores: what's blocking progress? Log a call, send a follow-up, check the Daily Task Queue</li>
+  <li>Review sub-40 scores: consider re-engagement campaign or move to Lost</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/deals/scored
+→ deals[] sorted by opportunityScore desc, each with:
+  { opportunityScore, risk: 'low|medium|high', factors: [{label, impact, pts}] }</pre>
+`,
+"pipeline-inspection":`<h2>Pipeline Inspection</h2>
+<p>A weekly snapshot of your pipeline showing exactly what changed: new deals entered, deals that moved forward, deals that stalled, and closed-won deals. Salesforce calls this "Pipeline Management" and includes it at their $175/user/month Enterprise tier. In OutreachPro it's a single API call.</p>
+
+<h3>What the Dashboard Shows</h3>
+<ul>
+  <li><strong>Active pipeline</strong> — total count and value of all open deals</li>
+  <li><strong>Won this week</strong> — deals closed in the last 7 days + their value</li>
+  <li><strong>New this week</strong> — deals that entered the pipeline in the last 7 days</li>
+  <li><strong>Stalled</strong> — deals with no activity logged in 7+ days (danger zone)</li>
+  <li><strong>By stage</strong> — breakdown of count and value at each pipeline stage</li>
+</ul>
+
+<h3>Stalled Deal Action Plan</h3>
+<p>Any deal with no activity in 7 days appears in the Stalled list. The Daily Task Queue also flags these with medium urgency. For each stalled deal:</p>
+<ol>
+  <li>Check the Activity Timeline — what was the last touchpoint?</li>
+  <li>Check Memory CRM — did the lead ask to be contacted later?</li>
+  <li>Log a new activity: call, follow-up email, or LinkedIn message</li>
+  <li>If no response within 7 more days: move to Lost and re-enrol in a win-back campaign</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/pipeline/inspection
+→ {
+    summary: { activePipeline, totalPipelineValue, wonThisWeek, wonValue, newThisWeek, stalled },
+    byStage: { Prospect: {count, value}, ... },
+    stalledDeals: [{id, name, stage, value}],
+    recentWins: [{id, name, value}]
+  }</pre>
+`,
+"playbooks":`<h2>Sales Playbooks</h2>
+<p>Battle cards for every common sales scenario — structured step-by-step guides for handling objections, opening cold calls, running demos, and closing deals. Salesforce Sales Enablement charges $150+/month for this. Built into OutreachPro.</p>
+
+<h3>Default Playbooks</h3>
+<ul>
+  <li><strong>Budget Objection</strong> — acknowledge, reframe to ROI, offer financing options</li>
+  <li><strong>Timing Objection</strong> — qualify, plant a seed, lock in a future date</li>
+  <li><strong>Competitor Objection</strong> — never badmouth, understand what they value, differentiate</li>
+  <li><strong>Cold Call Opener</strong> — permission-based open, hook with their reviews, bridge to problem</li>
+  <li><strong>Demo Closing</strong> — recap highlights, address hesitation, lock in next step</li>
+</ul>
+
+<h3>Using a Playbook</h3>
+<p>Each playbook has:</p>
+<ul>
+  <li><strong>Steps</strong> — the exact sequence of what to say, in order</li>
+  <li><strong>Talking points</strong> — supporting facts and proof points to have ready</li>
+  <li><strong>Key question</strong> — the one question that moves the conversation forward</li>
+</ul>
+<p>Access playbooks from the Call Script screen — when a lead's sentiment analysis detects an objection type, the matching playbook appears automatically.</p>
+
+<h3>Creating a Custom Playbook</h3>
+<ol>
+  <li>Go to <strong>Settings → Playbooks → New Playbook</strong></li>
+  <li>Set name, trigger keyword (maps to objection types), and category</li>
+  <li>Add steps, talking points, and the key question</li>
+  <li>Save — playbook appears automatically when the trigger is detected</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET  /api/playbooks              → list all playbooks
+POST /api/playbooks              → create playbook
+GET  /api/playbooks/:trigger     → get playbook by trigger (budget|timing|competitor|cold_call|post_demo)</pre>
 `,
 "proposals":`<h2>One-Click Proposal Generator</h2>
 <p>When a CRM deal reaches "Proposal" stage, generate a complete, print-ready sales proposal in one click. Claude writes a personalised executive summary. OutreachPro fills in the product details, ROI calculations, and pricing. The result is a professional branded proposal you can email, share as a link, or print — without touching a design tool. PandaDoc charges €35/month for this. It's built in.</p>
@@ -1253,6 +1824,43 @@ DELETE /api/memory/:id     → delete</pre>
   → { proposal, html, previewUrl }
 
 GET /api/proposals → list all generated proposals</pre>
+`,
+"quota":`<h2>Quota & Commission Tracker</h2>
+<p>Set your monthly revenue target and OutreachPro tracks progress in real time — showing you how much you've won, what commission you've earned, and whether you're on pace to hit quota. Salesforce SPM charges $350+/user/month for this. Free in OutreachPro.</p>
+
+<h3>Setting Up</h3>
+<ol>
+  <li>Go to <strong>Analytics → Quota & Commission</strong></li>
+  <li>Set monthly revenue target (e.g. €50,000)</li>
+  <li>Set base commission rate (e.g. 5% of won deal value)</li>
+  <li>Set bonus threshold — e.g. 100% of quota = bonus kicks in</li>
+  <li>Set bonus commission rate (e.g. 10% on revenue above target)</li>
+  <li>Save</li>
+</ol>
+
+<h3>What Gets Tracked</h3>
+<ul>
+  <li><strong>Won this month</strong> — sum of all deals marked Won since month start</li>
+  <li><strong>% of quota</strong> — won value ÷ monthly target × 100</li>
+  <li><strong>On track?</strong> — compares current % to how far through the month you are</li>
+  <li><strong>Base commission</strong> — won value × commission rate</li>
+  <li><strong>Bonus commission</strong> — activates when you hit quota threshold</li>
+  <li><strong>Days left</strong> — remaining selling days this month</li>
+</ul>
+
+<h3>Example</h3>
+<pre>Monthly quota: €50,000
+Commission: 5% base, 10% bonus above quota
+Day 15 of 30 (50% through month)
+
+Won so far: €28,000 (56% of quota)
+On track: ✓ (56% > 50% day target)
+Commission earned: €1,400 base + €0 bonus
+Projected month-end: €56,000 → bonus kicks in</pre>
+
+<h3>API</h3>
+<pre>GET  /api/quota   → current progress + commission calculation
+POST /api/quota   → update {monthly, commissionRate, bonusThreshold, bonusPct}</pre>
 `,
 "scheduler":`<h2>Meeting Scheduler — Built-in Calendly Replacement</h2>
 <p>Give every lead a booking link. They pick a slot from your availability, and OutreachPro automatically creates a CRM deal, sends a confirmation, and logs the meeting. No Calendly subscription needed — €0/month vs Calendly's €16/month.</p>
@@ -1306,6 +1914,103 @@ POST /api/scheduler/config    → update availability
 GET  /api/scheduler/available → next 14 days of open slots
 POST /api/scheduler/book      → book a slot {slotId, name, email, company}
 GET  /scheduler               → public booking page (share this URL)</pre>
+`,
+"segmentation":`<h2>Lead Segmentation</h2>
+<p>Automatically segment your lead database by category, city, rating tier, score tier, and status. Export any segment as CSV to run targeted campaigns, or use segment data to understand your pipeline composition.</p>
+
+<h3>Segment Types</h3>
+<ul>
+  <li><strong>By category</strong> — Fahrradhändler, E-Bike Händler, Fahrrad Werkstatt etc. — see which categories dominate your pipeline</li>
+  <li><strong>By city</strong> — Köln, Düsseldorf, Bonn — which cities have the most leads? Which convert best?</li>
+  <li><strong>By rating tier</strong> — Premium (4.5★+), Good (4.0–4.4★), Average (below 4★)</li>
+  <li><strong>By score tier</strong> — Hot (70+), Warm (40–69), Cold (below 40)</li>
+  <li><strong>By status</strong> — new, contacted, replied, converted</li>
+</ul>
+
+<h3>Using Segments for Targeted Campaigns</h3>
+<p>Example workflows:</p>
+<ul>
+  <li>Export all Premium-rated leads in Köln → personalised high-touch campaign</li>
+  <li>Export all Cold-scored leads with verified emails → different angle, lower effort</li>
+  <li>Export all "Fahrradhändler" category → category-specific subject line ("Ihr Fahrradgeschäft...")</li>
+  <li>Export all contacted-but-not-replied leads → stronger follow-up with video thumbnail</li>
+</ul>
+
+<h3>Exporting a Segment</h3>
+<ol>
+  <li>Go to <strong>Lead Finder → Segments</strong></li>
+  <li>Click on any segment to see the leads</li>
+  <li>Click <strong>Export CSV</strong> — downloads with BOM for Excel compatibility</li>
+  <li>Import the CSV into a targeted campaign</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET  /api/segments         → all segments auto-calculated
+POST /api/segments/export  → {field, value, operator: 'eq'|'gte'|'lte'|'contains'} → CSV</pre>
+`,
+"sentiment":`<h2>Email Sentiment Detection</h2>
+<p>When a lead replies, Claude reads their message and classifies it: Interested, Not Now, Objection, Meeting Request, or Unsubscribe. It extracts the specific objection type (budget, timing, competitor, no need), suggests the next action, and extracts a follow-up date if mentioned. The Unibox label updates automatically. Salesforce calls this "Einstein Email Insights" and includes it at $350/user/month. Free in OutreachPro.</p>
+
+<h3>Labels and What They Mean</h3>
+<ul>
+  <li><strong>Interested 🟢</strong> — positive reply, wants to know more. Suggested action: book a demo immediately.</li>
+  <li><strong>Meeting Request 🔥</strong> — explicitly asking for a call or meeting. Urgency: hot. Send booking link immediately.</li>
+  <li><strong>Not Now 🟡</strong> — timing issue, not a no. Memory CRM creates a follow-up automatically.</li>
+  <li><strong>Objection 🟠</strong> — specific concern raised. Objection type extracted (budget, timing, competitor, no need).</li>
+  <li><strong>Unsubscribe 🔴</strong> — wants off the list. All sequences stop automatically via workflow.</li>
+  <li><strong>Neutral ⚪</strong> — informational reply, no clear buying signal.</li>
+</ul>
+
+<h3>Objection Handling Suggestions</h3>
+<ul>
+  <li><strong>Budget objection</strong> → send ROI calculation + financing options if available</li>
+  <li><strong>Timing objection</strong> → Memory CRM follow-up for their stated date</li>
+  <li><strong>Competitor objection</strong> → send comparison table + your differentiators</li>
+  <li><strong>No need objection</strong> → re-qualify: ask about their specific pain point</li>
+</ul>
+
+<h3>Triggering Analysis</h3>
+<p>Analysis runs automatically when you click <strong>Analyse</strong> on any Unibox message, or call the API directly. The result updates the Unibox label, logs an activity to the lead's timeline, and triggers any matching workflows (e.g. "Unsubscribe → stop all sequences").</p>
+
+<h3>API</h3>
+<pre>POST /api/inbox/analyse
+  Body: { messageId, text, leadId }
+  → { sentiment, intent, label, objection, urgency, followUpDate, suggestedAction }</pre>
+`,
+"sequence-analytics":`<h2>Sequence Step Analytics</h2>
+<p>See exactly which step of every Smart Sequence gets the best open rates, click rates, and reply rates. Find the drop-off point where leads stop engaging — and fix it. Most tools don't show step-level data. Salesforce includes this at $175+/user/month.</p>
+
+<h3>What Gets Tracked Per Step</h3>
+<ul>
+  <li><strong>Sent</strong> — how many leads received this step</li>
+  <li><strong>Opened</strong> — pixel tracking fires, recorded as an open event</li>
+  <li><strong>Clicked</strong> — lead clicked a link in this step</li>
+  <li><strong>Replied</strong> — lead replied at this step</li>
+  <li><strong>Open rate</strong> — opened ÷ sent × 100</li>
+  <li><strong>Reply rate</strong> — replied ÷ sent × 100 — the most important metric</li>
+</ul>
+
+<h3>Reading the Data</h3>
+<ul>
+  <li><strong>High open, low reply on Step 1</strong> — subject line works, but body copy or CTA is weak. Rewrite the ask.</li>
+  <li><strong>Step 2 open rate drops sharply vs Step 1</strong> — too long a delay, or subject line for Step 2 is poor.</li>
+  <li><strong>Step 3 has the highest reply rate</strong> — common. Third touch gets replies. Make sure you're sending Step 3.</li>
+  <li><strong>LinkedIn step has high conversion</strong> — multichannel is working. Add LinkedIn to other sequences.</li>
+</ul>
+
+<h3>Using This to Optimise</h3>
+<ol>
+  <li>Go to <strong>Analytics → Sequence Performance</strong></li>
+  <li>Sort by reply rate — which step is your best performer?</li>
+  <li>The "Best Step" field shows the single highest-converting step in each sequence</li>
+  <li>Clone that step's approach into Step 1 of your next sequence</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/analytics/sequences
+→ { sequences: [{ name, enrolled, converted, conversionRate,
+    stepBreakdown: [{ stepName, sent, openRate, replyRate }],
+    bestStep }] }</pre>
 `,
 "sequences":`<h2>Email Sequences</h2>
 <p>Sequences are multi-step automated follow-up flows. Each step is an email (or LinkedIn message) sent automatically after a delay — with the entire sequence stopping the moment a lead replies.</p>
@@ -1471,6 +2176,41 @@ der herkömmlichen Methode.
 POST /api/spintax/render   → {text, lead} → {result: string}
 POST /api/spintax/batch    → {text, leads[]} → {results[{leadId, rendered}]}</pre>
 `,
+"template-library":`<h2>Email Template Library</h2>
+<p>Save, organise, and reuse your best-performing email templates. Generate AI variant versions with a different angle or tone. Track usage count per template. Built into OutreachPro — no separate tool needed.</p>
+
+<h3>Default Templates</h3>
+<ul>
+  <li><strong>Cold Outreach DE</strong> — German cold email with {{aiOpening}} token for personalisation</li>
+  <li><strong>Follow-Up After No Reply</strong> — second touch for leads who didn't respond</li>
+  <li><strong>Post-Demo Follow-Up</strong> — structured email after a demo with next-steps section</li>
+</ul>
+
+<h3>Creating a Template</h3>
+<ol>
+  <li>Go to <strong>Email Composer → Templates → New Template</strong></li>
+  <li>Write subject and body using <code>{{tokens}}</code> for personalisation</li>
+  <li>Add tags for organisation (e.g. cold, follow-up, german, high-value)</li>
+  <li>Save — template available across all campaigns and sequences</li>
+</ol>
+
+<h3>Available Tokens</h3>
+<pre>{{name}}        — business name
+{{city}}        — city
+{{rating}}      — Google star rating
+{{reviews}}     — review count
+{{aiOpening}}   — Claude's personalised opening line
+{{product}}     — your product name from workspace settings</pre>
+
+<h3>AI Variant Generation</h3>
+<p>Click <strong>Generate Variant</strong> on any template. Specify a style: "shorter and more direct", "warmer tone", "focus on ROI", "more casual". Claude rewrites the template from a different angle while keeping all {{tokens}} intact. Use variants for A/B testing — run the original vs the variant to find the better performer.</p>
+
+<h3>API</h3>
+<pre>GET    /api/templates            → list all templates
+POST   /api/templates            → create {name, subject, body, tags[]}
+POST   /api/templates/:id/variant → generate AI variant {style?}
+DELETE /api/templates/:id        → delete</pre>
+`,
 "video-thumbnails":`<h2>Personalised Video Thumbnails</h2>
 <p>Add a fake "video" thumbnail to any cold email — with the lead's name personalised directly on the image. Click rates increase by 3× on average because people are naturally drawn to play buttons.</p>
 
@@ -1602,6 +2342,113 @@ Week 6: 50 emails/day (ready for campaigns)</pre>
   <li>If you get spam complaints, pause immediately and investigate</li>
 </ul>
 `,
+"win-rate":`<h2>Win Rate Analytics</h2>
+<p>Track the percentage of closed deals that were won vs lost — broken down by time period, campaign source, and monthly trend. Identify which campaigns generate the most closeable leads, and where deals are dying.</p>
+
+<h3>Key Metrics</h3>
+<ul>
+  <li><strong>Win rate</strong> — won ÷ (won + lost) × 100. Industry benchmark: 20–30% for cold outreach.</li>
+  <li><strong>Average deal size</strong> — mean value of won deals. Track this over time — rising = upselling working.</li>
+  <li><strong>Win rate by campaign</strong> — which outreach source closes best. Allocate more time there.</li>
+  <li><strong>Monthly trend</strong> — are you winning more or fewer deals each month?</li>
+</ul>
+
+<h3>Time Periods</h3>
+<p>Use the period filter: <code>30d</code>, <code>90d</code> (default), <code>180d</code>, <code>365d</code>. Shorter periods show recent performance; longer periods show seasonal patterns and trends.</p>
+
+<h3>Using Win Rate to Improve</h3>
+<ul>
+  <li>Win rate below 15%? Your leads aren't qualified enough — tighten ICP criteria or score higher</li>
+  <li>Win rate above 40%? You're under-prospecting — add more volume</li>
+  <li>One campaign source has 2× win rate of others? Move budget there</li>
+  <li>Win rate dropping month-over-month? Review the Coaching Dashboard — something changed</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET /api/analytics/win-rate?period=90d
+→ { winRate, won, lost, total, avgDealSize, totalWonValue, byCampaign, monthlyTrend }</pre>
+`,
+"winback":`<h2>Win-Back & Re-Engagement Campaigns</h2>
+<p>Leads who went cold 90+ days ago, or deals that were marked Lost, get a completely fresh outreach — not a follow-up, but a genuine win-back email that acknowledges time has passed and circumstances may have changed. These convert at 15–25% because the lead already knows you.</p>
+
+<h3>Finding Win-Back Candidates</h3>
+<ol>
+  <li>Go to <strong>Campaigns → Win-Back</strong></li>
+  <li>Set the cutoff (default: 90 days)</li>
+  <li>OutreachPro shows: Lost deals older than cutoff + cold leads with no activity in that period</li>
+  <li>Review the list — remove any who explicitly said never</li>
+  <li>Click <strong>Generate Emails</strong> for selected leads</li>
+</ol>
+
+<h3>What Makes a Good Win-Back Email</h3>
+<p>Claude writes these with a specific structure:</p>
+<ul>
+  <li>Acknowledge time has passed — "It's been a while since we last spoke"</li>
+  <li>Reference why they didn't buy — timing, budget, competitor — without being pushy</li>
+  <li>Offer something new — updated product, new case study, different pricing</li>
+  <li>Low-pressure CTA — "No obligation, just wondering if anything has changed"</li>
+</ul>
+
+<h3>Example</h3>
+<pre>Subject: "Es ist eine Weile her — Fahrrad Müller"
+
+Hallo,
+
+ich melde mich kurz nach einigen Monaten. Damals kam das
+Timing nicht ganz hin — ich verstehe das vollkommen.
+
+Seitdem haben wir einige Verbesserungen am CycleWASH Pro
+vorgenommen, die besonders für Betriebe Ihrer Größe
+interessant sein könnten.
+
+Ist das Thema heute vielleicht wieder relevant?
+
+Keine Verpflichtung — ich bin einfach neugierig.
+
+Beste Grüße</pre>
+
+<h3>Best Timing</h3>
+<ul>
+  <li>90 days after going cold — first win-back attempt</li>
+  <li>6 months — second attempt with a different angle</li>
+  <li>12 months — final attempt, reference the year anniversary</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET  /api/winback/candidates?daysOld=90  → list of lost deals + cold leads
+POST /api/winback/generate               → {leadId, reason, language} → {email}</pre>
+`,
+"workflows":`<h2>Workflow Automation</h2>
+<p>Workflows are rules that fire automatically when something happens. When a lead replies, their CRM deal moves to "Replied" automatically. When a buying signal hits 60+, their sequences stop automatically. No manual steps, no things falling through the cracks. Salesforce calls this "Flow" and includes it at $100+/user/month. It's built into OutreachPro.</p>
+
+<h3>Pre-Built Workflows</h3>
+<ul>
+  <li><strong>Reply received → move to Replied</strong> — CRM deal stage updates automatically when a lead replies to any email</li>
+  <li><strong>Meeting booked → move to Meeting</strong> — scheduler booking auto-advances the CRM stage</li>
+  <li><strong>Hot signal → stop sequences</strong> — when a lead scores 60+ on buying signals, all active sequences pause so you don't spam a hot lead</li>
+  <li><strong>Proposal stage → generate proposal</strong> — (disabled by default) auto-triggers proposal generation when a deal reaches Proposal stage</li>
+  <li><strong>Stale 14d → re-engagement</strong> — (disabled by default) queues a re-engagement campaign for deals with no activity in 14 days</li>
+</ul>
+
+<h3>Creating a Custom Workflow</h3>
+<ol>
+  <li>Go to <strong>Settings → Workflows</strong></li>
+  <li>Click <strong>New Workflow</strong></li>
+  <li>Set trigger: <code>email_replied</code>, <code>meeting_booked</code>, <code>signal_score_60</code>, <code>stage_changed_proposal</code>, or <code>deal_stale_14d</code></li>
+  <li>Set action: <code>move_crm_stage</code>, <code>stop_sequences</code>, <code>generate_proposal</code>, <code>log_activity</code>, or <code>enqueue_reengagement</code></li>
+  <li>Enable and save</li>
+</ol>
+
+<h3>Evaluating Workflows</h3>
+<p>Workflows are evaluated whenever OutreachPro processes an event. You can also trigger evaluation manually via the API for testing.</p>
+
+<h3>API</h3>
+<pre>GET    /api/workflows              → list all workflows
+POST   /api/workflows              → create {name, trigger, action, actionData}
+POST   /api/workflows/:id/toggle   → enable/disable
+POST   /api/workflows/evaluate     → {trigger, leadId?, dealId?} → run matching workflows
+DELETE /api/workflows/:id          → delete</pre>
+`,
 "workspaces":`<h2>White-Label Client Workspaces</h2>
 <p>Run OutreachPro as an outreach agency. Each client gets a completely isolated workspace — their own leads, campaigns, inbox, CRM, and analytics — all from one OutreachPro instance.</p>
 
@@ -1630,7 +2477,6 @@ DELETE /api/workspaces/:id      → delete workspace</pre>
 <h3>Agency Pricing Model</h3>
 <p>With white-label workspaces, you can charge clients €500–2000/month for managed outreach — while your actual cost is OutreachPro's API bills (~€50–100/month). The workspace isolation means each client sees only their data, making the product fully white-label ready.</p>
 `};
-
 function sc(id){
   document.querySelectorAll("nav a").forEach(a=>a.classList.remove("act"));
   const f=Array.from(document.querySelectorAll("nav a")).find(a=>(a.getAttribute("onclick")||"").includes("'"+id+"'"));
@@ -1638,7 +2484,6 @@ function sc(id){
   const el=document.getElementById(id);
   if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
 }
-
 function lh(key){
   const c=H[key];
   if(!c){console.warn("No article:",key);return;}
@@ -1646,19 +2491,15 @@ function lh(key){
   const hca=document.getElementById("hca");
   hca.classList.add("v");
   document.getElementById("help").scrollIntoView({behavior:"smooth",block:"start"});
-  setTimeout(()=>hca.scrollIntoView({behavior:"smooth",block:"nearest"}),200);
+  setTimeout(()=>hca.scrollIntoView({behavior:"smooth",block:"nearest"}),150);
   document.querySelectorAll("nav a").forEach(a=>a.classList.remove("act"));
   const f=Array.from(document.querySelectorAll("nav a")).find(a=>(a.getAttribute("onclick")||"").includes("'"+key+"'"));
   if(f)f.classList.add("act");
 }
-
 function ch(){
   document.getElementById("hca").classList.remove("v");
   document.getElementById("hbody").innerHTML="";
 }
-
-// Activate first nav item on load
-document.getElementById("na-arch")?.classList.add("act");
 </script>
 </body>
 </html>
