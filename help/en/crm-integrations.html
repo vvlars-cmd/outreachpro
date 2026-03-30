@@ -1,0 +1,43 @@
+<h2>CRM Integrations — Overview</h2>
+<p>OutreachPro connects directly to the five most popular CRM tools used by marketers and sales teams. Once configured, you can push leads, sync deals, create contacts, log notes, and keep everything in sync — without ever leaving OutreachPro.</p>
+
+<h3>Supported CRMs</h3>
+<ul>
+  <li>🟠 <strong>HubSpot</strong> — contacts, companies, deals, notes (API v3)</li>
+  <li>🔵 <strong>Pipedrive</strong> — persons, organizations, deals, activities (API v2)</li>
+  <li>☁️ <strong>Salesforce</strong> — leads, opportunities, contacts, SOQL queries (REST API v59)</li>
+  <li>🟢 <strong>Zoho CRM</strong> — leads, deals, contacts, bulk sync (API v6)</li>
+  <li>⚪ <strong>Notion</strong> — CRM-as-database, pages, properties (REST API)</li>
+</ul>
+
+<h3>Quick Setup Flow</h3>
+<ol>
+  <li>Go to <strong>Settings → CRM Integrations</strong></li>
+  <li>Click the CRM you want to connect</li>
+  <li>Paste your API key / credentials</li>
+  <li>Click <strong>Test Connection</strong> — green = connected</li>
+  <li>Click <strong>Sync Leads</strong> to push your OutreachPro leads to that CRM</li>
+</ol>
+
+<h3>One-Button Sync All</h3>
+<p>Go to <strong>Settings → CRM Integrations → Sync All CRMs</strong>. OutreachPro pushes your leads to every connected CRM simultaneously. Useful after a big Apify scrape — import the leads, score them, then sync the top-scoring ones to all your CRMs in one click.</p>
+
+<h3>Sync Log</h3>
+<p>Every sync is logged with: CRM name, number synced, number failed, and timestamp. Go to <strong>Settings → CRM Integrations → Sync History</strong> to see the full log. Useful for auditing what's been pushed where.</p>
+
+<h3>API — Status Check</h3>
+<pre>GET /api/crm/status
+→ {
+    hubspot:    { configured: true },
+    pipedrive:  { configured: false },
+    salesforce: { configured: true },
+    zoho:       { configured: false },
+    notion:     { configured: true }
+  }
+
+POST /api/crm/sync-all
+  Body: { limit: 25, leadIds?: [] }
+  → { results: { hubspot: {...}, pipedrive: {...}, ... } }
+
+GET /api/crm/sync-log
+  → [{crm, synced, failed, ts}]</pre>
