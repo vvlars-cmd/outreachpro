@@ -1,0 +1,34 @@
+<h2>Email Template Library</h2>
+<p>Save, organise, and reuse your best-performing email templates. Generate AI variant versions with a different angle or tone. Track usage count per template. Built into OutreachPro — no separate tool needed.</p>
+
+<h3>Default Templates</h3>
+<ul>
+  <li><strong>Cold Outreach DE</strong> — German cold email with {{aiOpening}} token for personalisation</li>
+  <li><strong>Follow-Up After No Reply</strong> — second touch for leads who didn't respond</li>
+  <li><strong>Post-Demo Follow-Up</strong> — structured email after a demo with next-steps section</li>
+</ul>
+
+<h3>Creating a Template</h3>
+<ol>
+  <li>Go to <strong>Email Composer → Templates → New Template</strong></li>
+  <li>Write subject and body using <code>{{tokens}}</code> for personalisation</li>
+  <li>Add tags for organisation (e.g. cold, follow-up, german, high-value)</li>
+  <li>Save — template available across all campaigns and sequences</li>
+</ol>
+
+<h3>Available Tokens</h3>
+<pre>{{name}}        — business name
+{{city}}        — city
+{{rating}}      — Google star rating
+{{reviews}}     — review count
+{{aiOpening}}   — Claude's personalised opening line
+{{product}}     — your product name from workspace settings</pre>
+
+<h3>AI Variant Generation</h3>
+<p>Click <strong>Generate Variant</strong> on any template. Specify a style: "shorter and more direct", "warmer tone", "focus on ROI", "more casual". Claude rewrites the template from a different angle while keeping all {{tokens}} intact. Use variants for A/B testing — run the original vs the variant to find the better performer.</p>
+
+<h3>API</h3>
+<pre>GET    /api/templates            → list all templates
+POST   /api/templates            → create {name, subject, body, tags[]}
+POST   /api/templates/:id/variant → generate AI variant {style?}
+DELETE /api/templates/:id        → delete</pre>
