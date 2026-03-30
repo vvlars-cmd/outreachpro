@@ -1,20 +1,84 @@
 {
   "name": "outreachpro",
-  "version": "1.0.0",
-  "description": "OutreachPro \u2014 AI-powered B2B sales engagement platform. Self-hosted Instantly.ai clone.",
+  "version": "2.5.1",
+  "description": "AI-powered B2B sales engagement platform. Self-hosted Instantly.ai clone \u2014 Claude AI, Apify lead scraping, Gmail, CRM, 6-language i18n. One Docker command.",
   "main": "server.js",
+  "bin": {
+    "outreachpro": "bin/cli.js"
+  },
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "docker": "docker compose up --build -d",
+    "docker:down": "docker compose down",
+    "prepublishOnly": "node -e \"console.log(\"Publishing OutreachPro...\")\"",
+    "test": "node tests/test.js",
+    "test:watch": "node tests/agent.js --watch",
+    "test:agent": "node tests/agent.js",
+    "test:fix": "node tests/agent.js --fix",
+    "test:noai": "node tests/agent.js --no-ai"
   },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "node-fetch": "^3.3.2",
-    "multer": "^1.4.5-lts.1"
+  "files": [
+    "server.js",
+    "bin/",
+    "public/",
+    "landing/",
+    "i18n/",
+    "help/",
+    "scrapers/",
+    "data/events.seed.json",
+    "data/leads.seed.json",
+    ".env.example",
+    "Dockerfile",
+    "docker-compose.yml",
+    ".dockerignore",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "sales-engagement",
+    "cold-email",
+    "b2b-sales",
+    "crm",
+    "ai",
+    "claude",
+    "anthropic",
+    "apify",
+    "gmail",
+    "outreach",
+    "email-automation",
+    "lead-generation",
+    "self-hosted",
+    "docker",
+    "instantly",
+    "saas"
+  ],
+  "author": {
+    "name": "vvlars-cmd",
+    "url": "https://github.com/vvlars-cmd"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vvlars-cmd/outreachpro.git"
+  },
+  "homepage": "https://github.com/vvlars-cmd/outreachpro#readme",
+  "bugs": {
+    "url": "https://github.com/vvlars-cmd/outreachpro/issues"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {},
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
