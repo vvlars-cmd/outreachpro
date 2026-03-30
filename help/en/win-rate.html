@@ -1,0 +1,25 @@
+<h2>Win Rate Analytics</h2>
+<p>Track the percentage of closed deals that were won vs lost — broken down by time period, campaign source, and monthly trend. Identify which campaigns generate the most closeable leads, and where deals are dying.</p>
+
+<h3>Key Metrics</h3>
+<ul>
+  <li><strong>Win rate</strong> — won ÷ (won + lost) × 100. Industry benchmark: 20–30% for cold outreach.</li>
+  <li><strong>Average deal size</strong> — mean value of won deals. Track this over time — rising = upselling working.</li>
+  <li><strong>Win rate by campaign</strong> — which outreach source closes best. Allocate more time there.</li>
+  <li><strong>Monthly trend</strong> — are you winning more or fewer deals each month?</li>
+</ul>
+
+<h3>Time Periods</h3>
+<p>Use the period filter: <code>30d</code>, <code>90d</code> (default), <code>180d</code>, <code>365d</code>. Shorter periods show recent performance; longer periods show seasonal patterns and trends.</p>
+
+<h3>Using Win Rate to Improve</h3>
+<ul>
+  <li>Win rate below 15%? Your leads aren't qualified enough — tighten ICP criteria or score higher</li>
+  <li>Win rate above 40%? You're under-prospecting — add more volume</li>
+  <li>One campaign source has 2× win rate of others? Move budget there</li>
+  <li>Win rate dropping month-over-month? Review the Coaching Dashboard — something changed</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET /api/analytics/win-rate?period=90d
+→ { winRate, won, lost, total, avgDealSize, totalWonValue, byCampaign, monthlyTrend }</pre>
