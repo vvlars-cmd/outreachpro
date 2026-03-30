@@ -1,0 +1,29 @@
+<h2>Sales Goals & Progress Tracker</h2>
+<p>Set monthly targets for revenue, leads, demos, and emails sent. OutreachPro tracks real-time progress against each goal and flags whether you're on pace. Goals feed into the Coaching Dashboard and Daily Task Queue.</p>
+
+<h3>Default Goals</h3>
+<ul>
+  <li><strong>Monthly Revenue</strong> — sum of deals marked Won this month vs target</li>
+  <li><strong>New Leads per Month</strong> — leads added to the database this month</li>
+  <li><strong>Demos Booked</strong> — meeting_booked activity events this month</li>
+  <li><strong>Emails Sent</strong> — email_sent activity events this month</li>
+</ul>
+
+<h3>On-Track Logic</h3>
+<p>OutreachPro compares your current % of goal to how far through the month you are. If you're on Day 15 (50% through the month) and you've hit 56% of your revenue goal — you're on track. If you've only hit 30% — you need to accelerate.</p>
+
+<h3>Projected End of Month</h3>
+<p>OutreachPro extrapolates your current pace to project your end-of-month result: <em>"At current pace, you'll close €56,000 by month end (target: €50,000)"</em>. This lets you decide whether to push harder or adjust targets early.</p>
+
+<h3>Adding Custom Goals</h3>
+<ol>
+  <li>Go to <strong>Analytics → Goals</strong></li>
+  <li>Click <strong>New Goal</strong></li>
+  <li>Set name, type (revenue/leads/meetings/emails_sent), period, and target</li>
+  <li>Save — progress calculates automatically</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET    /api/goals              → all goals with current progress + projections
+POST   /api/goals              → create {name, type, period, target, currency?}
+DELETE /api/goals/:id          → delete goal</pre>
