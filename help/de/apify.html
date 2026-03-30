@@ -1,1 +1,17 @@
-<h2>Apify Google Maps Scraper</h2><p>Verwendet <code>compass/crawler-google-places</code>. Felder: Name, Website, E-Mail, Telefon, Kategorie, Bewertung, Adresse. Städte kommagetrennt eingeben. Min. 3,5 Sterne empfohlen. Duplikate werden automatisch entfernt.</p>
+<h2>Apify Lead-Scraper</h2>
+<p>Zieht echte Geschäftsdaten aus Google Maps — Name, E-Mail, Telefon, Website, Bewertung, Rezensionen, Adresse, Kategorie.</p>
+<h3>Schnellstart</h3>
+<ol>
+  <li>Konto bei apify.com erstellen</li>
+  <li>API-Token kopieren (Konto → Integrationen)</li>
+  <li>In .env eintragen: <code>APIFY_TOKEN=apify_api_...</code></li>
+  <li>Apify-Scraper → Suchbegriff + Stadt eingeben → Scrapen starten</li>
+</ol>
+<h3>Lead-Scoring (0–100)</h3>
+<ul>
+  <li>Bewertung 4,5★+ = 30 Punkte | 4,0★+ = 20 Punkte</li>
+  <li>Rezensionen 100+ = 25 Punkte | 50+ = 15 Punkte | 10+ = 8 Punkte</li>
+  <li>Website = 20 Punkte | E-Mail = 15 Punkte | Telefon = 10 Punkte</li>
+</ul>
+<h3>Multi-City-Bulk-Scraper</h3>
+<p>Bis zu 50 Städte in einem Durchlauf. Nur Leads mit Score über dem Schwellenwert (Standard: 60/100) werden automatisch importiert.</p>
