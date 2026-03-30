@@ -1,0 +1,29 @@
+<h2>Sales Coaching Dashboard</h2>
+<p>The coaching dashboard gives managers a real-time view of pipeline health, team performance, best-performing campaigns, A/B test winners, and overdue follow-ups. Claude generates a specific coaching insight based on the actual numbers. Salesforce includes this in their Unlimited tier at $350/user/month. Free in OutreachPro.</p>
+
+<h3>What the Dashboard Shows</h3>
+<ul>
+  <li><strong>Deal conversion funnel</strong> — count and value at each pipeline stage (Prospect → Won)</li>
+  <li><strong>Best campaign</strong> — highest reply rate campaign and its performance</li>
+  <li><strong>A/B test winners</strong> — all completed tests with the winning subject line</li>
+  <li><strong>Overdue follow-ups</strong> — Memory CRM reminders that are past due</li>
+  <li><strong>Activity breakdown</strong> — how many calls, emails, meetings logged across all leads</li>
+  <li><strong>AI coaching insight</strong> — Claude's specific, actionable coaching recommendation based on actual pipeline data</li>
+</ul>
+
+<h3>Example Coaching Insight</h3>
+<blockquote><em>"Your pipeline has 8 deals stuck in Contacted with no activity in 7+ days — prioritise follow-up calls this week. Your Tuesday email sends have a 38% open rate vs 21% on Monday, so reschedule next week's campaign launches to Tuesday mornings."</em></blockquote>
+
+<h3>Using It as a Manager</h3>
+<ol>
+  <li>Open <strong>Analytics → Coaching Dashboard</strong> every Monday</li>
+  <li>Check the funnel — where are deals stacking up? That stage needs attention.</li>
+  <li>Review A/B test winners — update all active campaigns to use the winning subject</li>
+  <li>Check overdue follow-ups — assign or action them before the day ends</li>
+  <li>Read the AI insight — one specific thing to improve this week</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/coaching/dashboard
+→ { bestCampaign, completedAbTests[], funnel[], overdueFollowUps,
+    activityBreakdown, coachingInsight }</pre>
