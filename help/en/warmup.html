@@ -1,10 +1,32 @@
 <h2>Email Warmup</h2>
-<p>Warmup gradually increases your sending volume to build sender reputation with Gmail, Outlook, and other mail providers. New domains need warmup before high-volume sending.</p>
-<h3>How the Ramp Works</h3>
-<p>OutreachPro starts at 5 emails/day and increases by 5 each week until reaching your configured daily target. Week 1: 5/day → Week 2: 10/day → Week 6: 30/day.</p>
-<h3>Deliverability Score</h3>
-<p>The score (0–100) reflects your inbox placement rate across a network of 2,800+ warmup peers. A score above 80 means you're landing in the inbox reliably. Below 60 means spam risk.</p>
-<h3>SPF / DKIM / DMARC</h3>
-<p>Before warming up, ensure your domain has all three DNS records configured. Use the <strong>Inbox Tester</strong> to verify. Missing DMARC is the most common cause of spam folder placement.</p>
-<h3>Best Practices</h3>
-<ul><li>Never send more than 50 emails/day from a new domain in the first month</li><li>Keep bounce rate below 2%</li><li>Maintain reply rate above 5% — replies signal positive engagement to mail providers</li><li>Avoid spam trigger words in subject lines (use the Inbox Tester to check)</li></ul>
+<p>Email warmup gradually increases your sending volume over 4–6 weeks, building sender reputation and ensuring your emails reach the primary inbox — not spam.</p>
+
+<h3>How Warmup Works</h3>
+<p>New email addresses have no sending history. Email providers are suspicious of sudden high-volume sending from unknown addresses. Warmup solves this by starting with a small daily volume and increasing gradually — signalling to Gmail and Outlook that this is a legitimate, trusted sender.</p>
+
+<h3>Warmup Schedule</h3>
+<pre>Week 1: 5 emails/day
+Week 2: 10 emails/day
+Week 3: 20 emails/day
+Week 4: 30 emails/day
+Week 5: 40 emails/day
+Week 6: 50 emails/day (ready for campaigns)</pre>
+
+<h3>Domain Health Check First</h3>
+<p>Before starting warmup, run the Domain Health Dashboard (Killer Feature #1) on your sending domain. All five checks must pass (SPF, DKIM, DMARC, MX, Blacklist) before starting warmup. A domain with missing DMARC cannot be warmed up effectively.</p>
+<p>Go to <strong>Email Accounts → Domain Health</strong> and enter your sending domain. Fix any failing checks before proceeding.</p>
+
+<h3>Warmup Metrics</h3>
+<p>The Warmup dashboard shows daily sent/received counts and a reputation score (0–100). Keep reputation above 80 before starting cold outreach campaigns. If reputation drops below 70, pause your campaigns and let the warmup continue for another week.</p>
+
+<h3>Multiple Inboxes</h3>
+<p>For high-volume outreach (100+ emails/day), warm up multiple inboxes and rotate between them in your campaigns. Go to <strong>Email Accounts</strong> to add multiple senders. Each account has its own warmup progress tracker.</p>
+
+<h3>Tips</h3>
+<ul>
+  <li>Use a custom domain, never @gmail.com for cold outreach</li>
+  <li>Set up SPF, DKIM, and DMARC before day 1 of warmup</li>
+  <li>Never send more than 50 cold emails/day from a single inbox</li>
+  <li>Check Domain Health weekly during warmup</li>
+  <li>If you get spam complaints, pause immediately and investigate</li>
+</ul>
