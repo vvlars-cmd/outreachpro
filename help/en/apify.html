@@ -1,1 +1,39 @@
-<h2>Apify Google Maps Scraper</h2><p>Uses <code>compass/crawler-google-places</code>. Fields: <code>name, website, email, phone, category, rating, reviewsCount, address</code>.</p><h3>Tips</h3><ul><li>Enter cities: <code>Berlin, Hamburg, Munich</code></li><li>Set max 15–30 per search</li><li>3.5★ minimum filters low quality</li><li>Results deduplicated by name+city</li></ul>
+<h2>Apify Lead Scraper</h2>
+<p>OutreachPro integrates directly with Apify's Google Maps scraper to pull real business data — name, email, phone, website, rating, reviews, address, category — into your lead database in minutes.</p>
+
+<h3>Quick Start</h3>
+<ol>
+  <li>Create a free account at <strong>apify.com</strong></li>
+  <li>Copy your API token from <em>Account → Integrations</em></li>
+  <li>Add it to your <code>.env</code> file as <code>APIFY_TOKEN=apify_api_...</code></li>
+  <li>In OutreachPro: go to <strong>Apify Scraper</strong>, enter a search term (e.g. "Fahrradhändler") and a city (e.g. "Köln")</li>
+  <li>Click <strong>Run Scrape</strong> — results stream in live via SSE</li>
+</ol>
+
+<h3>Multi-City Bulk Scraper</h3>
+<p>The bulk scraper (Killer Feature #6) queues multiple cities in one run. Go to <strong>Apify Scraper → Bulk Mode</strong>, enter a comma-separated list of cities and search terms. The scraper runs each combination and auto-imports leads that score above your threshold.</p>
+<pre>Cities: Köln, Düsseldorf, Bonn, Aachen, Münster
+Terms: Fahrradhändler, E-Bike Händler, Fahrrad Werkstatt
+Score threshold: 60</pre>
+<p>This queues 5 × 3 = 15 scrape jobs. Each job imports up to 10 leads, auto-scored 0–100.</p>
+
+<h3>Lead Scoring (0–100)</h3>
+<ul>
+  <li><strong>Rating</strong> — 4.5★+ = 30pts, 4.0★+ = 20pts, 3.5★+ = 10pts</li>
+  <li><strong>Reviews</strong> — 100+ = 25pts, 50+ = 15pts, 10+ = 8pts</li>
+  <li><strong>Website</strong> — has website = 20pts</li>
+  <li><strong>Email</strong> — has email = 15pts</li>
+  <li><strong>Phone</strong> — has phone = 10pts</li>
+</ul>
+<p>Run <strong>Score All Leads</strong> at any time to re-score and sort your lead list. Focus outreach on leads scoring 70+.</p>
+
+<h3>ICP Builder (Killer Feature #2)</h3>
+<p>Define your Ideal Customer Profile once and OutreachPro scrapes automatically on a weekly schedule. Go to <strong>Settings → ICP Builder</strong>, set your cities, search terms, minimum rating, and minimum reviews. Every Monday morning, new matching leads land in your database automatically — no manual scraping needed.</p>
+
+<h3>Best Practices</h3>
+<ul>
+  <li>Keep searches specific: "E-Bike Händler Köln" beats "Fahrrad"</li>
+  <li>Set minRating to 4.0+ to filter out low-quality businesses</li>
+  <li>Set minReviews to 10+ to ensure the business is active</li>
+  <li>Export leads as CSV after scoring to backup your best prospects</li>
+</ul>
