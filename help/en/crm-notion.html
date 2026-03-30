@@ -1,0 +1,44 @@
+<h2>Notion CRM Integration</h2>
+<p>Many teams use Notion as their CRM — a database where each row is a lead or deal, with custom properties for status, rating, city, website, and notes. OutreachPro connects directly to your Notion CRM database to sync leads, update statuses, and keep everything in one place.</p>
+
+<h3>Setting Up Your Notion CRM Database</h3>
+<p>First, create a Notion database with these properties (OutreachPro will map to them automatically by name):</p>
+<pre>Name     — Title (required)
+Email    — Email
+Phone    — Phone number
+Company  — Text
+City     — Text
+Status   — Select (options: New, Contacted, Replied, Meeting, Won, Lost)
+Rating   — Number
+Website  — URL
+Category — Select
+Notes    — Text</pre>
+<p>You can add extra properties — OutreachPro will only write to the ones it knows about.</p>
+
+<h3>Creating a Notion Integration Token</h3>
+<ol>
+  <li>Go to <strong>notion.so/my-integrations</strong> → New integration</li>
+  <li>Name it "OutreachPro", select your workspace</li>
+  <li>Capabilities: Read content, Update content, Insert content</li>
+  <li>Copy the <strong>Internal Integration Token</strong> (starts with <code>secret_</code>)</li>
+  <li>In your Notion database: click <strong>···</strong> → <strong>Add connections</strong> → select your OutreachPro integration</li>
+  <li>Copy the <strong>Database ID</strong> from the database URL: <code>notion.so/workspace/<strong>DATABASE_ID</strong>?v=...</code></li>
+  <li>In OutreachPro: Settings → CRM → Notion → paste token + database ID → Test</li>
+</ol>
+
+<h3>How It Works</h3>
+<p>Each OutreachPro lead becomes a page (row) in your Notion database. The lead's name, email, phone, city, rating, website, and category are mapped to Notion properties. When a lead's status changes in OutreachPro, you can sync the update back to Notion to keep both in sync.</p>
+
+<h3>Use Case: Solo Founder / Small Team</h3>
+<p>If you already live in Notion for notes, tasks, and planning — use it as your CRM too. OutreachPro handles all the outreach automation; Notion is your relationship memory. After every call, add notes directly in Notion. Use Notion's filter views to see all leads in "Meeting" stage, all leads from Köln, or all leads with rating above 4.5.</p>
+
+<h3>Use Case: Content + Outbound Team</h3>
+<p>Marketing team uses Notion for content planning. Sales team uses OutreachPro for outreach. Sync OutreachPro leads to a shared Notion database — marketing sees who's being targeted, adds context (blog posts the lead might like, relevant case studies), and both teams stay aligned without Slack threads.</p>
+
+<h3>API</h3>
+<pre>POST  /api/crm/notion/config        → {apiKey, databaseId}
+POST  /api/crm/notion/test          → test connection
+GET   /api/crm/notion/pages         → list database entries
+POST  /api/crm/notion/pages         → create page (lead entry)
+PATCH /api/crm/notion/pages/:pageId → update status/notes
+POST  /api/crm/notion/sync          → sync leads → Notion database</pre>
