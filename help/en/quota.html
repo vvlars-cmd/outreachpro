@@ -1,0 +1,36 @@
+<h2>Quota & Commission Tracker</h2>
+<p>Set your monthly revenue target and OutreachPro tracks progress in real time — showing you how much you've won, what commission you've earned, and whether you're on pace to hit quota. Salesforce SPM charges $350+/user/month for this. Free in OutreachPro.</p>
+
+<h3>Setting Up</h3>
+<ol>
+  <li>Go to <strong>Analytics → Quota & Commission</strong></li>
+  <li>Set monthly revenue target (e.g. €50,000)</li>
+  <li>Set base commission rate (e.g. 5% of won deal value)</li>
+  <li>Set bonus threshold — e.g. 100% of quota = bonus kicks in</li>
+  <li>Set bonus commission rate (e.g. 10% on revenue above target)</li>
+  <li>Save</li>
+</ol>
+
+<h3>What Gets Tracked</h3>
+<ul>
+  <li><strong>Won this month</strong> — sum of all deals marked Won since month start</li>
+  <li><strong>% of quota</strong> — won value ÷ monthly target × 100</li>
+  <li><strong>On track?</strong> — compares current % to how far through the month you are</li>
+  <li><strong>Base commission</strong> — won value × commission rate</li>
+  <li><strong>Bonus commission</strong> — activates when you hit quota threshold</li>
+  <li><strong>Days left</strong> — remaining selling days this month</li>
+</ul>
+
+<h3>Example</h3>
+<pre>Monthly quota: €50,000
+Commission: 5% base, 10% bonus above quota
+Day 15 of 30 (50% through month)
+
+Won so far: €28,000 (56% of quota)
+On track: ✓ (56% > 50% day target)
+Commission earned: €1,400 base + €0 bonus
+Projected month-end: €56,000 → bonus kicks in</pre>
+
+<h3>API</h3>
+<pre>GET  /api/quota   → current progress + commission calculation
+POST /api/quota   → update {monthly, commissionRate, bonusThreshold, bonusPct}</pre>
