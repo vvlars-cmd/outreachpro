@@ -3,572 +3,1662 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>OutreachPro — Help & Tutorials</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>OutreachPro v3 — Documentation & Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f8f7f4;--surf:#f0ede8;--surf2:#e8e4dc;--bdr:#ddd9d0;
-  --ink:#1a1714;--ink2:#555;--muted:#888;
-  --acc:#c8420a;--grn:#1a6b3a;--blu:#1a3a6b;
-  --head:'Instrument Serif',Georgia,serif;
-  --body:'Geist',sans-serif;--mono:'DM Mono',monospace;
-}
-html{font-size:16px;scroll-behavior:smooth}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.65}
-
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:rgba(248,247,244,.95);border-bottom:1px solid var(--bdr);backdrop-filter:blur(12px)}
-.nav-logo{font-family:var(--head);font-size:20px;font-weight:300;color:var(--ink);display:flex;align-items:center;gap:8px}
-.nav-logo em{color:var(--acc);font-style:italic}
-.nav-links{display:flex;gap:28px}
-.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .15s}
-.nav-links a:hover{color:var(--ink)}
-.nav-cta{background:var(--acc);color:#fff;padding:8px 20px;border-radius:5px;font-size:13px;font-weight:600;text-decoration:none;transition:all .15s}
-.nav-cta:hover{background:#a33308}
-
-/* LAYOUT */
-.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:57px}
-
-/* SIDEBAR */
-.sidebar{position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto;border-right:1px solid var(--bdr);padding:24px 0;background:var(--surf)}
-.sidebar::-webkit-scrollbar{width:3px}
-.sidebar::-webkit-scrollbar-thumb{background:var(--bdr)}
-.sb-section{padding:12px 20px 4px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--bdr);margin-top:8px}
-.sb-section:first-child{border-top:none;margin-top:0}
-.sb-link{display:block;padding:7px 20px;font-size:13px;color:var(--ink2);text-decoration:none;transition:all .15s;border-left:2px solid transparent;cursor:pointer}
-.sb-link:hover{color:var(--ink);background:rgba(0,0,0,.03)}
-.sb-link.act{color:var(--acc);border-left-color:var(--acc);background:rgba(200,66,10,.05)}
-.read-bar{position:fixed;top:57px;left:240px;right:0;height:2px;background:transparent;z-index:50}
-.read-fill{height:100%;background:var(--acc);width:0%;transition:width .1s}
-
-/* CONTENT */
-.content{padding:48px 64px 120px;max-width:840px;overflow-y:auto}
-.h-sec{margin-bottom:72px;scroll-margin-top:24px}
-.eyebrow{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:14px}
-.h1{font-family:var(--head);font-size:clamp(38px,4vw,60px);font-weight:300;line-height:1.05;color:var(--ink);margin-bottom:16px}
-.h1 em{color:var(--acc);font-style:italic}
-.lead{font-size:16px;color:var(--ink2);max-width:580px;line-height:1.75;margin-bottom:28px}
-.h2{font-family:var(--head);font-size:30px;font-weight:300;color:var(--ink);margin:36px 0 12px;line-height:1.15}
-.h3{font-size:15px;font-weight:700;color:var(--ink);margin:24px 0 8px;letter-spacing:.2px}
-.p{font-size:14px;color:var(--ink2);line-height:1.8;margin-bottom:12px}
-.code{font-family:var(--mono);font-size:12px;background:var(--surf2);padding:1px 6px;border-radius:3px;color:var(--acc)}
-.pre{background:#1a1714;border:1px solid var(--bdr);border-left:2px solid var(--acc);padding:18px 22px;font-family:var(--mono);font-size:12px;line-height:1.8;color:#d4cfbf;overflow-x:auto;margin:14px 0;border-radius:2px;white-space:pre}
-.ul{padding-left:22px;margin:10px 0 14px;color:var(--ink2);font-size:14px;line-height:2}
-.ol{padding-left:22px;margin:10px 0 14px;color:var(--ink2);font-size:14px;line-height:2.2}
-.callout{display:flex;gap:14px;padding:16px 20px;margin:18px 0;border-radius:4px;font-size:13px;line-height:1.7}
-.tip{background:rgba(26,107,58,.06);border:1px solid rgba(26,107,58,.2)}
-.warn{background:rgba(200,66,10,.06);border:1px solid rgba(200,66,10,.2)}
-.info{background:rgba(26,58,107,.06);border:1px solid rgba(26,58,107,.2)}
-.ci{font-size:20px;flex-shrink:0;margin-top:1px}
-.ci-body strong{color:var(--acc)}
-.table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
-.table th{padding:10px 14px;text-align:left;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:var(--surf);border-bottom:1px solid var(--bdr)}
-.table td{padding:11px 14px;border-bottom:1px solid var(--bdr);color:var(--ink2);vertical-align:top;line-height:1.6}
-.table tr:last-child td{border-bottom:none}
-.table tr:hover td{background:rgba(200,66,10,.02)}
-.tp{color:var(--acc);font-family:var(--mono);font-size:12px}
-.step-list{display:flex;flex-direction:column;margin:20px 0}
-.step{display:grid;grid-template-columns:52px 1fr;gap:20px;padding:24px 0;border-bottom:1px solid var(--bdr)}
-.step:last-child{border-bottom:none}
-.step-n{font-family:var(--head);font-size:48px;font-weight:300;color:var(--bdr);line-height:1;font-style:italic}
-.step-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:6px}
-.step-body{font-size:13px;color:var(--ink2);line-height:1.7}
-.step-tag{display:inline-flex;align-items:center;gap:5px;background:var(--surf);border:1px solid var(--bdr);border-radius:3px;padding:3px 10px;font-size:11px;color:var(--acc);margin-top:10px;font-family:var(--mono)}
-.ex{background:var(--surf);border:1px solid var(--bdr);border-radius:4px;padding:18px 22px;margin:14px 0}
-.ex-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
-.badge{display:inline-block;font-size:10px;letter-spacing:1px;background:var(--acc);color:#fff;padding:1px 8px;border-radius:3px;margin-left:6px;vertical-align:middle}
-.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
-.feat{background:var(--surf);border:1px solid var(--bdr);border-radius:4px;padding:20px}
-.feat-icon{font-size:24px;margin-bottom:10px}
-.feat-title{font-size:13px;font-weight:700;margin-bottom:6px;color:var(--ink)}
-.feat-desc{font-size:12px;color:var(--muted);line-height:1.6}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:24px}
-.btn-acc{background:var(--acc);color:#fff;padding:12px 28px;border-radius:6px;font-size:14px;font-weight:700;text-decoration:none;transition:all .15s;display:inline-block}
-.btn-acc:hover{background:#a33308}
-.btn-ghost{border:1px solid var(--bdr);color:var(--ink2);padding:12px 28px;border-radius:6px;font-size:14px;font-weight:600;text-decoration:none;transition:all .15s;display:inline-block}
-.btn-ghost:hover{border-color:var(--acc);color:var(--acc)}
-@media(max-width:768px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:24px}}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bdr)}
+:root{--bg:#0d0f1a;--surf:#12152a;--surf2:#1a1f35;--bdr:#232845;--bdr2:#2d3455;--ink:#e8eaf6;--ink2:#9fa8c7;--mu:#5a6391;--acc:#6c63ff;--ac2:#a5b4fc;--grn:#22c55e;--red:#ef4444;--yel:#f59e0b;--H:'Syne',sans-serif;--M:'DM Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--M);font-size:14px;line-height:1.65;min-height:100vh;display:flex}
+nav{width:248px;flex-shrink:0;background:var(--surf);border-right:1px solid var(--bdr);position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+nav::-webkit-scrollbar{width:3px}nav::-webkit-scrollbar-thumb{background:var(--bdr2)}
+main{margin-left:248px;flex:1;padding-bottom:120px}
+.nb{padding:18px 20px 14px;border-bottom:1px solid var(--bdr)}
+.nb h1{font-family:var(--H);font-size:16px;font-weight:800;color:var(--ac2);letter-spacing:-.3px}
+.nb small{font-size:10px;color:var(--mu);letter-spacing:1px;display:block;margin-top:2px}
+.ns{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);padding:11px 20px 3px;margin-top:3px}
+nav a{display:block;padding:6px 20px;font-size:12px;color:var(--ink2);text-decoration:none;cursor:pointer;transition:all .12s;border-left:2px solid transparent;line-height:1.4}
+nav a:hover{color:var(--ink);background:rgba(108,99,255,.06)}
+nav a.act{color:var(--ac2);border-left-color:var(--acc);background:rgba(108,99,255,.1);font-weight:500}
+.nbg{font-size:9px;background:var(--acc);color:#fff;padding:1px 5px;border-radius:2px;margin-left:5px;vertical-align:middle}
+.nbg3{background:#059669}
+.hero{background:linear-gradient(135deg,#0d0f1a 0%,#10132a 60%,#0a0d20 100%);border-bottom:1px solid var(--bdr);padding:52px 60px 44px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:500px;height:500px;background:radial-gradient(circle,rgba(108,99,255,.12) 0%,transparent 65%);pointer-events:none}
+.ey{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ac2);margin-bottom:10px}
+.hero h2{font-family:var(--H);font-size:44px;font-weight:800;color:var(--ink);line-height:1.05;margin-bottom:14px}
+.hero p{font-size:15px;color:var(--ink2);max-width:580px;line-height:1.7}
+.vp{display:inline-flex;align-items:center;gap:6px;background:rgba(108,99,255,.15);border:1px solid rgba(108,99,255,.3);padding:3px 12px;border-radius:16px;font-size:11px;color:var(--ac2);margin-bottom:18px}
+.vd{width:6px;height:6px;border-radius:50%;background:var(--grn);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.sec{padding:48px 60px;border-bottom:1px solid var(--bdr)}
+.sec:last-child{border-bottom:none}
+.sey{font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ac2);margin-bottom:10px}
+.sth{font-family:var(--H);font-size:28px;font-weight:700;color:var(--ink);margin-bottom:12px;line-height:1.1}
+.sp{font-size:14px;color:var(--ink2);line-height:1.75;margin-bottom:20px;max-width:640px}
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--bdr);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;margin:24px 0}
+.stat{background:var(--surf);padding:16px;text-align:center}
+.sv{font-family:var(--H);font-size:26px;font-weight:800;color:var(--ac2);line-height:1}
+.sl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);margin-top:4px}
+.arch{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:28px;margin:20px 0;overflow-x:auto}
+.atl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mu);margin-bottom:20px}
+.layer{margin-bottom:14px}
+.ll{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);padding-bottom:6px;display:flex;align-items:center;gap:8px}
+.ll::after{content:'';flex:1;height:1px;background:var(--bdr)}
+.lr{display:flex;gap:5px;flex-wrap:wrap}
+.nd{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;padding:9px 13px;border-radius:7px;font-size:11px;font-weight:600;text-align:center;min-width:88px;gap:3px}
+.ni{font-size:17px}.nl{font-size:11px;font-weight:600}.ns2{font-size:10px;font-weight:400;opacity:.65}
+.nb_={background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.25);color:#c4beff}
+.ng{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);color:#86efac}
+.ny{background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.22);color:#fcd34d}
+.nd2{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.22);color:#93c5fd}
+.np{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.22);color:#d8b4fe}
+.nf{background:rgba(20,184,166,.08);border:1px solid rgba(20,184,166,.22);color:#5eead4}
+.nr{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);color:#fca5a5}
+.arr{text-align:center;color:var(--mu);font-size:15px;padding:3px 0}
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.rc{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;overflow:hidden}
+.rch{padding:10px 14px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--mu);background:var(--surf2);border-bottom:1px solid var(--bdr)}
+.ri{display:flex;align-items:flex-start;gap:8px;padding:8px 14px;border-bottom:1px solid var(--bdr);font-size:11px}
+.ri:last-child{border-bottom:none}
+.m{font-size:9px;font-weight:700;letter-spacing:.5px;padding:2px 5px;border-radius:3px;flex-shrink:0;margin-top:1px}
+.mG{background:rgba(34,197,94,.18);color:#86efac}.mP{background:rgba(108,99,255,.18);color:#c4beff}.mD{background:rgba(239,68,68,.18);color:#fca5a5}
+.rp{color:var(--ac2);font-size:10px;font-family:var(--M)}.rd{color:var(--ink2);font-size:10px;margin-top:1px}
+.hg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.hg2{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+.hc{background:var(--surf);border:1px solid var(--bdr);border-radius:7px;padding:13px;cursor:pointer;transition:all .18s;display:block;text-decoration:none}
+.hc:hover{border-color:var(--ac2);background:rgba(108,99,255,.05)}
+.hc.kf{border-color:rgba(108,99,255,.22)}
+.hc.kf3{border-color:rgba(5,150,105,.25);background:rgba(5,150,105,.04)}
+.hc h4{font-family:var(--H);font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.hc p{font-size:11px;color:var(--mu);line-height:1.45}
+.hc .hi{font-size:17px;margin-bottom:5px}
+.nb2{font-size:9px;background:var(--acc);color:#fff;padding:1px 5px;border-radius:2px;margin-left:4px}
+.nb3{font-size:9px;background:#059669;color:#fff;padding:1px 5px;border-radius:2px;margin-left:4px}
+.hca{background:var(--surf);border:1px solid var(--bdr);border-radius:9px;padding:28px;margin-top:14px;display:none}
+.hca.v{display:block}
+.hca h2{font-family:var(--H);font-size:22px;font-weight:700;color:var(--ink);margin-bottom:10px}
+.hca h3{font-size:14px;font-weight:600;color:var(--ink);margin:18px 0 7px}
+.hca p{font-size:13px;color:var(--ink2);line-height:1.75;margin-bottom:10px}
+.hca ul,.hca ol{padding-left:18px;margin:7px 0 10px;color:var(--ink2);font-size:13px;line-height:2}
+.hca pre{background:#090b17;border:1px solid var(--bdr);border-left:3px solid var(--acc);padding:14px 18px;border-radius:6px;font-size:11px;line-height:1.85;color:#a5b4fc;overflow-x:auto;margin:10px 0;white-space:pre;font-family:var(--M)}
+.hca code{font-family:var(--M);font-size:11px;background:rgba(108,99,255,.15);padding:1px 5px;border-radius:3px;color:var(--ac2)}
+.hca blockquote{border-left:3px solid var(--acc);padding:12px 18px;background:rgba(108,99,255,.06);margin:12px 0;font-size:13px;color:var(--ink2);font-style:italic;border-radius:0 6px 6px 0}
+.bk{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--mu);cursor:pointer;margin-bottom:16px;letter-spacing:1px;text-transform:uppercase}
+.bk:hover{color:var(--ink2)}
+.code{background:#090b17;border:1px solid var(--bdr);border-left:3px solid var(--acc);border-radius:6px;padding:18px 22px;font-size:12px;line-height:1.9;color:#a5b4fc;overflow-x:auto;margin:14px 0;white-space:pre;font-family:var(--M)}
+.co{color:var(--mu)}
+.cl{display:flex;gap:10px;padding:12px 16px;border-radius:7px;margin:14px 0;font-size:13px;line-height:1.6}
+.tip{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.18);color:#86efac}
+.inf{background:rgba(108,99,255,.07);border:1px solid rgba(108,99,255,.18);color:#c4beff}
+.warn{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);color:#fcd34d}
+.flow{display:flex;align-items:center;flex-wrap:wrap;margin:18px 0;gap:2px}
+.fs{text-align:center}
+.fb{background:var(--surf2);border:1px solid var(--bdr);padding:9px 13px;border-radius:7px;font-size:11px;color:var(--ink2);min-width:84px}
+.fb strong{display:block;color:var(--ink);font-size:12px;margin-bottom:1px}
+.fa{font-size:17px;color:var(--mu);margin:0 3px}
+.tbl{width:100%;border-collapse:collapse;margin:16px 0;font-size:12px}
+.tbl th{background:var(--surf2);padding:10px 12px;text-align:left;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--bdr)}
+.tbl td{padding:10px 12px;border-bottom:1px solid var(--bdr);color:var(--ink2)}
+.tbl tr:last-child td{border-bottom:none}
+.pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600}
+.p-grn{background:rgba(34,197,94,.15);color:#86efac}
+.p-yel{background:rgba(245,158,11,.15);color:#fcd34d}
+.p-red{background:rgba(239,68,68,.15);color:#fca5a5}
+@media(max-width:900px){nav{display:none}main{margin-left:0}.rg,.hg,.hg2{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.sec,.hero{padding:28px 20px}}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bdr2);border-radius:3px}
 </style>
 </head>
 <body>
+
 <nav>
-  <div class="nav-logo">OutreachPro <em>Help</em></div>
-  <div class="nav-links">
-    <a href="#intro">Guide</a>
-    <a href="#quickstart">Quickstart</a>
-    <a href="#features">Features</a>
-    <a href="#api">API</a>
-    <a href="http://localhost:3000" target="_blank">← Back to App</a>
-  </div>
-  <a href="http://localhost:3000" class="nav-cta">Open App →</a>
+  <div class="nb"><h1>OutreachPro</h1><small>v3.0 Documentation</small></div>
+  <div class="ns">Overview</div>
+  <a onclick="sc('arch')" class="act" id="na-arch">System Architecture</a>
+  <a onclick="sc('flow')" id="na-flow">Data Flow</a>
+  <a onclick="sc('api')" id="na-api">API Reference</a>
+  <a onclick="sc('competitive')" id="na-competitive">vs Competitors</a>
+  <div class="ns">Core Features</div>
+  <a onclick="lh('campaigns')">📧 Campaigns</a>
+  <a onclick="lh('sequences')">📨 Sequences</a>
+  <a onclick="lh('apify')">🗺 Lead Scraper</a>
+  <a onclick="lh('composer')">✍ Email Composer</a>
+  <a onclick="lh('gmail')">📮 Gmail</a>
+  <a onclick="lh('crm')">🏆 CRM Pipeline</a>
+  <a onclick="lh('warmup')">🔥 Email Warmup</a>
+  <a onclick="lh('analytics')">📊 Analytics</a>
+  <a onclick="lh('inbox-test')">🧪 Inbox Tester</a>
+  <div class="ns">Killer Features v2.5 <span class="nbg">10</span></div>
+  <a onclick="lh('domain-health')">🏥 Domain Health</a>
+  <a onclick="lh('icp')">🎯 ICP Builder</a>
+  <a onclick="lh('ab-testing')">🔄 A/B Testing</a>
+  <a onclick="lh('intent-signals')">📊 Intent Signals</a>
+  <a onclick="lh('memory')">🧠 Memory CRM</a>
+  <a onclick="lh('apify')">🏙 Bulk Scraper</a>
+  <a onclick="lh('linkedin')">💼 LinkedIn</a>
+  <a onclick="lh('workspaces')">🏢 Workspaces</a>
+  <a onclick="lh('ai-sdr')">🤖 AI SDR</a>
+  <a onclick="lh('video-thumbnails')">🎬 Video Thumbnails</a>
+  <div class="ns">Killer Features v3.0 <span class="nbg nbg3">10 NEW</span></div>
+  <a onclick="lh('smart-sequences')">🔀 Smart Sequences</a>
+  <a onclick="lh('scheduler')">📅 Meeting Scheduler</a>
+  <a onclick="lh('buying-signals')">⚡ Buying Signals</a>
+  <a onclick="lh('spintax')">🎲 Spintax + Liquid</a>
+  <a onclick="lh('email-verification')">✅ Email Verification</a>
+  <a onclick="lh('inbox-rotation')">🔁 Inbox Rotation</a>
+  <a onclick="lh('forecasting')">📈 Forecasting</a>
+  <a onclick="lh('competitor-monitor')">👁 Competitor Monitor</a>
+  <a onclick="lh('voice-scripts')">🎤 Voice Scripts</a>
+  <a onclick="lh('proposals')">📋 Proposal Generator</a>
+  <div class="ns">Setup</div>
+  <a onclick="sc('deploy')">🐳 Docker Deploy</a>
+  <a onclick="sc('env')">🔑 Environment Vars</a>
+  <a onclick="sc('npm')">📦 npm / CLI</a>
 </nav>
 
-<div class="read-bar"><div class="read-fill" id="rfill"></div></div>
+<main>
 
-<div class="layout">
-  <nav class="sidebar" id="sidebar">
-    <div class="sb-section" style="border-top:none;margin-top:0">Getting Started</div>
-    <a class="sb-link act" onclick="scrollTo('intro')">Introduction</a>
-    <a class="sb-link" onclick="scrollTo('quickstart')">5-Minute Quickstart</a>
-    <a class="sb-link" onclick="scrollTo('concepts')">How it works</a>
-    <a class="sb-link" onclick="scrollTo('setup')">Initial setup</a>
-    <div class="sb-section">Core Features</div>
-    <a class="sb-link" onclick="scrollTo('leads')">Lead Finder</a>
-    <a class="sb-link" onclick="scrollTo('scraper')">Apify Scraper</a>
-    <a class="sb-link" onclick="scrollTo('composer')">Email Composer</a>
-    <a class="sb-link" onclick="scrollTo('campaigns')">Campaigns</a>
-    <a class="sb-link" onclick="scrollTo('sequences')">Sequences</a>
-    <a class="sb-link" onclick="scrollTo('unibox')">Unibox</a>
-    <a class="sb-link" onclick="scrollTo('crm')">CRM Pipeline</a>
-    <a class="sb-link" onclick="scrollTo('warmup')">Email Warmup</a>
-    <a class="sb-link" onclick="scrollTo('analytics')">Analytics</a>
-    <div class="sb-section">AI Features</div>
-    <a class="sb-link" onclick="scrollTo('ai-personalise')">AI Personalisation</a>
-    <a class="sb-link" onclick="scrollTo('ai-copilot')">AI Copilot</a>
-    <a class="sb-link" onclick="scrollTo('ai-labels')">AI Reply Labels</a>
-    <div class="sb-section">Developer</div>
-    <a class="sb-link" onclick="scrollTo('api')">REST API Reference</a>
-    <a class="sb-link" onclick="scrollTo('tests')">Running Tests</a>
-    <a class="sb-link" onclick="scrollTo('docker')">Docker Setup</a>
-    <a class="sb-link" onclick="scrollTo('env')">Environment Variables</a>
-    <div class="sb-section">Troubleshooting</div>
-    <a class="sb-link" onclick="scrollTo('trouble')">Common Issues</a>
-    <a class="sb-link" onclick="scrollTo('faq')">FAQ</a>
-  </nav>
+<div class="hero">
+  <div class="vp"><span class="vd"></span> v3.0 — Latest</div>
+  <div class="ey">Documentation & Architecture</div>
+  <h2>OutreachPro</h2>
+  <p>AI-powered B2B sales engagement. Self-hosted with Claude AI, Apify scraping, Gmail OAuth2, <strong>20 killer features</strong>, 6-language i18n, and no per-seat limits.</p>
+</div>
 
-  <div class="content" id="content">
+<!-- STATS -->
+<div class="sec" id="arch">
+  <div class="sey">At a glance</div>
+  <div class="stats">
+    <div class="stat"><div class="sv">60+</div><div class="sl">API Routes</div></div>
+    <div class="stat"><div class="sv">20</div><div class="sl">Killer Features</div></div>
+    <div class="stat"><div class="sv">29</div><div class="sl">Help Articles</div></div>
+    <div class="stat"><div class="sv">6</div><div class="sl">Languages</div></div>
+    <div class="stat"><div class="sv">2581</div><div class="sl">Lines server.js</div></div>
+    <div class="stat"><div class="sv">€0</div><div class="sl">Per-seat cost</div></div>
+  </div>
 
-    <!-- INTRO -->
-    <div class="h-sec" id="intro">
-      <div class="eyebrow">Documentation</div>
-      <h1 class="h1">OutreachPro <em>Help</em></h1>
-      <p class="lead">Everything you need to run your B2B outreach platform — from first scrape to closed deal. Self-hosted, AI-powered, no SaaS fees.</p>
-      <div class="hero-actions">
-        <a href="#quickstart" class="btn-acc" onclick="scrollTo('quickstart');return false">5-min quickstart →</a>
-        <a href="http://localhost:3000/tests" target="_blank" class="btn-ghost">Run test suite</a>
+  <div class="sey" style="margin-top:32px">System Architecture</div>
+  <div class="sth">How OutreachPro is built</div>
+  <div class="sp">Docker-first Node.js. Single Alpine container. JSON data on Docker volume. No database. Server injection patches the frontend on every request — index.html is never touched directly.</div>
+
+  <div class="arch">
+    <div class="atl">Architecture — OutreachPro v3.0</div>
+    <div class="layer"><div class="ll">Client</div><div class="lr">
+      <div class="nd nb_"><span class="ni">🌐</span><span class="nl">Browser SPA</span><span class="ns2">16 views</span></div>
+      <div class="nd nb_"><span class="ni">📅</span><span class="nl">Scheduler</span><span class="ns2">/scheduler</span></div>
+      <div class="nd nb_"><span class="ni">📋</span><span class="nl">Proposals</span><span class="ns2">HTML proposals</span></div>
+      <div class="nd nb_"><span class="ni">📖</span><span class="nl">Help Site</span><span class="ns2">/help</span></div>
+      <div class="nd nb_"><span class="ni">🧪</span><span class="nl">Test Runner</span><span class="ns2">/tests</span></div>
+    </div></div>
+    <div class="arr">↕ HTTP + SSE real-time streams</div>
+    <div class="layer"><div class="ll">Web layer — Express.js :3000</div><div class="lr">
+      <div class="nd ng"><span class="ni">⚡</span><span class="nl">Express.js</span><span class="ns2">Node 20 Alpine</span></div>
+      <div class="nd ng"><span class="ni">💉</span><span class="nl">Server Inject</span><span class="ns2">CSS+JS patches</span></div>
+      <div class="nd ng"><span class="ni">🔁</span><span class="nl">SSE Streams</span><span class="ns2">Live progress</span></div>
+      <div class="nd ng"><span class="ni">📤</span><span class="nl">Multer</span><span class="ns2">CSV import</span></div>
+      <div class="nd ng"><span class="ni">🎲</span><span class="nl">Spintax Engine</span><span class="ns2">Built-in</span></div>
+      <div class="nd ng"><span class="ni">✅</span><span class="nl">Email Verify</span><span class="ns2">MX+disposable</span></div>
+    </div></div>
+    <div class="arr">↕ Route handlers (60+ endpoints)</div>
+    <div class="layer"><div class="ll">API route groups</div><div class="lr">
+      <div class="nd ng"><span class="ni">👥</span><span class="nl">Leads</span><span class="ns2">CRUD+score+verify</span></div>
+      <div class="nd ng"><span class="ni">📧</span><span class="nl">Campaigns</span><span class="ns2">+A/B+rotation</span></div>
+      <div class="nd ng"><span class="ni">🔀</span><span class="nl">Smart Seqs</span><span class="ns2">If/else branches</span></div>
+      <div class="nd ng"><span class="ni">📅</span><span class="nl">Scheduler</span><span class="ns2">Slots+booking</span></div>
+      <div class="nd ng"><span class="ni">⚡</span><span class="nl">Signals</span><span class="ns2">Pixel+hot queue</span></div>
+      <div class="nd ng"><span class="ni">📈</span><span class="nl">Forecast</span><span class="ns2">AI revenue pred.</span></div>
+      <div class="nd ng"><span class="ni">📋</span><span class="nl">Proposals</span><span class="ns2">AI HTML gen.</span></div>
+      <div class="nd ng"><span class="ni">🎤</span><span class="nl">Voice Scripts</span><span class="ns2">Claude-written</span></div>
+    </div></div>
+    <div class="arr">↕ Async calls to external services</div>
+    <div class="layer"><div class="ll">AI & integrations</div><div class="lr">
+      <div class="nd ny"><span class="ni">🤖</span><span class="nl">Claude Sonnet</span><span class="ns2">Personalise+SDR+Memory+Forecast</span></div>
+      <div class="nd np"><span class="ni">🗺</span><span class="nl">Apify</span><span class="ns2">Google Maps scraper</span></div>
+      <div class="nd np"><span class="ni">📮</span><span class="nl">Gmail API</span><span class="ns2">OAuth2 send+scrape</span></div>
+      <div class="nd np"><span class="ni">🌐</span><span class="nl">DNS Resolver</span><span class="ns2">Domain health+verify</span></div>
+      <div class="nd np"><span class="ni">📡</span><span class="nl">Tracking Pixel</span><span class="ns2">1×1 GIF opens</span></div>
+    </div></div>
+    <div class="arr">↕ readJSON / writeJSON</div>
+    <div class="layer"><div class="ll">Data layer — JSON files on Docker volume /app/data</div><div class="lr">
+      <div class="nd nd2"><span class="ni">👥</span><span class="nl">leads.json</span></div>
+      <div class="nd nd2"><span class="ni">📧</span><span class="nl">campaigns.json</span></div>
+      <div class="nd nd2"><span class="ni">🔀</span><span class="nl">smart-sequences.json</span></div>
+      <div class="nd nd2"><span class="ni">📅</span><span class="nl">scheduler.json</span></div>
+      <div class="nd nd2"><span class="ni">⚡</span><span class="nl">buying-signals.json</span></div>
+      <div class="nd nd2"><span class="ni">🧠</span><span class="nl">memories.json</span></div>
+      <div class="nd nd2"><span class="ni">📈</span><span class="nl">deals.json</span></div>
+      <div class="nd nd2"><span class="ni">📋</span><span class="nl">proposals.json</span></div>
+      <div class="nd nd2"><span class="ni">🔄</span><span class="nl">ab-tests.json</span></div>
+      <div class="nd nd2"><span class="ni">🏢</span><span class="nl">workspaces/</span></div>
+      <div class="nd nd2"><span class="ni">🔁</span><span class="nl">rotation.json</span></div>
+      <div class="nd nd2"><span class="ni">👁</span><span class="nl">competitors.json</span></div>
+    </div></div>
+    <div class="arr">↕ Container runtime</div>
+    <div class="layer"><div class="ll">Infrastructure</div><div class="lr">
+      <div class="nd nr"><span class="ni">🐳</span><span class="nl">Docker Compose</span><span class="ns2">Node 20 Alpine</span></div>
+      <div class="nd nr"><span class="ni">💾</span><span class="nl">Docker Volume</span><span class="ns2">Data persists</span></div>
+      <div class="nd nr"><span class="ni">🔒</span><span class="nl">.env Secrets</span><span class="ns2">Never in code</span></div>
+      <div class="nd nr"><span class="ni">📦</span><span class="nl">npm v3.0.0</span><span class="ns2">npx outreachpro</span></div>
+    </div></div>
+
+    <div style="margin-top:14px;padding-top:14px;border-top:1px dashed var(--bdr)">
+      <div class="ll">v2.5 killer features (10)</div>
+      <div class="lr">
+        <div class="nd nf"><span class="ni">🏥</span><span class="nl">Domain Health</span></div>
+        <div class="nd nf"><span class="ni">🎯</span><span class="nl">ICP Builder</span></div>
+        <div class="nd nf"><span class="ni">🔄</span><span class="nl">A/B Testing</span></div>
+        <div class="nd nf"><span class="ni">🔥</span><span class="nl">Intent Signals</span></div>
+        <div class="nd nf"><span class="ni">🧠</span><span class="nl">Memory CRM</span></div>
+        <div class="nd nf"><span class="ni">🏙</span><span class="nl">Bulk Scraper</span></div>
+        <div class="nd nf"><span class="ni">💼</span><span class="nl">LinkedIn</span></div>
+        <div class="nd nf"><span class="ni">🏢</span><span class="nl">Workspaces</span></div>
+        <div class="nd nf"><span class="ni">🤖</span><span class="nl">AI SDR</span></div>
+        <div class="nd nf"><span class="ni">🎬</span><span class="nl">Video Thumbs</span></div>
       </div>
-      <div class="callout tip" style="margin-top:24px"><span class="ci">💡</span><div class="ci-body"><strong>OutreachPro vs Apollo/Instantly:</strong> You own your data. No per-seat fees. Claude AI writes personalised emails using real business data from each lead. Google Maps scraping built in. €20–80/month in API costs vs €99+/seat/month for competitors.</div></div>
     </div>
-
-    <!-- QUICKSTART -->
-    <div class="h-sec" id="quickstart">
-      <div class="eyebrow">Getting Started</div>
-      <h2 class="h2">5-minute quickstart</h2>
-      <p class="p">From zero to your first campaign in 5 minutes.</p>
-      <div class="step-list">
-        <div class="step"><div class="step-n">1</div><div>
-          <div class="step-title">Start the app</div>
-          <div class="step-body">Make sure Docker Desktop is running, then:<pre class="pre">cd ~/outreachpro-app
-docker compose up --build -d
-open http://localhost:3000</pre></div>
-          <div class="step-tag">✓ Health check: localhost:3000/health</div>
-        </div></div>
-        <div class="step"><div class="step-n">2</div><div>
-          <div class="step-title">Add your API keys</div>
-          <div class="step-body">Go to <strong>Settings</strong> in the left sidebar. Add your keys:<br/>• <strong>Anthropic API key</strong> — for AI personalisation (console.anthropic.com)<br/>• <strong>Apify token</strong> — for lead scraping (console.apify.com)<br/>• <strong>Gmail credentials</strong> — for sending (optional, Google Cloud Console)</div>
-          <div class="step-tag">⚙ Settings → Integrations</div>
-        </div></div>
-        <div class="step"><div class="step-n">3</div><div>
-          <div class="step-title">Scrape your first leads</div>
-          <div class="step-body">Go to <strong>Apify Scraper</strong>. Enter a city (e.g. "Köln") and search term (e.g. "Fahrradhändler"). Click <strong>Scrape Leads</strong>. Watch leads appear in real-time.</div>
-          <div class="step-tag">🗺 Apify Scraper → Scrape Leads</div>
-        </div></div>
-        <div class="step"><div class="step-n">4</div><div>
-          <div class="step-title">Personalise with AI</div>
-          <div class="step-body">Go to <strong>Email Composer</strong>. Select a lead from the dropdown. Click <strong>Generate with AI</strong>. Claude writes a personalised opening line using the lead's business data (category, rating, reviews, website).</div>
-          <div class="step-tag">✦ Email Composer → Generate with AI</div>
-        </div></div>
-        <div class="step"><div class="step-n">5</div><div>
-          <div class="step-title">Create and launch a campaign</div>
-          <div class="step-body">Click <strong>+ Campaign</strong> in the top bar. Set your daily send limit to 20–40. Enable <strong>Stop on Reply</strong>. Go to <strong>Sequences</strong> and add 2–3 email steps with 3-day delays. Launch.</div>
-          <div class="step-tag">📧 Daily limit 20–40 · Stop on Reply ON</div>
-        </div></div>
+    <div style="margin-top:10px;padding-top:10px;border-top:1px dashed rgba(5,150,105,.3)">
+      <div class="ll" style="color:#34d399">v3.0 killer features (10 NEW)</div>
+      <div class="lr">
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🔀</span><span class="nl">Smart Sequences</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">📅</span><span class="nl">Scheduler</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">⚡</span><span class="nl">Buying Signals</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🎲</span><span class="nl">Spintax+Liquid</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">✅</span><span class="nl">Email Verify</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🔁</span><span class="nl">Inbox Rotation</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">📈</span><span class="nl">Forecasting</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,109,.25);color:#6ee7b7"><span class="ni">👁</span><span class="nl">Competitor Mon.</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">🎤</span><span class="nl">Voice Scripts</span></div>
+        <div class="nd" style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.25);color:#6ee7b7"><span class="ni">📋</span><span class="nl">Proposals</span></div>
       </div>
     </div>
-
-    <!-- CONCEPTS -->
-    <div class="h-sec" id="concepts">
-      <div class="eyebrow">Concepts</div>
-      <h2 class="h2">How OutreachPro works</h2>
-      <p class="p">The full outreach flow from lead discovery to closed deal:</p>
-      <div class="pre">Apify scrape → leads.json → AI personalise → campaign → sequence
-     ↓                                                           ↓
-Gmail draft ←── Unibox ←── replies ←── emails sent ←── warmup</div>
-      <h3 class="h3">Data flow</h3>
-      <p class="p">All data is stored as JSON files on your Docker volume (<span class="code">/app/data/</span>). Nothing leaves your server unless you explicitly use the Gmail or Anthropic APIs. The <span class="code">.gitignore</span> excludes all data files from version control.</p>
-      <div class="callout info"><span class="ci">🐳</span><div class="ci-body">OutreachPro runs in a single Docker container (Node 20 Alpine). Your data persists in a Docker volume. To back up: <span class="code">docker cp outreachpro:/app/data ./backup</span></div></div>
-    </div>
-
-    <!-- SETUP -->
-    <div class="h-sec" id="setup">
-      <div class="eyebrow">Setup</div>
-      <h2 class="h2">Initial setup</h2>
-      <h3 class="h3">Environment variables</h3>
-      <div class="pre">ANTHROPIC_API_KEY=sk-ant-api03-...   # Required for AI
-APIFY_TOKEN=apify_api_...             # Required for scraping
-GOOGLE_CLIENT_ID=...                  # Optional: Gmail
-GOOGLE_CLIENT_SECRET=GOCSPX-...      # Optional: Gmail
-GOOGLE_REDIRECT_URI=http://localhost:3000/api/gmail/callback
-PORT=3000</div>
-      <p class="p">Copy <span class="code">.env.example</span> to <span class="code">.env</span> and fill in your values. Or use the CLI: <span class="code">npx outreachpro init</span></p>
-      <h3 class="h3">Changing the port</h3>
-      <p class="p">Set <span class="code">PORT=8080</span> in your <span class="code">.env</span> file and rebuild: <span class="code">docker compose up --build -d</span></p>
-    </div>
-
-    <!-- LEADS -->
-    <div class="h-sec" id="leads">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Lead Finder</h2>
-      <p class="p">The Lead Finder shows all imported leads. Each lead has: name, city, email, phone, website, category, rating, review count, status, and notes.</p>
-      <h3 class="h3">Lead statuses</h3>
-      <table class="table">
-        <tr><th>Status</th><th>Meaning</th></tr>
-        <tr><td class="tp">new</td><td>Just imported, not yet contacted</td></tr>
-        <tr><td class="tp">contacted</td><td>In an active campaign sequence</td></tr>
-        <tr><td class="tp">replied</td><td>Replied to an email</td></tr>
-        <tr><td class="tp">interested</td><td>AI labelled as interested</td></tr>
-        <tr><td class="tp">not_now</td><td>Not interested right now</td></tr>
-        <tr><td class="tp">won</td><td>Converted to a deal in CRM</td></tr>
-      </table>
-      <h3 class="h3">Importing leads</h3>
-      <p class="p">Three ways to add leads:<br/>1. <strong>Apify Scraper</strong> — scrape Google Maps automatically<br/>2. <strong>Gmail Scraper</strong> — extract from your inbox<br/>3. <strong>CSV upload</strong> — import spreadsheet (Email Composer tab)</p>
-    </div>
-
-    <!-- APIFY SCRAPER -->
-    <div class="h-sec" id="scraper">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Apify Google Maps Scraper</h2>
-      <p class="p">Finds local businesses on Google Maps and extracts contact details. Requires an Apify token (free tier available at console.apify.com).</p>
-      <h3 class="h3">How to scrape</h3>
-      <ol class="ol">
-        <li>Go to <strong>Apify Scraper</strong> in the nav</li>
-        <li>Enter target city (e.g. <span class="code">Köln</span>)</li>
-        <li>Enter search term (e.g. <span class="code">Fahrradhändler</span>)</li>
-        <li>Set minimum rating (3.5★ recommended)</li>
-        <li>Click <strong>Scrape Leads</strong></li>
-      </ol>
-      <div class="callout tip"><span class="ci">💡</span><div class="ci-body">Best search terms for bike dealers in Germany: <span class="code">Fahrradhändler</span>, <span class="code">E-Bike Händler</span>, <span class="code">Fahrradgeschäft</span>, <span class="code">Zweiradhandel</span></div></div>
-      <h3 class="h3">What gets extracted</h3>
-      <p class="p">Name · Email · Phone · Website · Category · Rating · Review count · Full address · All imported and deduplicated automatically.</p>
-    </div>
-
-    <!-- COMPOSER -->
-    <div class="h-sec" id="composer">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Email Composer</h2>
-      <p class="p">Write AI-personalised emails for your leads. Supports variable tokens that get replaced per lead.</p>
-      <h3 class="h3">Variable tokens</h3>
-      <table class="table">
-        <tr><th>Token</th><th>Replaced with</th></tr>
-        <tr><td class="tp">{{name}}</td><td>Lead's company name</td></tr>
-        <tr><td class="tp">{{city}}</td><td>Lead's city</td></tr>
-        <tr><td class="tp">{{product}}</td><td>Your product name (from Settings)</td></tr>
-        <tr><td class="tp">{{aiOpening}}</td><td>AI-generated personalised opening sentence</td></tr>
-        <tr><td class="tp">{{date}}</td><td>Today's date</td></tr>
-      </table>
-      <h3 class="h3">AI Draft</h3>
-      <p class="p">Select a lead from the dropdown → click <strong>Generate with AI</strong>. Claude reads the lead's business data (category, rating, review count, website) and writes a unique personalised sentence. Works in German and English.</p>
-      <h3 class="h3">Bulk personalise</h3>
-      <p class="p">Click <strong>Personalise All</strong> to generate AI openings for every lead with an email address. A progress bar shows real-time status. Each opening is unique.</p>
-      <div class="callout warn"><span class="ci">⚠</span><div class="ci-body"><strong>API cost:</strong> Each AI personalisation uses ~200 tokens ≈ €0.001. Bulk personalising 100 leads costs ~€0.10.</div></div>
-    </div>
-
-    <!-- CAMPAIGNS -->
-    <div class="h-sec" id="campaigns">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Campaigns</h2>
-      <p class="p">A campaign sends a sequence of emails to your leads, stopping automatically when they reply.</p>
-      <h3 class="h3">Campaign settings</h3>
-      <table class="table">
-        <tr><th>Setting</th><th>What it does</th><th>Recommended</th></tr>
-        <tr><td class="tp">name</td><td>Your campaign name</td><td>Include date + target city</td></tr>
-        <tr><td class="tp">from</td><td>Sending email address</td><td>Your Gmail account</td></tr>
-        <tr><td class="tp">daily</td><td>Max emails sent per day</td><td>Start at 20–40</td></tr>
-        <tr><td class="tp">stopOnReply</td><td>Auto-stop sequence when lead replies</td><td>Always ON</td></tr>
-        <tr><td class="tp">status</td><td>draft / active / paused</td><td>Start as draft</td></tr>
-      </table>
-      <h3 class="h3">Performance targets</h3>
-      <ul class="ul"><li><strong>Open rate &gt; 40%</strong> — good subject line</li><li><strong>Reply rate &gt; 10%</strong> — good email body + AI personalisation</li><li><strong>Bounce rate &lt; 3%</strong> — clean email list</li></ul>
-    </div>
-
-    <!-- SEQUENCES -->
-    <div class="h-sec" id="sequences">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Sequences</h2>
-      <p class="p">Multi-step email sequences automatically send follow-ups after a set number of days if the lead hasn't replied.</p>
-      <div class="ex"><div class="ex-lbl">Example 3-step sequence</div>
-        <div class="pre">Step 1 (day 0):  Intro — product overview + {{aiOpening}}
-Step 2 (day 3):  Follow-up — "did you get a chance to read my email?"
-Step 3 (day 7):  Final — case study or social proof + soft close</div>
-      </div>
-      <div class="callout tip"><span class="ci">💡</span><div class="ci-body">3 steps is the sweet spot. Studies show reply rate peaks at step 2 for cold email. Going beyond 4 steps hurts sender reputation.</div></div>
-    </div>
-
-    <!-- UNIBOX -->
-    <div class="h-sec" id="unibox">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Unibox</h2>
-      <p class="p">All replies from all campaigns in one inbox. AI automatically classifies each reply.</p>
-      <h3 class="h3">AI Labels</h3>
-      <table class="table">
-        <tr><th>Label</th><th>Meaning</th><th>Action</th></tr>
-        <tr><td><span style="color:var(--grn)">● interested</span></td><td>Wants to know more</td><td>Reply immediately, move to CRM</td></tr>
-        <tr><td><span style="color:#3b82f6">● meeting</span></td><td>Wants to schedule a call</td><td>Book in calendar, move to CRM</td></tr>
-        <tr><td><span style="color:var(--yel)">● not_now</span></td><td>Not interested right now</td><td>Re-queue for Q4</td></tr>
-        <tr><td><span style="color:var(--muted)">● other</span></td><td>Unsubscribe, OOO, etc.</td><td>Remove from list</td></tr>
-      </table>
-    </div>
-
-    <!-- CRM -->
-    <div class="h-sec" id="crm">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">CRM Pipeline</h2>
-      <p class="p">Kanban board for tracking every deal from first contact to signed contract.</p>
-      <h3 class="h3">Stages</h3>
-      <div class="pre">Prospect → Contacted → Meeting → Proposal → Won (or Lost)</div>
-      <h3 class="h3">Usage tips</h3>
-      <ul class="ul">
-        <li>Create a deal as soon as a lead replies as <strong>interested</strong></li>
-        <li>Drag cards between columns as deals progress</li>
-        <li>The pipeline value KPI shows total open opportunity value</li>
-        <li>Won value tracks actual closed revenue</li>
-      </ul>
-    </div>
-
-    <!-- WARMUP -->
-    <div class="h-sec" id="warmup">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Email Warmup</h2>
-      <p class="p">Builds your sender reputation before launching campaigns. Slow-ramps from 5 to 50 emails/day over 14 days.</p>
-      <h3 class="h3">Reputation score guide</h3>
-      <table class="table">
-        <tr><th>Score</th><th>Status</th><th>Action</th></tr>
-        <tr><td>80–100</td><td style="color:var(--grn)">Excellent</td><td>Safe to send campaigns</td></tr>
-        <tr><td>60–79</td><td style="color:var(--yel)">Fair</td><td>Keep warming up</td></tr>
-        <tr><td>Below 60</td><td style="color:var(--red)">Poor</td><td>Do NOT send campaigns yet</td></tr>
-      </table>
-      <div class="callout warn"><span class="ci">⚠</span><div class="ci-body">Warm up for at least <strong>14 days</strong> before launching any campaign. Skipping warmup is the #1 cause of emails going to spam.</div></div>
-    </div>
-
-    <!-- ANALYTICS -->
-    <div class="h-sec" id="analytics">
-      <div class="eyebrow">Feature</div>
-      <h2 class="h2">Analytics</h2>
-      <p class="p">Track performance across all campaigns. Available at <span class="code">GET /api/analytics</span> and in the Analytics view.</p>
-      <h3 class="h3">Metrics returned</h3>
-      <table class="table">
-        <tr><th>Metric</th><th>Meaning</th><th>Target</th></tr>
-        <tr><td class="tp">totalLeads</td><td>Total leads in system</td><td>—</td></tr>
-        <tr><td class="tp">totalCampaigns</td><td>Total campaigns</td><td>—</td></tr>
-        <tr><td class="tp">openRate</td><td>% emails opened</td><td>&gt;40%</td></tr>
-        <tr><td class="tp">replyRate</td><td>% emails replied</td><td>&gt;10%</td></tr>
-        <tr><td class="tp">bounceRate</td><td>% emails bounced</td><td>&lt;3%</td></tr>
-        <tr><td class="tp">wonRevenue</td><td>Total won deal value (€)</td><td>—</td></tr>
-        <tr><td class="tp">pipelineValue</td><td>Total open deal value (€)</td><td>—</td></tr>
-      </table>
-    </div>
-
-    <!-- AI PERSONALISATION -->
-    <div class="h-sec" id="ai-personalise">
-      <div class="eyebrow">AI Features</div>
-      <h2 class="h2">AI Personalisation</h2>
-      <p class="p">Uses Claude Sonnet to write a unique opening sentence per lead, based on real business data.</p>
-      <div class="pre">POST /api/ai/personalise
-{
-  "lead": {
-    "name": "Rad & Tat Köln",
-    "city": "Köln",
-    "category": "Fahrradhändler",
-    "rating": 4.8,
-    "reviewsCount": 320,
-    "website": "https://rad-und-tat.de"
-  },
-  "language": "de",
-  "productContext": "bicycle washing machine"
-}</div>
-      <p class="p">Returns: <span class="code">{ "opening": "Mit 320 Bewertungen und 4,8 Sternen zeigt Rad &amp; Tat…" }</span></p>
-      <div class="callout tip"><span class="ci">✦</span><div class="ci-body">The AI reads the lead's review count, rating, category, and website to craft something genuinely specific. Personalised emails get 3× more replies than generic templates.</div></div>
-    </div>
-
-    <!-- AI COPILOT -->
-    <div class="h-sec" id="ai-copilot">
-      <div class="eyebrow">AI Features</div>
-      <h2 class="h2">AI Copilot</h2>
-      <p class="p">Ask Claude anything about your outreach strategy. Provides advice based on your current campaign data.</p>
-      <div class="pre">POST /api/ai/copilot
-{ "message": "How can I improve my open rate?",
-  "context": { "openRate": 22, "campaigns": 3 } }</div>
-      <p class="p">Use it to: improve subject lines, fix low open rates, write better follow-ups, analyse why a campaign underperformed.</p>
-    </div>
-
-    <!-- AI LABELS -->
-    <div class="h-sec" id="ai-labels">
-      <div class="eyebrow">AI Features</div>
-      <h2 class="h2">AI Reply Labels</h2>
-      <p class="p">Automatically classifies inbox replies into: <span class="code">interested</span>, <span class="code">meeting</span>, <span class="code">not_now</span>, <span class="code">other</span>.</p>
-      <div class="pre">POST /api/inbox/label
-{ "id": "msg123", "label": "interested" }</div>
-      <p class="p">The AI reads the full reply body and assigns the most appropriate label. You can override any label manually.</p>
-    </div>
-
-    <!-- API REFERENCE -->
-    <div class="h-sec" id="api">
-      <div class="eyebrow">Developer</div>
-      <h2 class="h2">REST API Reference</h2>
-      <p class="p">All endpoints accept and return JSON. Base URL: <span class="code">http://localhost:3000</span></p>
-      <table class="table">
-        <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
-        <tr><td>GET</td><td class="tp">/health</td><td>Server health check</td></tr>
-        <tr><td>GET</td><td class="tp">/api/leads</td><td>List all leads</td></tr>
-        <tr><td>POST</td><td class="tp">/api/leads</td><td>Create lead</td></tr>
-        <tr><td>POST</td><td class="tp">/api/leads/bulk</td><td>Import multiple leads</td></tr>
-        <tr><td>DELETE</td><td class="tp">/api/leads/:id</td><td>Delete lead</td></tr>
-        <tr><td>GET</td><td class="tp">/api/leads/export</td><td>Export leads as CSV</td></tr>
-        <tr><td>GET</td><td class="tp">/api/campaigns</td><td>List campaigns</td></tr>
-        <tr><td>POST</td><td class="tp">/api/campaigns</td><td>Create campaign</td></tr>
-        <tr><td>DELETE</td><td class="tp">/api/campaigns/:id</td><td>Delete campaign</td></tr>
-        <tr><td>GET</td><td class="tp">/api/sequences/:campaignId</td><td>Get sequence steps</td></tr>
-        <tr><td>POST</td><td class="tp">/api/sequences</td><td>Save sequence steps</td></tr>
-        <tr><td>GET</td><td class="tp">/api/inbox</td><td>Get all inbox messages</td></tr>
-        <tr><td>POST</td><td class="tp">/api/inbox/label</td><td>Label a message</td></tr>
-        <tr><td>POST</td><td class="tp">/api/inbox/read</td><td>Mark message as read</td></tr>
-        <tr><td>GET</td><td class="tp">/api/deals</td><td>List CRM deals</td></tr>
-        <tr><td>POST</td><td class="tp">/api/deals</td><td>Create deal</td></tr>
-        <tr><td>DELETE</td><td class="tp">/api/deals/:id</td><td>Delete deal</td></tr>
-        <tr><td>GET</td><td class="tp">/api/analytics</td><td>Get analytics metrics</td></tr>
-        <tr><td>GET</td><td class="tp">/api/events</td><td>List events</td></tr>
-        <tr><td>POST</td><td class="tp">/api/ai/personalise</td><td>AI personalise per lead</td></tr>
-        <tr><td>POST</td><td class="tp">/api/ai/copilot</td><td>AI copilot chat</td></tr>
-        <tr><td>GET</td><td class="tp">/api/gmail/status</td><td>Gmail connection status</td></tr>
-        <tr><td>GET</td><td class="tp">/api/i18n/:lang</td><td>Get translations (en/de/fr/es/it/nl)</td></tr>
-      </table>
-    </div>
-
-    <!-- TESTS -->
-    <div class="h-sec" id="tests">
-      <div class="eyebrow">Developer</div>
-      <h2 class="h2">Running the test suite</h2>
-      <p class="p">OutreachPro ships with a full test suite — 22 suites, ~120 assertions covering every API endpoint, data integrity, security, concurrency, and performance.</p>
-      <h3 class="h3">Command line</h3>
-      <div class="pre">cd ~/outreachpro-app
-npm test</div>
-      <h3 class="h3">Split-screen test runner</h3>
-      <p class="p">Open the visual test runner alongside the app:</p>
-      <div class="pre">open http://localhost:3000/tests</div>
-      <p class="p">Click <strong>▶ Run All Tests</strong>. The right panel shows the live app, the left shows test results in real-time with pass/fail per assertion.</p>
-      <h3 class="h3">What's tested</h3>
-      <ul class="ul">
-        <li>Health endpoint, static assets, CF script removal</li>
-        <li>All 6 i18n languages (100+ strings each)</li>
-        <li>CRUD for leads, campaigns, templates, accounts, deals, events</li>
-        <li>Inbox labelling and read status persistence</li>
-        <li>Sequence creation and step ordering</li>
-        <li>Analytics metric ranges and logical constraints</li>
-        <li>Security: XSS, SQL injection, oversized payloads</li>
-        <li>Concurrency: 5 simultaneous GETs, 3 simultaneous POSTs</li>
-        <li>Performance: all endpoints under 500ms</li>
-      </ul>
-    </div>
-
-    <!-- DOCKER -->
-    <div class="h-sec" id="docker">
-      <div class="eyebrow">Developer</div>
-      <h2 class="h2">Docker setup</h2>
-      <div class="pre">docker compose up --build -d    # Start
-docker compose down             # Stop
-docker compose logs -f          # View logs
-docker compose ps               # Check status
-
-# Backup data
-docker cp outreachpro:/app/data ./backup
-
-# Shell into container
-docker exec -it outreachpro sh</div>
-    </div>
-
-    <!-- ENV -->
-    <div class="h-sec" id="env">
-      <div class="eyebrow">Developer</div>
-      <h2 class="h2">Environment variables</h2>
-      <table class="table">
-        <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
-        <tr><td class="tp">ANTHROPIC_API_KEY</td><td>Yes</td><td>Claude AI — personalisation + copilot</td></tr>
-        <tr><td class="tp">APIFY_TOKEN</td><td>Yes</td><td>Google Maps lead scraping</td></tr>
-        <tr><td class="tp">GOOGLE_CLIENT_ID</td><td>No</td><td>Gmail OAuth — sending + drafts</td></tr>
-        <tr><td class="tp">GOOGLE_CLIENT_SECRET</td><td>No</td><td>Gmail OAuth</td></tr>
-        <tr><td class="tp">GOOGLE_REDIRECT_URI</td><td>No</td><td>Default: localhost:3000/api/gmail/callback</td></tr>
-        <tr><td class="tp">PORT</td><td>No</td><td>Default: 3000</td></tr>
-        <tr><td class="tp">NODE_ENV</td><td>No</td><td>production or development</td></tr>
-      </table>
-    </div>
-
-    <!-- TROUBLESHOOTING -->
-    <div class="h-sec" id="trouble">
-      <div class="eyebrow">Troubleshooting</div>
-      <h2 class="h2">Common issues</h2>
-      <h3 class="h3">App won't start</h3>
-      <div class="pre">cd ~/outreachpro-app
-docker compose down
-docker compose up --build -d
-docker compose logs -f    # check for errors</div>
-      <h3 class="h3">Buttons not working</h3>
-      <p class="p">Press <strong>Cmd+Shift+R</strong> (hard refresh). If still broken, click the <strong>Hard Reset</strong> button at the bottom of the sidebar.</p>
-      <h3 class="h3">Language not switching</h3>
-      <p class="p">The i18n fix requires the latest <span class="code">server.js</span>. Check version badge shows <span class="code">v2.5</span> or later. If not, rebuild Docker with the latest server.js.</p>
-      <h3 class="h3">AI not personalising</h3>
-      <p class="p">Check <span class="code">ANTHROPIC_API_KEY</span> in Settings → Integrations. Verify the key starts with <span class="code">sk-ant-api03-</span>.</p>
-      <h3 class="h3">Scraper returning no results</h3>
-      <p class="p">Check <span class="code">APIFY_TOKEN</span> in Settings. Make sure the token is active at console.apify.com. Free tier allows ~200 results/month.</p>
-      <h3 class="h3">Emails going to spam</h3>
-      <p class="p">1. Run email warmup for 14+ days before sending campaigns. 2. Check domain SPF, DKIM, DMARC records. 3. Use the Inbox Tester to check your spam score. 4. Start with a daily limit of 20 emails max.</p>
-    </div>
-
-    <!-- FAQ -->
-    <div class="h-sec" id="faq">
-      <div class="eyebrow">FAQ</div>
-      <h2 class="h2">Frequently asked questions</h2>
-      <h3 class="h3">Is my data safe?</h3>
-      <p class="p">Yes. OutreachPro is fully self-hosted. Your leads, campaigns, and emails never leave your server. Only the API calls to Anthropic and Apify leave your machine — these send only the specific data needed for that request (a lead's business info for personalisation, or a search query for scraping).</p>
-      <h3 class="h3">How much does it cost to run?</h3>
-      <p class="p">Typical monthly API costs: Anthropic ~€10–30 (personalising 1,000–3,000 leads), Apify ~€5–15 (scraping 500–2,000 leads). Total: €15–50/month vs €99+/seat/month for Apollo or Instantly.</p>
-      <h3 class="h3">Is cold email legal in Germany/EU?</h3>
-      <p class="p">B2B cold email is permitted under GDPR legitimate interest, as long as you email business addresses found via public sources (like Google Maps) and include an unsubscribe option. Always consult your legal counsel for your specific situation.</p>
-      <h3 class="h3">Can I use it for multiple companies?</h3>
-      <p class="p">Yes — the Workspace module lets you configure different company profiles. The Agency pricing plan ($349/mo) is designed for managing multiple client workspaces.</p>
-      <h3 class="h3">How do I update to a new version?</h3>
-      <div class="pre">cd ~/outreachpro-app
-git pull origin main
-docker compose up --build -d</div>
-    </div>
-
   </div>
 </div>
 
+<!-- DATA FLOW -->
+<div class="sec" id="flow">
+  <div class="sey">Data Flow</div>
+  <div class="sth">Complete outreach pipeline v3.0</div>
+  <div class="flow">
+    <div class="fs"><div class="fb"><strong>🎯 ICP</strong>Auto-scrape</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>✅ Verify</strong>MX+disposable</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>🎲 Spintax</strong>Render copy</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>🤖 Claude</strong>Personalise</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>🔁 Rotate</strong>Pick inbox</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>📧 Gmail</strong>Send+pixel</div></div>
+  </div>
+  <div class="flow">
+    <div class="fs"><div class="fb"><strong>⚡ Signal</strong>Open/click</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>🔀 Branch</strong>Smart seq.</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>📅 Book</strong>Scheduler</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>🏆 CRM</strong>Meeting stage</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>📋 Proposal</strong>1-click gen.</div></div><div class="fa">→</div>
+    <div class="fs"><div class="fb"><strong>📈 Forecast</strong>Revenue pred.</div></div>
+  </div>
+  <div class="cl inf" style="margin-top:20px;color:var(--ink2);font-size:13px">
+    💉 <strong style="color:var(--ac2)">Server Injection:</strong> Every page load strips Cloudflare email-decode script, then injects: CSS overrides, v3.0 badge, hard reset button, nav tooltips, and i18n loader. index.html is never modified directly.
+  </div>
+</div>
+
+<!-- COMPETITIVE -->
+<div class="sec" id="competitive">
+  <div class="sey">vs The Market</div>
+  <div class="sth">What OutreachPro replaces</div>
+  <div class="sp">All of these features are bundled in OutreachPro at zero extra cost — versus paying separately for each tool.</div>
+  <table class="tbl">
+    <thead><tr><th>Feature</th><th>What others charge</th><th>OutreachPro</th><th>Saving</th></tr></thead>
+    <tbody>
+      <tr><td>Smart Conditional Sequences</td><td>Skylead $100/mo</td><td><span class="pill p-grn">Built in</span></td><td>$100/mo</td></tr>
+      <tr><td>Meeting Scheduler</td><td>Calendly $16/mo</td><td><span class="pill p-grn">Built in</span></td><td>$16/mo</td></tr>
+      <tr><td>Email Verification</td><td>NeverBounce $30–100/mo</td><td><span class="pill p-grn">Built in</span></td><td>$50/mo</td></tr>
+      <tr><td>Inbox Rotation (3 inboxes)</td><td>Instantly $97/mo</td><td><span class="pill p-grn">Built in</span></td><td>$97/mo</td></tr>
+      <tr><td>Spintax + Liquid Syntax</td><td>Skylead/Lemlist $79–100/mo</td><td><span class="pill p-grn">Built in</span></td><td>$79/mo</td></tr>
+      <tr><td>Revenue Forecasting</td><td>Clari $$$</td><td><span class="pill p-grn">Built in</span></td><td>$200+/mo</td></tr>
+      <tr><td>Proposal Generator</td><td>PandaDoc $35/mo</td><td><span class="pill p-grn">Built in</span></td><td>$35/mo</td></tr>
+      <tr><td>A/B Subject Testing</td><td>Lemlist $109/mo</td><td><span class="pill p-grn">Built in</span></td><td>$109/mo</td></tr>
+      <tr><td>Memory CRM / Follow-up AI</td><td>No equivalent</td><td><span class="pill p-grn">Unique</span></td><td>—</td></tr>
+      <tr><td>Per-seat pricing</td><td>$47–$100/seat/mo</td><td><span class="pill p-grn">Unlimited seats</span></td><td>$100+/mo per user</td></tr>
+      <tr><td style="font-weight:600">Total equivalent cost</td><td style="font-weight:600;color:#fca5a5">$686–$900+/mo</td><td style="font-weight:600;color:#86efac">Self-hosted: ~$20/mo API costs</td><td style="font-weight:600;color:#86efac">$666–$880/mo</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- API REFERENCE -->
+<div class="sec" id="api">
+  <div class="sey">Reference</div>
+  <div class="sth">API Routes — 60+ endpoints</div>
+  <div class="sp">All routes return JSON. Base: <code style="background:rgba(108,99,255,.15);padding:1px 6px;border-radius:3px;color:var(--ac2);font-size:12px">http://localhost:3000</code></div>
+  <div class="rg">
+    <div class="rc"><div class="rch">Smart Sequences</div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/smart-sequences</div><div class="rd">List all smart sequences</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/smart-sequences</div><div class="rd">Create sequence with steps+conditions</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/smart-sequences/:id/enroll</div><div class="rd">Enroll leads {leadIds[]}</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/smart-sequences/:id/event</div><div class="rd">Record {leadId, stepId, event}</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/smart-sequences/:id/enrollments</div><div class="rd">Get enrolled leads + branch state</div></div></div>
+    </div>
+    <div class="rc"><div class="rch">Meeting Scheduler</div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/scheduler/config</div><div class="rd">Availability settings</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/scheduler/config</div><div class="rd">Update availability slots</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/scheduler/available</div><div class="rd">Next 14 days open slots</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/scheduler/book</div><div class="rd">Book slot → creates CRM deal</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/scheduler</div><div class="rd">Public booking page (share URL)</div></div></div>
+    </div>
+    <div class="rc"><div class="rch">Buying Signals</div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/signals</div><div class="rd">All tracked signals</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/signals/track</div><div class="rd">Record open/click/reply event</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/signals/hot</div><div class="rd">Leads scoring 60+ not actioned</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/signals/:id/action</div><div class="rd">Mark signal actioned</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/t/:leadId/:campaignId</div><div class="rd">Tracking pixel (1×1 GIF)</div></div></div>
+    </div>
+    <div class="rc"><div class="rch">Spintax + Email Verify</div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/spintax/preview</div><div class="rd">Generate 3 preview renders</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/spintax/render</div><div class="rd">Render once for one lead</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/spintax/batch</div><div class="rd">Render for all leads in array</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/verify/email</div><div class="rd">Verify single email</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/verify/bulk</div><div class="rd">Verify up to 100 emails</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/verify/leads</div><div class="rd">Verify + flag all leads in DB</div></div></div>
+    </div>
+    <div class="rc"><div class="rch">Inbox Rotation + Forecast</div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/rotation/config</div><div class="rd">Rotation settings</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/rotation/config</div><div class="rd">Update accounts + strategy</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/rotation/next-sender</div><div class="rd">Get next inbox for send</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/rotation/stats</div><div class="rd">Per-inbox sent/remaining today</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/forecast</div><div class="rd">30/60/90-day revenue + stale deals</div></div></div>
+    </div>
+    <div class="rc"><div class="rch">Voice Scripts + Proposals</div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/voice/script</div><div class="rd">Generate one voice script</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/voice/batch</div><div class="rd">Batch scripts for multiple leads</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/proposals/generate</div><div class="rd">Generate HTML proposal</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/proposals</div><div class="rd">List all proposals</div></div></div>
+      <div class="ri"><span class="m mG">GET</span><div><div class="rp">/api/competitors</div><div class="rd">List tracked competitors</div></div></div>
+      <div class="ri"><span class="m mP">POST</span><div><div class="rp">/api/competitors/scan</div><div class="rd">Scan competitor pricing pages</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- HELP ARTICLES -->
+<div class="sec" id="help">
+  <div class="sey">Documentation</div>
+  <div class="sth">Help Articles — 29 guides</div>
+
+  <div style="font-size:10px;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Core Features (9)</div>
+  <div class="hg">
+    <div class="hc" onclick="lh('campaigns')"><div class="hi">📧</div><h4>Campaigns</h4><p>A/B testing, daily limits, stop-on-reply, activation</p></div>
+    <div class="hc" onclick="lh('sequences')"><div class="hi">📨</div><h4>Sequences</h4><p>Multi-step flows, best practices, timing</p></div>
+    <div class="hc" onclick="lh('apify')"><div class="hi">🗺</div><h4>Lead Scraper</h4><p>Apify setup, scoring, bulk import</p></div>
+    <div class="hc" onclick="lh('composer')"><div class="hi">✍</div><h4>Email Composer</h4><p>AI personalisation, tokens, batch</p></div>
+    <div class="hc" onclick="lh('gmail')"><div class="hi">📮</div><h4>Gmail Integration</h4><p>OAuth2, send, drafts, scraper</p></div>
+    <div class="hc" onclick="lh('crm')"><div class="hi">🏆</div><h4>CRM Pipeline</h4><p>Kanban, Memory CRM, intent signals</p></div>
+    <div class="hc" onclick="lh('warmup')"><div class="hi">🔥</div><h4>Email Warmup</h4><p>Sender reputation, schedule, multi-inbox</p></div>
+    <div class="hc" onclick="lh('analytics')"><div class="hi">📊</div><h4>Analytics</h4><p>KPIs, A/B results, pipeline, revenue</p></div>
+    <div class="hc" onclick="lh('inbox-test')"><div class="hi">🧪</div><h4>Inbox Tester</h4><p>Domain health, SPF/DKIM setup guides</p></div>
+  </div>
+
+  <div style="font-size:10px;color:var(--mu);letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px">Killer Features v2.5 (10)</div>
+  <div class="hg">
+    <div class="hc kf" onclick="lh('domain-health')"><div class="hi">🏥</div><h4>Domain Health <span class="nb2">v2.5</span></h4><p>SPF, DKIM, DMARC, MX, Spamhaus — A–F grade</p></div>
+    <div class="hc kf" onclick="lh('icp')"><div class="hi">🎯</div><h4>ICP Builder <span class="nb2">v2.5</span></h4><p>Define once, auto-scrape weekly</p></div>
+    <div class="hc kf" onclick="lh('ab-testing')"><div class="hi">🔄</div><h4>A/B Testing <span class="nb2">v2.5</span></h4><p>Two variants, auto-promotes winner</p></div>
+    <div class="hc kf" onclick="lh('intent-signals')"><div class="hi">📊</div><h4>Intent Signals <span class="nb2">v2.5</span></h4><p>Google review growth = hot lead</p></div>
+    <div class="hc kf" onclick="lh('memory')"><div class="hi">🧠</div><h4>Memory CRM <span class="nb2">v2.5</span></h4><p>"Call me in Q4" → auto-reminder Oct 1</p></div>
+    <div class="hc kf" onclick="lh('linkedin')"><div class="hi">💼</div><h4>LinkedIn Outreach <span class="nb2">v2.5</span></h4><p>Connection requests in sequences</p></div>
+    <div class="hc kf" onclick="lh('workspaces')"><div class="hi">🏢</div><h4>White-Label Workspaces <span class="nb2">v2.5</span></h4><p>Isolated data per client</p></div>
+    <div class="hc kf" onclick="lh('ai-sdr')"><div class="hi">🤖</div><h4>AI SDR Autonomous <span class="nb2">v2.5</span></h4><p>Claude picks targets, sends on autopilot</p></div>
+    <div class="hc kf" onclick="lh('video-thumbnails')"><div class="hi">🎬</div><h4>Video Thumbnails <span class="nb2">v2.5</span></h4><p>Personalised SVG play buttons — 3× CTR</p></div>
+    <div class="hc kf" onclick="lh('apify')"><div class="hi">🏙</div><h4>Bulk Scraper+Scoring <span class="nb2">v2.5</span></h4><p>50 cities, auto-scored, top 20% imported</p></div>
+  </div>
+
+  <div style="font-size:10px;color:#34d399;letter-spacing:2px;text-transform:uppercase;margin:20px 0 10px">Killer Features v3.0 — NEW (10)</div>
+  <div class="hg2">
+    <div class="hc kf3" onclick="lh('smart-sequences')"><div class="hi">🔀</div><h4>Smart Sequences <span class="nb3">NEW</span></h4><p>If/else branches per lead action. Skylead charges $100/mo.</p></div>
+    <div class="hc kf3" onclick="lh('scheduler')"><div class="hi">📅</div><h4>Meeting Scheduler <span class="nb3">NEW</span></h4><p>Built-in Calendly. Leads book slots, CRM auto-updates.</p></div>
+    <div class="hc kf3" onclick="lh('buying-signals')"><div class="hi">⚡</div><h4>Buying Signals <span class="nb3">NEW</span></h4><p>Pixel tracking → hot lead queue → immediate action.</p></div>
+    <div class="hc kf3" onclick="lh('spintax')"><div class="hi">🎲</div><h4>Spintax + Liquid Syntax <span class="nb3">NEW</span></h4><p>Randomised words + conditional copy. Zero spam filters.</p></div>
+    <div class="hc kf3" onclick="lh('email-verification')"><div class="hi">✅</div><h4>Email Verification <span class="nb3">NEW</span></h4><p>MX check + disposable domain + role-based flagging.</p></div>
+    <div class="hc kf3" onclick="lh('inbox-rotation')"><div class="hi">🔁</div><h4>Inbox Rotation <span class="nb3">NEW</span></h4><p>150 emails/day safely across 3 inboxes. Instantly $97/mo.</p></div>
+    <div class="hc kf3" onclick="lh('forecasting')"><div class="hi">📈</div><h4>Revenue Forecasting <span class="nb3">NEW</span></h4><p>30/60/90-day AI predictions + stale deal alerts.</p></div>
+    <div class="hc kf3" onclick="lh('competitor-monitor')"><div class="hi">👁</div><h4>Competitor Monitor <span class="nb3">NEW</span></h4><p>Track competitor pricing weekly. Unique to OutreachPro.</p></div>
+    <div class="hc kf3" onclick="lh('voice-scripts')"><div class="hi">🎤</div><h4>Voice Message Scripts <span class="nb3">NEW</span></h4><p>Claude writes voicemail scripts. 42% prefer voice.</p></div>
+    <div class="hc kf3" onclick="lh('proposals')"><div class="hi">📋</div><h4>Proposal Generator <span class="nb3">NEW</span></h4><p>1-click branded HTML proposal. PandaDoc €35/mo.</p></div>
+  </div>
+
+  <div class="hca" id="hca">
+    <div class="bk" onclick="ch()">← Back to articles</div>
+    <div id="hbody"></div>
+  </div>
+</div>
+
+<!-- DEPLOY -->
+<div class="sec" id="deploy">
+  <div class="sey">Deployment</div><div class="sth">Docker Setup</div>
+  <div class="code"><span class="co"># 1. Clone</span>
+git clone https://github.com/vvlars-cmd/outreachpro && cd outreachpro
+<span class="co"># 2. Configure</span>
+cp .env.example .env && nano .env
+<span class="co"># 3. Build and start</span>
+docker compose up --build -d
+<span class="co"># 4. Verify</span>
+curl http://localhost:3000/health
+<span class="co"># → {"status":"ok","ts":"...","port":"3000"}</span>
+open http://localhost:3000/help  <span class="co"># this docs site</span></div>
+</div>
+
+<!-- ENV -->
+<div class="sec" id="env">
+  <div class="sey">Configuration</div><div class="sth">Environment Variables</div>
+  <div class="code"><span class="co"># AI — personalisation, SDR, memory, forecast, proposals, voice scripts</span>
+ANTHROPIC_API_KEY=sk-ant-api03-...
+<span class="co"># Scraping — Apify Google Maps, ICP builder, bulk scraper, competitor monitor</span>
+APIFY_TOKEN=apify_api_...
+<span class="co"># Email — Gmail OAuth2 send, draft, inbox scraper</span>
+GOOGLE_CLIENT_ID=....apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-...
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/gmail/callback
+<span class="co"># Optional</span>
+PORT=3000
+NODE_ENV=production</div>
+</div>
+
+<!-- NPM -->
+<div class="sec" id="npm">
+  <div class="sey">npm Package</div><div class="sth">CLI — npx outreachpro</div>
+  <div class="code">npx outreachpro init    <span class="co"># create .env</span>
+npx outreachpro start   <span class="co"># start :3000</span>
+npx outreachpro docker  <span class="co"># docker compose up --build -d</span>
+npx outreachpro help    <span class="co"># show commands</span>
+<span class="co"># npmjs.com/package/outreachpro</span></div>
+</div>
+
+</main>
+
 <script>
-function scrollTo(id) {
-  const el = document.getElementById(id);
-  const content = document.getElementById('content');
-  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+const H = {"ab-testing":`<h2>A/B Subject Line Testing</h2>
+<p>Test two subject line variants against each other in any campaign. OutreachPro tracks opens per variant and automatically promotes the winner — no manual analysis needed.</p>
+
+<h3>Creating an A/B Test</h3>
+<ol>
+  <li>Open any Campaign and click <strong>A/B Test</strong></li>
+  <li>Enter Subject A and Subject B</li>
+  <li>Set the split (default: 50% each)</li>
+  <li>Set auto-promote threshold (default: 50 sends — after 50 total emails sent, the winner is auto-promoted)</li>
+  <li>Click <strong>Start Test</strong></li>
+</ol>
+
+<h3>How Auto-Promotion Works</h3>
+<p>As emails send, OutreachPro records opens per variant. When the total send count reaches the threshold (e.g. 50), it calculates the open rate for each:</p>
+<pre>Subject A: 22 sends, 8 opens → 36.4% open rate
+Subject B: 28 sends, 7 opens → 25.0% open rate
+→ Winner: Subject A (promoted automatically for remaining sends)</pre>
+
+<h3>Subject Line Best Practices</h3>
+<ul>
+  <li>Test one variable at a time — different length, personalisation, or angle</li>
+  <li>Subject A: question format — "Quick question about {{name}}'s workshop?"</li>
+  <li>Subject B: observation format — "Noticed {{name}}'s {{rating}}★ rating on Google"</li>
+  <li>Avoid ALL CAPS, excessive punctuation, and spam trigger words</li>
+  <li>Keep under 50 characters for full mobile display</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET    /api/ab-tests                    → list all tests
+POST   /api/ab-tests                    → create test
+POST   /api/ab-tests/:id/record         → record event {variant, event}
+DELETE /api/ab-tests/:id                → delete test</pre>
+`,
+"ai-sdr":`<h2>AI SDR — Autonomous Outreach Mode</h2>
+<p>The AI SDR is OutreachPro's most powerful feature. Claude acts as a virtual Sales Development Representative — analysing your leads, deciding who to target, writing personalised emails, and (in autopilot mode) sending them automatically.</p>
+
+<h3>Two Modes</h3>
+<ul>
+  <li><strong>Suggest</strong> — Claude proposes targets and email copy. You review and approve before anything sends. Recommended for new users.</li>
+  <li><strong>Autopilot</strong> — Claude sends automatically up to your daily limit. No approval needed. Recommended once you've validated copy quality.</li>
+</ul>
+
+<h3>Setting Up AI SDR</h3>
+<ol>
+  <li>Go to <strong>Workspace → AI SDR</strong></li>
+  <li>Set daily limit (recommended: 10–20)</li>
+  <li>Set target stages (e.g. leads with status "new")</li>
+  <li>Set persona (e.g. "friendly professional", "direct and brief")</li>
+  <li>Set language (de, en, fr, etc.)</li>
+  <li>Click <strong>Save Config</strong></li>
+  <li>Click <strong>Run SDR</strong></li>
+</ol>
+
+<h3>What Claude Does</h3>
+<p>For each eligible lead, Claude:</p>
+<ol>
+  <li>Reads the lead's name, city, category, rating, review count, and website</li>
+  <li>Writes a personalised subject line (not a template — unique to that lead)</li>
+  <li>Writes a personalised opening line referencing their specific business details</li>
+  <li>Provides reasoning for why this lead was chosen</li>
+</ol>
+
+<h3>Example Output</h3>
+<pre>Lead: Fahrrad Müller, Köln, 4.8★, 342 reviews
+Subject: "Ihre 342 Bewertungen sagen alles, Herr Müller"
+Opening: "Mit 342 Google-Bewertungen und 4,8 Sternen haben Sie
+offensichtlich eine loyale Kundschaft aufgebaut. Genau für
+solche Betriebe haben wir den CycleWASH Pro entwickelt..."
+Reasoning: "High review count + excellent rating = growing
+business, strong social proof, likely investing in equipment"</pre>
+
+<h3>API</h3>
+<pre>GET  /api/ai-sdr/config  → current config
+POST /api/ai-sdr/config  → update config
+POST /api/ai-sdr/run     → run SDR session → {suggestions[]}</pre>
+`,
+"analytics":`<h2>Analytics Dashboard</h2>
+<p>Track every dimension of your outreach performance — from raw send counts to actual won revenue — across all campaigns and workspaces.</p>
+
+<h3>Key Metrics</h3>
+<ul>
+  <li><strong>Open rate</strong> — % of sent emails opened. Industry average: 22–28%. Above 35% = excellent subject lines.</li>
+  <li><strong>Reply rate</strong> — % that generated a reply. Good: 5–10%, excellent: 10%+. Below 3% = pause and rewrite copy.</li>
+  <li><strong>Bounce rate</strong> — invalid addresses or blocked sends. Keep below 2% to protect sender reputation.</li>
+  <li><strong>Pipeline value</strong> — sum of all active CRM deals not yet won or lost.</li>
+  <li><strong>Won revenue</strong> — deals marked Won in CRM. Tracks your actual closed business.</li>
+  <li><strong>Lead score avg</strong> — average score of your imported leads (0–100). Higher = better quality prospects.</li>
+</ul>
+
+<h3>A/B Test Results</h3>
+<p>The A/B Tests panel shows all active and completed subject line tests. When a test reaches its threshold (default: 50 sends), the winner is auto-promoted and shown here with the winning open rate.</p>
+
+<h3>Intent Signals</h3>
+<p>Leads flagged by the Intent Signal Detector appear in Analytics with their signal score. Signals above 40 are highlighted as hot leads. Click any signal to action it directly from the analytics view.</p>
+
+<h3>Workspace Breakdown</h3>
+<p>If you're running multiple white-label workspaces, each workspace shows its own analytics row. The master view shows aggregate totals across all clients.</p>
+
+<h3>Tips for Better Numbers</h3>
+<ul>
+  <li>Run the Domain Health checker before every new campaign. Poor SPF/DKIM = spam folder = zero opens.</li>
+  <li>Use the Lead Scorer before importing — top 20% of leads generate 80% of replies.</li>
+  <li>Always run A/B tests on subject lines. The winning subject can double open rates.</li>
+  <li>Check the Memory CRM for due follow-ups daily — re-engaged leads convert at 3× the rate of cold leads.</li>
+</ul>
+`,
+"apify":`<h2>Apify Lead Scraper</h2>
+<p>OutreachPro integrates directly with Apify's Google Maps scraper to pull real business data — name, email, phone, website, rating, reviews, address, category — into your lead database in minutes.</p>
+
+<h3>Quick Start</h3>
+<ol>
+  <li>Create a free account at <strong>apify.com</strong></li>
+  <li>Copy your API token from <em>Account → Integrations</em></li>
+  <li>Add it to your <code>.env</code> file as <code>APIFY_TOKEN=apify_api_...</code></li>
+  <li>In OutreachPro: go to <strong>Apify Scraper</strong>, enter a search term (e.g. "Fahrradhändler") and a city (e.g. "Köln")</li>
+  <li>Click <strong>Run Scrape</strong> — results stream in live via SSE</li>
+</ol>
+
+<h3>Multi-City Bulk Scraper</h3>
+<p>The bulk scraper (Killer Feature #6) queues multiple cities in one run. Go to <strong>Apify Scraper → Bulk Mode</strong>, enter a comma-separated list of cities and search terms. The scraper runs each combination and auto-imports leads that score above your threshold.</p>
+<pre>Cities: Köln, Düsseldorf, Bonn, Aachen, Münster
+Terms: Fahrradhändler, E-Bike Händler, Fahrrad Werkstatt
+Score threshold: 60</pre>
+<p>This queues 5 × 3 = 15 scrape jobs. Each job imports up to 10 leads, auto-scored 0–100.</p>
+
+<h3>Lead Scoring (0–100)</h3>
+<ul>
+  <li><strong>Rating</strong> — 4.5★+ = 30pts, 4.0★+ = 20pts, 3.5★+ = 10pts</li>
+  <li><strong>Reviews</strong> — 100+ = 25pts, 50+ = 15pts, 10+ = 8pts</li>
+  <li><strong>Website</strong> — has website = 20pts</li>
+  <li><strong>Email</strong> — has email = 15pts</li>
+  <li><strong>Phone</strong> — has phone = 10pts</li>
+</ul>
+<p>Run <strong>Score All Leads</strong> at any time to re-score and sort your lead list. Focus outreach on leads scoring 70+.</p>
+
+<h3>ICP Builder (Killer Feature #2)</h3>
+<p>Define your Ideal Customer Profile once and OutreachPro scrapes automatically on a weekly schedule. Go to <strong>Settings → ICP Builder</strong>, set your cities, search terms, minimum rating, and minimum reviews. Every Monday morning, new matching leads land in your database automatically — no manual scraping needed.</p>
+
+<h3>Best Practices</h3>
+<ul>
+  <li>Keep searches specific: "E-Bike Händler Köln" beats "Fahrrad"</li>
+  <li>Set minRating to 4.0+ to filter out low-quality businesses</li>
+  <li>Set minReviews to 10+ to ensure the business is active</li>
+  <li>Export leads as CSV after scoring to backup your best prospects</li>
+</ul>
+`,
+"buying-signals":`<h2>Buying Signal Triggers</h2>
+<p>Buying signal tracking fires the moment a lead engages with your emails. An open = 30 points. A click = 60 points. A reply = 100 points. Leads scoring 60+ are automatically flagged as hot and surface at the top of your follow-up queue.</p>
+
+<h3>How Tracking Works</h3>
+<p>OutreachPro embeds an invisible 1×1 pixel image in every email. When the lead opens the email, their email client loads the pixel and OutreachPro records an "open" event instantly. No external service required — it's a single HTTP request to your own server.</p>
+
+<h3>Embedding the Tracking Pixel</h3>
+<p>Add this to any email HTML (OutreachPro adds it automatically when sending via campaigns):</p>
+<pre>&lt;img src="https://yourserver.com/t/{{leadId}}/{{campaignId}}"
+     width="1" height="1" style="display:none"/&gt;</pre>
+
+<h3>Signal Scores</h3>
+<ul>
+  <li><strong>Open (30 pts)</strong> — lead saw your subject line and opened. Warm signal.</li>
+  <li><strong>Click (60 pts)</strong> — lead clicked a link in your email. Hot signal. Follow up within 2 hours.</li>
+  <li><strong>Reply (100 pts)</strong> — lead replied. Convert immediately. Lead auto-moves to "Replied" in CRM.</li>
+</ul>
+
+<h3>Hot Lead Queue</h3>
+<p>Go to <strong>Analytics → Buying Signals → Hot Leads</strong> to see all leads with signal score ≥ 60. These are sorted by recency — the most recently active leads are at the top. The sweet spot for follow-up is within 2 hours of a click event.</p>
+
+<h3>Why This Converts Better</h3>
+<p>The 2026 HubSpot State of Sales report confirms that signal-triggered outreach converts at 1.7× the rate of scheduled sequences. When a lead clicks your email, they're thinking about you right now. A follow-up call or personalised reply in that window feels responsive, not intrusive.</p>
+
+<h3>Combining with Smart Sequences</h3>
+<p>Use buying signals to trigger Smart Sequence branches: <em>If lead clicks link → immediately skip to Step 3 (demo offer)</em> instead of waiting the standard 7-day timer. This cuts your time-to-reply from days to hours for the hottest leads.</p>
+
+<h3>API</h3>
+<pre>POST /api/signals/track           → record event {leadId, campaignId, event}
+GET  /api/signals/hot             → leads scoring 60+ not yet actioned
+POST /api/signals/:id/action      → mark signal as actioned
+GET  /t/:leadId/:campaignId       → tracking pixel (returns 1x1 GIF)</pre>
+`,
+"campaigns":`<h2>Campaigns</h2>
+<p>A campaign is a container for a sequence of emails sent to a list of leads. OutreachPro handles scheduling, daily limits, stop-on-reply, and A/B subject testing automatically.</p>
+
+<h3>Creating a Campaign</h3>
+<ol>
+  <li>Go to <strong>Campaigns → New Campaign</strong></li>
+  <li>Set a name, sender email, and daily send limit (recommended: 20–40/day per inbox)</li>
+  <li>Toggle <strong>Stop on Reply</strong> — when a lead replies, OutreachPro stops sending further steps to them automatically</li>
+  <li>Add leads from your Lead Finder (filter by status: new)</li>
+  <li>Attach a sequence of email steps (see Sequences)</li>
+  <li>Click <strong>Activate</strong> to start sending</li>
+</ol>
+
+<h3>A/B Subject Testing (Killer Feature #3)</h3>
+<p>Test two subject lines against each other automatically. In any campaign, click <strong>A/B Test</strong> and enter two subject variants:</p>
+<pre>Subject A: "Quick question about {{name}}'s bikes"
+Subject B: "Saw your {{rating}}★ reviews — impressive"</pre>
+<p>Set the split % (default: 50/50) and auto-promote threshold (default: 50 sends). After 50 sends, OutreachPro calculates which subject got more opens and automatically promotes the winner for all remaining sends. The losing subject is retired.</p>
+
+<h3>Campaign Statuses</h3>
+<ul>
+  <li><strong>Draft</strong> — not sending yet, still being configured</li>
+  <li><strong>Active</strong> — sending daily up to the limit</li>
+  <li><strong>Paused</strong> — temporarily stopped (resumes from current step)</li>
+  <li><strong>Complete</strong> — all leads have received all steps</li>
+</ul>
+
+<h3>Daily Limits</h3>
+<p>Never exceed 50 emails/day per inbox for cold outreach. OutreachPro enforces your daily limit automatically — if you set 30/day, it sends 30 at random intervals throughout the day to avoid spam filters.</p>
+
+<h3>LinkedIn Steps</h3>
+<p>Add LinkedIn connection requests as steps in any sequence (Killer Feature #7). After connecting, follow-up messages can be added as later steps. Claude generates personalised connection notes based on the lead's business profile.</p>
+`,
+"competitor-monitor":`<h2>Competitor Price Monitor</h2>
+<p>Track your competitors' pricing pages and get alerted when they change their prices, launch new features, or run promotions. OutreachPro is the only sales engagement tool with this built in. Use it to stay one step ahead in every sales conversation and auto-update your email copy when the competitive landscape shifts.</p>
+
+<h3>Setting Up Competitors</h3>
+<ol>
+  <li>Go to <strong>Settings → Competitor Monitor</strong></li>
+  <li>Click <strong>Add Competitor</strong></li>
+  <li>Enter competitor name, website, and their pricing page URL</li>
+  <li>Note their current price (for change comparison)</li>
+  <li>Repeat for each competitor (recommended: 3–5 main competitors)</li>
+  <li>Click <strong>Scan Now</strong> to run the first check</li>
+</ol>
+
+<h3>CycleWASH Example Competitors</h3>
+<pre>Competitor 1: Cleanfix
+  Pricing URL: cleanfix.de/preise
+
+Competitor 2: Kärcher bike wash
+  Pricing URL: kaercher.com/de/shop/fahrrad
+
+Competitor 3: BikeWashSystem
+  Pricing URL: bikewashsystem.com/prices</pre>
+
+<h3>How to Use Competitor Intelligence in Emails</h3>
+<p>When a competitor drops prices or runs a promotion, update your email templates to reference it — without naming the competitor directly:</p>
+<pre>{% if competitor_promotion %}
+You may have seen competitors promoting discounts recently.
+We'd rather give you a better product at the same price —
+here's why CycleWASH Pro is the better long-term investment:
+{% endif %}</pre>
+
+<h3>Using Signals Offensively</h3>
+<ul>
+  <li><strong>Competitor raises prices</strong> → trigger a campaign to their known customers with your stable pricing as the hook</li>
+  <li><strong>Competitor launches new feature</strong> → add a comparison table to your email templates within 48 hours</li>
+  <li><strong>Competitor goes through leadership change</strong> → their customers are uncertain — great time to reach out</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET    /api/competitors          → list all tracked competitors
+POST   /api/competitors          → add competitor {name, website, pricingUrl, currentPrice}
+POST   /api/competitors/scan     → run scan on all competitors
+DELETE /api/competitors/:id      → remove competitor</pre>
+`,
+"composer":`<h2>Email Composer</h2>
+<p>The Email Composer uses Claude AI to write personalised cold emails for each individual lead — using real data from their Google Business profile (category, rating, reviews, website, city) to craft a unique opening line that doesn't sound templated.</p>
+
+<h3>Per-Lead Personalisation</h3>
+<ol>
+  <li>Go to <strong>Email Composer</strong></li>
+  <li>Select a lead from the dropdown (or select "All leads" for batch)</li>
+  <li>Choose a template or write your own subject and body with <code>{{tokens}}</code></li>
+  <li>Click <strong>AI Personalise</strong> — Claude writes a unique opening line using the lead's real business data</li>
+  <li>Review the draft, edit if needed</li>
+  <li>Click <strong>Send via Gmail</strong> or <strong>Save as Draft</strong></li>
+</ol>
+
+<h3>Available Tokens</h3>
+<ul>
+  <li><code>{{name}}</code> — business name</li>
+  <li><code>{{city}}</code> — city</li>
+  <li><code>{{category}}</code> — business category</li>
+  <li><code>{{rating}}</code> — Google rating (e.g. 4.5)</li>
+  <li><code>{{reviews}}</code> — review count</li>
+  <li><code>{{website}}</code> — website URL</li>
+  <li><code>{{aiOpening}}</code> — Claude's personalised opening line</li>
+  <li><code>{{product}}</code> — your product name (from workspace settings)</li>
+</ul>
+
+<h3>Batch Personalisation</h3>
+<p>To personalise emails for all leads at once: select "All leads" and click <strong>Batch Personalise</strong>. Claude processes each lead sequentially. For 25 leads, expect 60–90 seconds. Each lead gets a unique opening line — no two emails are the same.</p>
+
+<h3>Video Thumbnails (Killer Feature #10)</h3>
+<p>Add a fake "video thumbnail" to any email to dramatically increase click rates (3× average). Click <strong>Generate Video Thumbnail</strong> — OutreachPro creates a personalised SVG image with the lead's name, city, and a play button overlay. The image is base64-encoded and embeds directly in the email — no hosting needed.</p>
+<p>Example use: <em>"I recorded a 2-minute video specifically for [Business Name] about how CycleWASH Pro can cut your bike cleaning time by 80%."</em></p>
+
+<h3>LinkedIn Message Generator</h3>
+<p>Switch to <strong>LinkedIn</strong> tab in the composer. Select connection request or follow-up message type. Claude generates a personalised LinkedIn message (max 300 chars for connection requests, staying within LinkedIn's limit). Copy and send manually or add as a sequence step.</p>
+
+<h3>Tips</h3>
+<ul>
+  <li>Keep subject lines under 50 characters — they display fully on mobile</li>
+  <li>Use the lead's star rating in the subject: "Saw your {{rating}}★ reviews" performs 40% better than generic subjects</li>
+  <li>Always include one personalised sentence in the first line — it's what determines if they keep reading</li>
+  <li>Test two subject variants using A/B testing before mass sending</li>
+</ul>
+`,
+"crm":`<h2>CRM Pipeline</h2>
+<p>The CRM Kanban board tracks every lead from first contact to closed deal. Drag cards between stages to update deal status. Revenue updates automatically as deals move to Won.</p>
+
+<h3>Pipeline Stages</h3>
+<ul>
+  <li><strong>Prospect</strong> — lead identified, not yet contacted</li>
+  <li><strong>Contacted</strong> — first email or LinkedIn message sent</li>
+  <li><strong>Replied</strong> — lead has responded (positive or requesting info)</li>
+  <li><strong>Meeting</strong> — call or demo scheduled</li>
+  <li><strong>Proposal</strong> — quote or proposal sent</li>
+  <li><strong>Won</strong> — deal closed ✓ (revenue counted)</li>
+  <li><strong>Lost</strong> — not moving forward</li>
+</ul>
+
+<h3>Memory CRM (Killer Feature #5)</h3>
+<p>When a lead says "call me back in Q4" or "ping me after the holidays", Memory CRM captures this automatically. When a reply comes into your Unibox containing a timing signal, click <strong>Add to Memory</strong>. Claude extracts the follow-up date and stores a reminder.</p>
+<p>Go to <strong>CRM → Memory</strong> to see all upcoming follow-ups sorted by due date. Click <strong>Action</strong> to mark complete and trigger a personalised re-engagement email.</p>
+<p>Examples Claude understands:</p>
+<ul>
+  <li>"Call me in Q4" → follow-up queued for Oct 1</li>
+  <li>"We're busy until after Christmas" → queued for Jan 2</li>
+  <li>"Try me again in 3 months" → queued 90 days from today</li>
+  <li>"Budget approved in March" → queued for Mar 1</li>
+</ul>
+
+<h3>Deal Value</h3>
+<p>Set a deal value when creating a CRM card. This feeds the Pipeline Value KPI on the Analytics dashboard. When a deal moves to Won, the value moves from Pipeline to Won Revenue — giving you a real-time view of your outreach ROI.</p>
+
+<h3>Intent Signals in CRM</h3>
+<p>Leads flagged by the Intent Signal Detector (rapid review growth, rating improvement) are highlighted in the CRM with a 🔥 signal badge. These are the hottest leads — prioritise outreach to them first.</p>
+
+<h3>White-Label Workspaces</h3>
+<p>Each client workspace has its own isolated CRM pipeline (Killer Feature #8). Switch workspaces using the workspace selector in the top bar. The master view aggregates deal values across all workspaces.</p>
+`,
+"cyclewash":`<h2>Workspace Settings</h2>
+<p>Configure your company details, product information, and event calendar. These settings power the AI personalisation — Claude uses your product name, pricing, and event dates when writing email opening lines.</p>
+
+<h3>Company Settings</h3>
+<ul>
+  <li><strong>Company name</strong> — appears in email signatures and AI-generated copy</li>
+  <li><strong>Product name</strong> — the <code>{{product}}</code> token in email templates</li>
+  <li><strong>Product description</strong> — used by Claude to write relevant opening lines</li>
+  <li><strong>Website</strong> — linked in email signatures</li>
+</ul>
+
+<h3>Event Calendar</h3>
+<p>Add trade shows, demo days, and regional events. When an event is upcoming in the lead's city, OutreachPro automatically mentions it in the AI-generated opening: <em>"We'll be in Köln for the Eurobike show next month — would love to show you the Pro Platinum in person."</em></p>
+
+<h3>White-Label Workspaces (Killer Feature #8)</h3>
+<p>Run OutreachPro as a white-label outreach agency. Each client gets their own isolated workspace with separate leads, campaigns, inbox, and CRM pipeline.</p>
+<ol>
+  <li>Go to <strong>Workspace → New Workspace</strong></li>
+  <li>Enter client name, their sender email, and a brand colour</li>
+  <li>OutreachPro creates isolated data files for this client</li>
+  <li>Switch between workspaces using the top-bar selector</li>
+</ol>
+<p>The master workspace view shows aggregate stats across all clients — total leads, active campaigns, pipeline value, and won revenue per workspace.</p>
+
+<h3>AI SDR Mode (Killer Feature #9)</h3>
+<p>Enable Autonomous SDR mode to let Claude decide who to target, when to reach out, and what to say — without any manual input.</p>
+<ol>
+  <li>Go to <strong>Workspace → AI SDR</strong></li>
+  <li>Set mode: <strong>Suggest</strong> (Claude proposes, you approve) or <strong>Autopilot</strong> (sends automatically)</li>
+  <li>Set daily limit (recommended: 10–20 for autopilot)</li>
+  <li>Set target stages (e.g. "new" leads only)</li>
+  <li>Click <strong>Run SDR</strong> — Claude analyses your leads and generates personalised subject + opening for each</li>
+</ol>
+<p>In Suggest mode, you get a review screen before anything sends. In Autopilot, Claude sends directly up to the daily limit.</p>
+`,
+"domain-health":`<h2>Domain Health Dashboard</h2>
+<p>Before sending a single cold email, your sending domain needs to pass 5 technical checks. The Domain Health Dashboard runs all checks in seconds and gives you a score (A–F) so you know exactly what to fix.</p>
+
+<h3>Running a Check</h3>
+<ol>
+  <li>Go to <strong>Inbox Tester → Domain Health</strong></li>
+  <li>Enter your sending domain (e.g. <code>yourbrand.com</code> — not the full email address)</li>
+  <li>Click <strong>Run Check</strong></li>
+  <li>Results appear within 3–5 seconds</li>
+</ol>
+
+<h3>The 5 Checks</h3>
+<ul>
+  <li><strong>MX Records</strong> — can your domain receive replies? Required for two-way email.</li>
+  <li><strong>SPF</strong> — is your sending server authorised? Prevents spoofing.</li>
+  <li><strong>DKIM</strong> — are your emails cryptographically signed? Proves authenticity.</li>
+  <li><strong>DMARC</strong> — what happens when emails fail SPF/DKIM? Controls spam handling.</li>
+  <li><strong>Spamhaus</strong> — is your domain on a global blacklist? Instant inbox death if yes.</li>
+</ul>
+
+<h3>Grading</h3>
+<ul>
+  <li><strong>A (90–100)</strong> — all checks pass. Safe to send campaigns.</li>
+  <li><strong>B (70–89)</strong> — minor issues. Fix before sending at scale.</li>
+  <li><strong>C (50–69)</strong> — significant issues. Do not send campaigns yet.</li>
+  <li><strong>F (below 50)</strong> — critical failures. Fix immediately.</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET /api/domain-health/:domain
+→ { domain, score, grade, checks: { spf, dkim, dmarc, mx, blacklist } }</pre>
+`,
+"email-verification":`<h2>Email Verification</h2>
+<p>Before OutreachPro sends a single email, it checks whether the address is actually deliverable. Invalid emails cause bounces. High bounce rates destroy sender reputation. This feature catches bad addresses before they do damage — saving you from the most preventable deliverability problem.</p>
+
+<h3>What Gets Checked</h3>
+<ul>
+  <li><strong>Format validation</strong> — does the address follow valid email syntax?</li>
+  <li><strong>Disposable domain detection</strong> — mailinator.com, tempmail.com, guerrillamail.com, and 17 others are automatically flagged as invalid</li>
+  <li><strong>Role-based detection</strong> — info@, support@, admin@, noreply@ addresses are flagged as low-priority. These route to inboxes monitored by multiple people and rarely generate replies</li>
+  <li><strong>MX record check</strong> — does the email's domain actually have mail servers? This catches domains that exist as websites but can't receive email</li>
+</ul>
+
+<h3>Risk Scores</h3>
+<ul>
+  <li><strong>Low risk (score 85+)</strong> — MX records found, not disposable, not role-based. Safe to send.</li>
+  <li><strong>Medium risk (score 40)</strong> — Role-based address. May send but expect lower reply rates. Consider finding the owner's direct email first.</li>
+  <li><strong>High risk (score 0–5)</strong> — Disposable domain, invalid format, or domain has no mail servers. Do not send.</li>
+</ul>
+
+<h3>Verifying Your Lead List</h3>
+<ol>
+  <li>Go to <strong>Lead Finder → Verify Emails</strong></li>
+  <li>Click <strong>Verify All Leads</strong></li>
+  <li>OutreachPro checks every lead with an email address (up to 100 at once)</li>
+  <li>Results appear in the lead list: ✓ valid, ⚠ medium risk, ✗ invalid</li>
+  <li>Filter to remove high-risk leads before sending any campaign</li>
+</ol>
+
+<h3>Before Every Campaign Send</h3>
+<p>Best practice: run verification before activating any new campaign. Go to <strong>Campaigns → [Campaign Name] → Verify Lead Emails</strong>. OutreachPro will flag how many leads in that campaign have risky emails, giving you the chance to remove them before they harm your sender score.</p>
+
+<h3>Why Bounce Rate Matters</h3>
+<p>Gmail and Outlook track bounce rates per sending domain. Above 2% bounces: deliverability warnings. Above 5%: your emails start going to spam for everyone — even people who want to receive them. One batch of unverified emails to 100 bad addresses can take weeks of warmup to recover from.</p>
+
+<h3>Finding Better Emails for Role-Based Addresses</h3>
+<p>When OutreachPro flags info@ or contact@ as medium-risk, use the Apify scraper to search for the specific owner: search Google Maps for the business name, then check their website's team/about page for a personal email. Direct emails to owners (max@fahrrad-mueller.de) convert at 5–10× the rate of generic addresses.</p>
+
+<h3>API</h3>
+<pre>POST /api/verify/email     → {email} → {valid, risk, score, reason, hasMx}
+POST /api/verify/bulk      → {emails[]} → {summary, results[]}
+POST /api/verify/leads     → verify all leads in DB, update emailRisk field</pre>
+`,
+"forecasting":`<h2>Revenue Forecasting + Deal Velocity</h2>
+<p>OutreachPro analyses your CRM pipeline and predicts how much revenue you'll close in the next 30, 60, and 90 days. It also flags deals that have been stuck in one stage too long — before they go cold and disappear. Enterprise tools like Clari charge thousands per month for this. It's built into OutreachPro.</p>
+
+<h3>How the Forecast Works</h3>
+<p>Each CRM stage has a probability weight based on how far along the deal is:</p>
+<pre>Prospect  →  5% probability of closing
+Contacted → 10% probability
+Replied   → 25% probability
+Meeting   → 50% probability
+Proposal  → 75% probability</pre>
+<p>The 30-day forecast multiplies each deal's value by its stage probability and sums the result. A €38,000 deal in Proposal stage contributes €28,500 to the forecast. A €38,000 deal in Prospect contributes €1,900.</p>
+<p>The 60 and 90-day forecasts apply a pipeline velocity multiplier based on your historical close rate.</p>
+
+<h3>AI Narrative Forecast</h3>
+<p>If your Anthropic API key is configured, Claude writes a plain-English 2-sentence forecast summary after crunching the numbers. Example:</p>
+<blockquote><em>"With 4 deals in Proposal stage totalling €152,000 and a healthy pipeline of 12 active deals, your 30-day forecast is €47,800. The 2 deals stuck in Meeting for 21+ days are the main risk — prioritise re-engagement calls this week."</em></blockquote>
+
+<h3>Stale Deal Alerts</h3>
+<p>Any deal with no activity update in 14+ days is flagged as stale. Go to <strong>Analytics → Forecasting → Stale Deals</strong> to see the full list with days-since-activity. These are your highest-risk deals — they haven't moved because nobody has followed up.</p>
+<p>Stale deal rescue workflow:</p>
+<ol>
+  <li>Open the stale deal in CRM</li>
+  <li>Click <strong>Re-engage</strong> — generates a personalised win-back email via Claude</li>
+  <li>Check Memory CRM — did this lead ask to be contacted later? If so, the timing may be intentional</li>
+  <li>If no response within 7 days, move to Lost and re-add to a re-engagement campaign</li>
+</ol>
+
+<h3>Using Forecasts for Planning</h3>
+<ul>
+  <li><strong>30-day forecast</strong> — use for monthly revenue planning and expense decisions</li>
+  <li><strong>60-day forecast</strong> — use to decide whether to run more outreach campaigns this month</li>
+  <li><strong>90-day forecast</strong> — use for quarterly sales targets and inventory planning</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET /api/forecast
+→ {
+    forecast: { d30, d60, d90 },
+    pipeline: { active, totalValue },
+    won: { count, totalValue },
+    staleDeals: [{id, name, stage, value, daysSinceActivity}],
+    narrative: "Claude's plain-English summary"
+  }</pre>
+`,
+"gmail":`<h2>Gmail Integration</h2>
+<p>OutreachPro connects to Gmail via OAuth2 to send emails, save drafts, and scrape your inbox for new leads — all without storing your password.</p>
+
+<h3>Setup (5 minutes)</h3>
+<ol>
+  <li>Go to <strong>Google Cloud Console → APIs & Services</strong></li>
+  <li>Create a new project (or use existing)</li>
+  <li>Enable the <strong>Gmail API</strong></li>
+  <li>Create OAuth2 credentials: Web Application</li>
+  <li>Add Authorized Redirect URI: <code>http://localhost:3000/api/gmail/callback</code></li>
+  <li>Copy Client ID and Client Secret to your <code>.env</code> file</li>
+  <li>In OutreachPro: click <strong>Connect Gmail</strong> in Email Accounts</li>
+  <li>Authorise in the popup — you're connected</li>
+</ol>
+
+<h3>Gmail Scraper</h3>
+<p>The Gmail Scraper scans your inbox for business emails and automatically extracts leads. Go to <strong>Gmail Scraper</strong>, set keywords (e.g. "Fahrrad", "Bike"), and click Run. OutreachPro streams matching emails and imports the sender's name, email, and company as leads.</p>
+<p>Use this to capture inbound leads from people who've already emailed you — they convert at 10× the rate of cold outreach.</p>
+
+<h3>Sending & Drafts</h3>
+<ul>
+  <li><strong>Send directly</strong> — emails send immediately via Gmail API with rate limiting</li>
+  <li><strong>Save as Draft</strong> — creates a Gmail draft you can review before sending</li>
+  <li><strong>Batch Send</strong> — sends personalised emails to all leads in a campaign via SSE (streams progress live)</li>
+</ul>
+
+<h3>Troubleshooting</h3>
+<ul>
+  <li><strong>"Gmail not connected"</strong> — re-authorise by clicking Connect Gmail again</li>
+  <li><strong>"Rate limit exceeded"</strong> — Gmail API allows ~100 emails/hour. OutreachPro handles throttling automatically</li>
+  <li><strong>"Redirect URI mismatch"</strong> — make sure your Google Cloud OAuth settings include exactly <code>http://localhost:3000/api/gmail/callback</code></li>
+</ul>
+`,
+"icp":`<h2>ICP Builder — Ideal Customer Profile</h2>
+<p>Define your ideal customer profile once and OutreachPro automatically finds and imports matching leads on a weekly schedule. No more manual scraping.</p>
+
+<h3>Setting Up Your ICP</h3>
+<ol>
+  <li>Go to <strong>Settings → ICP Builder</strong></li>
+  <li>Add your target cities (comma-separated)</li>
+  <li>Add search terms (what you'd type into Google Maps)</li>
+  <li>Set minimum rating (default: 4.0)</li>
+  <li>Set minimum reviews (default: 10)</li>
+  <li>Set max leads per run (default: 50)</li>
+  <li>Click <strong>Save ICP</strong></li>
+  <li>Click <strong>Run Now</strong> to test it immediately, or enable <strong>Weekly Auto-Run</strong></li>
+</ol>
+
+<h3>Example ICP — Bike Dealer</h3>
+<pre>Cities: Köln, Düsseldorf, Bonn, Aachen, Leverkusen, Wuppertal
+Terms: Fahrradhändler, E-Bike Händler, Fahrrad Service
+Min Rating: 4.0
+Min Reviews: 15
+Max per run: 50</pre>
+<p>This runs 6 cities × 3 terms = 18 scrape jobs, importing up to 50 top-scored leads per week. Over 4 weeks that's 200 pre-qualified leads automatically in your pipeline.</p>
+
+<h3>Auto-Import Logic</h3>
+<p>Only leads scoring above your threshold (default: 60/100) are imported. Leads already in your database (matched by name + city) are not duplicated. New leads land in the Lead Finder with status "new" and source "ICP auto-import".</p>
+
+<h3>API</h3>
+<pre>GET  /api/icp         → current ICP config
+POST /api/icp         → update ICP config
+POST /api/icp/run     → trigger immediate run</pre>
+`,
+"inbox-rotation":`<h2>Multi-Sender Inbox Rotation</h2>
+<p>The safest daily send limit for cold outreach from a single inbox is 50 emails. With inbox rotation, you assign 3 warmed inboxes to a campaign and OutreachPro automatically spreads sends across all three — letting you safely send 150 emails per day while each inbox stays under its 50-email limit. Instantly.ai charges $97/month for this. In OutreachPro it's built in.</p>
+
+<h3>Why 50/Day Per Inbox?</h3>
+<p>Email providers (Gmail, Outlook) monitor sending volume from new addresses. Sending 150 cold emails in one day from a new inbox triggers spam filters. But the same 150 emails spread across 3 inboxes at 50 each looks completely normal — three people having normal email conversations.</p>
+
+<h3>Setting Up Rotation</h3>
+<ol>
+  <li>First, warm up at least 2–3 inboxes for 4–6 weeks (see Email Warmup guide)</li>
+  <li>Go to <strong>Email Accounts → Inbox Rotation</strong></li>
+  <li>Enable rotation and add each warmed inbox</li>
+  <li>Set daily limit per inbox (default: 50)</li>
+  <li>Choose rotation strategy: Round-Robin, Random, or Weighted</li>
+  <li>Assign the rotation pool to any campaign</li>
+</ol>
+
+<h3>Rotation Strategies</h3>
+<ul>
+  <li><strong>Round-Robin</strong> (recommended) — cycles evenly through inboxes in sequence. Inbox A sends email 1, B sends email 2, C sends email 3, A sends email 4... Most predictable distribution.</li>
+  <li><strong>Random</strong> — picks a random available inbox for each send. Good for disguising patterns across large lists.</li>
+  <li><strong>Weighted</strong> — assign weights to inboxes (e.g. Inbox A weight 2, B weight 1). Inbox A sends twice as many. Use this when one inbox has a stronger reputation.</li>
+</ul>
+
+<h3>Rotation Stats Dashboard</h3>
+<p>The rotation dashboard shows per-inbox: emails sent today, daily limit, remaining capacity, and total capacity across all inboxes. At a glance you can see if any inbox is near its limit and should be relieved.</p>
+
+<h3>What Leads See</h3>
+<p>Each lead receives email from whichever inbox was selected for their send. The sender name and domain rotate — but this is actually a benefit: if a lead receives a follow-up from a different sender address, it doesn't feel like a mass campaign. It feels like a different colleague reaching out.</p>
+
+<h3>Scale Calculator</h3>
+<pre>1 inbox  × 50/day = 50 emails/day  = 1,000/month
+2 inboxes × 50/day = 100 emails/day = 2,000/month
+3 inboxes × 50/day = 150 emails/day = 3,000/month
+5 inboxes × 50/day = 250 emails/day = 5,000/month</pre>
+
+<h3>API</h3>
+<pre>GET  /api/rotation/config         → current rotation settings
+POST /api/rotation/config         → update settings
+POST /api/rotation/next-sender    → get next sender to use (auto-increments count)
+GET  /api/rotation/stats          → per-inbox sent today / remaining</pre>
+`,
+"inbox-test":`<h2>Inbox Placement Tester</h2>
+<p>The Inbox Tester checks whether your emails will land in the primary inbox, promotions tab, or spam folder — before you send a campaign.</p>
+
+<h3>Domain Health Dashboard (Killer Feature #1)</h3>
+<p>The most important deliverability check. Enter your sending domain and OutreachPro checks:</p>
+<ul>
+  <li><strong>SPF</strong> — authorises your server to send on behalf of the domain</li>
+  <li><strong>DKIM</strong> — cryptographically signs your emails to prove authenticity</li>
+  <li><strong>DMARC</strong> — tells email providers what to do with emails that fail SPF/DKIM</li>
+  <li><strong>MX Records</strong> — your domain can receive replies</li>
+  <li><strong>Spamhaus Blacklist</strong> — your domain isn't on the global spam blocklist</li>
+</ul>
+<p>Each check is scored: 5 passes = 100/100 Grade A. Fix any failing checks before sending campaigns.</p>
+
+<h3>Setting Up SPF</h3>
+<p>Add this TXT record to your domain's DNS:</p>
+<pre>v=spf1 include:_spf.google.com ~all</pre>
+<p>(Adjust for your email provider — Fastmail, Outlook, custom SMTP, etc.)</p>
+
+<h3>Setting Up DMARC</h3>
+<p>Add this TXT record at <code>_dmarc.yourdomain.com</code>:</p>
+<pre>v=DMARC1; p=none; rua=mailto:dmarc@yourdomain.com</pre>
+<p>Start with <code>p=none</code> (monitoring only), then move to <code>p=quarantine</code> after 2 weeks of clean reports.</p>
+
+<h3>What to Do If You Fail Checks</h3>
+<ul>
+  <li><strong>No SPF</strong> — add the TXT record above to your domain DNS (propagates in 24h)</li>
+  <li><strong>No DKIM</strong> — enable DKIM signing in your email provider (Google Workspace: Admin → Apps → Gmail → Authenticate Email)</li>
+  <li><strong>No DMARC</strong> — add the TXT record above</li>
+  <li><strong>Blacklisted</strong> — request delisting at mxtoolbox.com/blacklists. Takes 24–48h.</li>
+</ul>
+`,
+"intent-signals":`<h2>Intent Signal Detector</h2>
+<p>The Intent Signal Detector monitors your leads' Google Business profiles for changes that indicate growth or buying intent — then flags the hottest prospects for immediate outreach.</p>
+
+<h3>What Counts as a Signal</h3>
+<ul>
+  <li><strong>Review surge</strong> — 5+ new reviews since last scan = business is active and growing</li>
+  <li><strong>Rating improvement</strong> — rating went up = business is improving, good time to reach out</li>
+  <li><strong>New photos</strong> — business is actively managing their profile (future enhancement)</li>
+</ul>
+
+<h3>Running a Scan</h3>
+<ol>
+  <li>Go to <strong>Analytics → Intent Signals</strong></li>
+  <li>Click <strong>Scan Leads</strong> (scans up to 20 leads per run)</li>
+  <li>Set limit if needed (default: 20)</li>
+  <li>Results appear showing which leads triggered signals and their signal score</li>
+</ol>
+
+<h3>Signal Scoring</h3>
+<ul>
+  <li>Review growth (+5 reviews): +40 points</li>
+  <li>Rating improvement: +30 points</li>
+  <li>Combined: 70+ points = hot lead 🔥</li>
+</ul>
+
+<h3>Taking Action</h3>
+<p>Click <strong>Action</strong> on any signal to mark it handled. This moves it from the active signals list to history. Best practice: action a signal by sending the lead a personalised email within 24 hours of detection — timing is everything.</p>
+
+<h3>Why This Matters</h3>
+<p>A business with rapidly growing reviews is investing in their reputation. They're likely growing their revenue and open to tools that help them scale. Reaching out at this exact moment — when they're actively improving — converts at 3–5× the rate of cold outreach.</p>
+
+<h3>API</h3>
+<pre>GET  /api/intent-signals              → list all signals
+POST /api/intent-signals/scan         → run scan {limit: 20}
+POST /api/intent-signals/:id/action   → mark actioned</pre>
+`,
+"linkedin":`<h2>LinkedIn Outreach</h2>
+<p>Add LinkedIn connection requests and messages as steps in your outreach sequences. Claude generates personalised connection notes for each lead — staying within LinkedIn's 300-character limit for connection requests.</p>
+
+<h3>Adding LinkedIn Steps</h3>
+<ol>
+  <li>Go to <strong>Sequences</strong> and open any sequence</li>
+  <li>Click <strong>Add Step → LinkedIn</strong></li>
+  <li>Choose type: <strong>Connection Request</strong> or <strong>Message</strong></li>
+  <li>Click <strong>AI Generate</strong> — Claude writes a personalised note</li>
+  <li>Review and edit if needed</li>
+  <li>Set delay (e.g. Day 2 — send connection request 2 days after first email)</li>
+</ol>
+
+<h3>Recommended Multichannel Sequence</h3>
+<pre>Day 0  — Email: personalised pitch
+Day 2  — LinkedIn: connection request (personalised note)
+Day 5  — Email: follow-up with case study
+Day 8  — LinkedIn: message to connected lead
+Day 14 — Email: final follow-up</pre>
+<p>This multichannel approach generates 3–4× more replies than email-only sequences.</p>
+
+<h3>Connection Request Templates</h3>
+<p>OutreachPro ships with 3 default LinkedIn templates. Add your own at <strong>Settings → LinkedIn Templates</strong>. Claude uses the template as a starting point and personalises it for each lead.</p>
+
+<h3>Important Notes</h3>
+<ul>
+  <li>LinkedIn connection requests must be sent manually — LinkedIn's API prohibits automated connection requests</li>
+  <li>OutreachPro generates the text and notifies you when it's time to send</li>
+  <li>Connection requests: max 300 characters</li>
+  <li>Messages to connections: max 500 characters</li>
+  <li>LinkedIn limits ~100 connection requests per week — pace yourself</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET  /api/linkedin/templates         → list templates
+POST /api/linkedin/templates         → create template
+POST /api/linkedin/generate          → generate message for lead
+  Body: { lead, templateId, type: 'connection'|'message' }
+  → { message, charCount }</pre>
+`,
+"memory":`<h2>Memory CRM — AI Follow-up Reminders</h2>
+<p>Memory CRM uses Claude to extract follow-up timing from reply emails and automatically queue re-engagement messages. Never forget a "call me back in Q4" again.</p>
+
+<h3>How It Works</h3>
+<ol>
+  <li>A lead replies: "We're all set for now, but check back in March"</li>
+  <li>In Unibox, click <strong>Add to Memory</strong> on that reply</li>
+  <li>Claude reads the message and extracts: follow-up date = March 1, intent = "maybe"</li>
+  <li>A reminder is created and appears in <strong>CRM → Memory</strong></li>
+  <li>On March 1, the reminder shows as "Due" with a one-click re-engagement button</li>
+</ol>
+
+<h3>Timing Phrases Claude Understands</h3>
+<ul>
+  <li>"Call me in Q4" → October 1</li>
+  <li>"After the holidays" → January 2</li>
+  <li>"Try me in 3 months" → today + 90 days</li>
+  <li>"Budget approved in March" → March 1</li>
+  <li>"We're reviewing vendors in spring" → April 1</li>
+  <li>"Not until next year" → January 1 next year</li>
+</ul>
+
+<h3>Due Memories</h3>
+<p>Go to <strong>CRM → Memory → Due Today</strong> to see all follow-ups that are due. Each entry shows the original message, the lead's name, and the extracted follow-up context. Click <strong>Re-engage</strong> to open the Email Composer pre-filled with a personalised re-engagement email that references the original conversation.</p>
+
+<h3>Manual Memory</h3>
+<p>You can also add memories manually without a reply text. Set the lead, follow-up date, and a note. Useful for adding reminders from phone calls or LinkedIn conversations that happened outside OutreachPro.</p>
+
+<h3>API</h3>
+<pre>GET  /api/memory           → all memories
+GET  /api/memory/due       → due today or overdue
+POST /api/memory           → create {leadId, messageText, followUpDate?}
+POST /api/memory/:id/action → mark actioned {note?}
+DELETE /api/memory/:id     → delete</pre>
+`,
+"proposals":`<h2>One-Click Proposal Generator</h2>
+<p>When a CRM deal reaches "Proposal" stage, generate a complete, print-ready sales proposal in one click. Claude writes a personalised executive summary. OutreachPro fills in the product details, ROI calculations, and pricing. The result is a professional branded proposal you can email, share as a link, or print — without touching a design tool. PandaDoc charges €35/month for this. It's built in.</p>
+
+<h3>Generating a Proposal</h3>
+<ol>
+  <li>Open a CRM deal in "Proposal" stage</li>
+  <li>Click <strong>Generate Proposal</strong></li>
+  <li>Optionally add a custom message for Claude to incorporate</li>
+  <li>Choose products to include and apply a discount if relevant</li>
+  <li>Click <strong>Generate</strong> — proposal renders in ~5 seconds</li>
+  <li>Preview the HTML proposal, then click <strong>Send via Gmail</strong> or <strong>Copy Link</strong></li>
+</ol>
+
+<h3>What the Proposal Includes</h3>
+<ul>
+  <li><strong>Cover page</strong> — client name, city, date, reference number, validity period</li>
+  <li><strong>Executive summary</strong> — 2 sentences written by Claude, personalised to the specific business (references their rating, category, city)</li>
+  <li><strong>Product section</strong> — your products with pricing, featured recommendation highlighted</li>
+  <li><strong>ROI table</strong> — cleaning time reduction, throughput increase, payback period</li>
+  <li><strong>CTA section</strong> — bold call-to-action with your booking link</li>
+  <li><strong>Footer</strong> — company details, address, registration number</li>
+</ul>
+
+<h3>Example Executive Summary (Claude-written)</h3>
+<blockquote><em>"With 342 Google reviews and a 4.8-star rating, Fahrrad Müller has clearly built Köln's most trusted bike shop. CycleWASH Pro is designed for exactly this type of high-volume premium operation — cutting per-bike cleaning time from 15 minutes to under 4, letting your team serve more customers while maintaining the quality your reputation is built on."</em></blockquote>
+
+<h3>Customising Products and Pricing</h3>
+<p>The proposal generator uses your workspace product settings by default. Override for any specific deal:</p>
+<ul>
+  <li>Add/remove products from the proposal</li>
+  <li>Apply a percentage discount (shown as a discount badge)</li>
+  <li>Add custom line items (installation, training, extended warranty)</li>
+</ul>
+
+<h3>Validity Period</h3>
+<p>Every proposal automatically includes a 30-day validity date. This creates urgency without a hard sell — the lead knows the pricing is only locked in for 30 days. You can adjust the validity period in Settings → Proposal Defaults.</p>
+
+<h3>Sharing Options</h3>
+<ul>
+  <li><strong>Email HTML</strong> — copy the full HTML into a Gmail email (renders beautifully in most email clients)</li>
+  <li><strong>Direct link</strong> — share the proposal URL directly: the lead can view it in any browser</li>
+  <li><strong>Print/PDF</strong> — open in browser → print → save as PDF for physical meetings</li>
+</ul>
+
+<h3>API</h3>
+<pre>POST /api/proposals/generate
+  Body: { dealId, leadId, customMessage, products[], discount }
+  → { proposal, html, previewUrl }
+
+GET /api/proposals → list all generated proposals</pre>
+`,
+"scheduler":`<h2>Meeting Scheduler — Built-in Calendly Replacement</h2>
+<p>Give every lead a booking link. They pick a slot from your availability, and OutreachPro automatically creates a CRM deal, sends a confirmation, and logs the meeting. No Calendly subscription needed — €0/month vs Calendly's €16/month.</p>
+
+<h3>Setting Up Your Scheduler</h3>
+<ol>
+  <li>Go to <strong>Settings → Meeting Scheduler</strong></li>
+  <li>Set your meeting name (e.g. "30-Min CycleWASH Demo")</li>
+  <li>Set duration (15, 30, or 60 minutes)</li>
+  <li>Set your timezone</li>
+  <li>Configure available time slots per day</li>
+  <li>Customise the confirmation message template</li>
+  <li>Click Save</li>
+</ol>
+
+<h3>Adding Your Booking Link to Emails</h3>
+<p>Include your booking URL in any email template:</p>
+<pre>Hi {{name}},
+
+I'd love to show you the CycleWASH Pro in action.
+Pick any slot that works for you:
+
+👉 yoursite.com/scheduler
+
+It's a quick 30-minute demo — I'll show you
+exactly how it works in a shop like {{name}}'s.
+
+Best,
+[Your name]</pre>
+
+<h3>What Happens When a Lead Books</h3>
+<ol>
+  <li>Lead visits <code>/scheduler</code> and picks a time slot</li>
+  <li>Slot is instantly marked as booked (no double-booking possible)</li>
+  <li>CRM deal is automatically created in "Meeting" stage with the lead's details</li>
+  <li>Confirmation message is displayed on screen</li>
+  <li>You see the new deal in your CRM Pipeline immediately</li>
+</ol>
+
+<h3>Booking Link in Sequences</h3>
+<p>Add the booking URL as the CTA in any sequence step. Pair it with a Smart Sequence condition: if a lead clicks the booking link, immediately advance them to "Meeting" stage in CRM and skip remaining email steps.</p>
+
+<h3>Availability Configuration Example</h3>
+<pre>Mon–Thu: 09:00, 10:00, 11:00, 14:00, 15:00, 16:00
+Friday:  09:00, 10:00, 11:00
+Weekend: (no slots)</pre>
+
+<h3>API</h3>
+<pre>GET  /api/scheduler/config    → current availability settings
+POST /api/scheduler/config    → update availability
+GET  /api/scheduler/available → next 14 days of open slots
+POST /api/scheduler/book      → book a slot {slotId, name, email, company}
+GET  /scheduler               → public booking page (share this URL)</pre>
+`,
+"sequences":`<h2>Email Sequences</h2>
+<p>Sequences are multi-step automated follow-up flows. Each step is an email (or LinkedIn message) sent automatically after a delay — with the entire sequence stopping the moment a lead replies.</p>
+
+<h3>Creating a Sequence</h3>
+<ol>
+  <li>Go to <strong>Sequences</strong> and select a campaign</li>
+  <li>Click <strong>Add Step</strong> for each email in the sequence</li>
+  <li>Set the delay (days after previous step): Step 1 = Day 0, Step 2 = Day 3, Step 3 = Day 7</li>
+  <li>Write subject and body for each step using <code>{{tokens}}</code></li>
+  <li>Optionally add a <strong>LinkedIn Step</strong> between email steps</li>
+</ol>
+
+<h3>Recommended 5-Step Sequence</h3>
+<pre>Step 1 (Day 0)  — Email: personalised opening + product pitch
+Step 2 (Day 3)  — LinkedIn: connection request (personalised note)
+Step 3 (Day 5)  — Email: follow-up with case study or social proof
+Step 4 (Day 14) — LinkedIn: follow-up message after connecting
+Step 5 (Day 21) — Email: breakup email ("Last one, I promise...")</pre>
+<p>This 5-step multichannel sequence generates 3–4× more replies than email-only outreach.</p>
+
+<h3>Stop on Reply</h3>
+<p>When enabled (recommended), the sequence stops automatically for any lead who replies — regardless of which step they're on. This prevents embarrassing "I already replied to this!" situations.</p>
+
+<h3>LinkedIn Steps (Killer Feature #7)</h3>
+<p>Any step can be a LinkedIn action instead of an email. Claude generates the connection request or message text based on the lead's profile. These appear as tasks in your sequence — OutreachPro notifies you to send them manually (LinkedIn's automation policies prevent direct API sending).</p>
+
+<h3>Sequence Best Practices</h3>
+<ul>
+  <li>Each step should reference the previous one: "Following up on my email from Tuesday..."</li>
+  <li>Step 2 should be shorter than Step 1 — busy people prefer brevity on follow-ups</li>
+  <li>The "breakup email" (last step) often has the highest reply rate — something like "I'll stop bothering you after this" creates urgency</li>
+  <li>Never send more than 5 steps — more than that damages sender reputation</li>
+  <li>Space steps at least 3 days apart — daily emails feel like spam</li>
+</ul>
+`,
+"smart-sequences":`<h2>Smart Conditional Sequences</h2>
+<p>Standard sequences send the same follow-up to everyone on a fixed timer. Smart Sequences are different — they branch based on what each lead actually does. Opened your email? They go down path A. Didn't open? Path B. Replied? Sequence converts and stops. Every lead gets a personalised journey, not a mass cadence.</p>
+
+<h3>Why This Matters</h3>
+<p>Skylead charges $100/month just for conditional sequences. In OutreachPro, they're built in. A lead who opened your email three times is much hotter than one who never opened it — but without conditional sequences, you'd send them the same follow-up. Smart Sequences fix that.</p>
+
+<h3>How to Build a Smart Sequence</h3>
+<ol>
+  <li>Go to <strong>Sequences → Smart Sequences → New</strong></li>
+  <li>Add your first step (Day 0 — initial email)</li>
+  <li>Click <strong>Add Condition</strong> on the step</li>
+  <li>Set: <strong>If opened → go to Step 2A</strong> / <strong>If not opened → go to Step 2B</strong></li>
+  <li>Build Step 2A (for openers): shorter, more direct — they showed interest</li>
+  <li>Build Step 2B (for non-openers): different subject line, different angle</li>
+  <li>Click <strong>Enroll Leads</strong> to start the sequence</li>
+</ol>
+
+<h3>Example: CycleWASH 5-Step Smart Sequence</h3>
+<pre>Step 1 (Day 0): Initial email — "Ihr Fahrradladen in {{city}}"
+  ↓ IF opened →
+    Step 2A (Day 3): "Sie haben meine E-Mail gelesen — darf ich fragen warum nicht?"
+  ↓ IF not opened →
+    Step 2B (Day 4): Completely different subject: "Kurze Frage zu {{name}}"
+      ↓ IF 2B opened →
+        Step 3A (Day 7): Product-focused follow-up
+      ↓ IF 2B not opened →
+        Step 3B (Day 10): Final attempt — breakup email
+
+Step 4 (any path): LinkedIn connection request
+  ↓ IF replied at any point → STOP — lead enters CRM as Replied</pre>
+
+<h3>Condition Types</h3>
+<ul>
+  <li><strong>opened</strong> — lead opened the email (tracked via pixel)</li>
+  <li><strong>replied</strong> — lead replied (sequence stops, CRM updated)</li>
+  <li><strong>clicked</strong> — lead clicked a link in the email</li>
+  <li><strong>not_opened</strong> — lead didn't open within the delay window</li>
+</ul>
+
+<h3>Real-World Performance</h3>
+<p>Conditional sequences consistently generate 2–3× more replies than flat sequences because:</p>
+<ul>
+  <li>Engaged leads (opened, clicked) get more direct messaging — not a generic follow-up</li>
+  <li>Unengaged leads get a completely different angle — new subject line, new hook</li>
+  <li>You never waste a follow-up step on someone who already replied</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET  /api/smart-sequences                     → list all
+POST /api/smart-sequences                     → create sequence
+POST /api/smart-sequences/:id/enroll          → enroll leads
+POST /api/smart-sequences/:id/event           → record event {leadId, stepId, event}
+GET  /api/smart-sequences/:id/enrollments     → list enrolled leads</pre>
+`,
+"spintax":`<h2>Spintax + Liquid Syntax Engine</h2>
+<p>Send 500 emails that all look genuinely different — not because you have 500 templates, but because OutreachPro randomises words and phrases per send using Spintax, and conditionally changes whole paragraphs based on lead data using Liquid Syntax. The result: emails that never trigger spam filters for repetition, and copy that's always contextually relevant.</p>
+
+<h3>Spintax — Randomise Words Per Send</h3>
+<p>Wrap options in curly braces, separated by pipes. OutreachPro picks one randomly for each send:</p>
+<pre>{Hi|Hello|Guten Tag} {{name}},
+
+{I came across|I noticed|I spotted} your {shop|business|store} on Google —
+{really impressive|quite impressive|exceptional} to see {{{rating}}★|those {{rating}} stars|
+a {{rating}}-star rating} with {{reviews}} reviews.
+
+{I wanted to reach out|I'm getting in touch|I thought I'd connect} because...</pre>
+<p>This single template generates dozens of unique-sounding variations. No two recipients see identical text.</p>
+
+<h3>Liquid Syntax — Conditional Copy Based on Lead Data</h3>
+<p>Write different copy for different lead segments without managing multiple templates:</p>
+<pre>{% if rating > 4.5 %}
+Mit Ihrer herausragenden {{rating}}-Sterne-Bewertung haben Sie offensichtlich
+einen exzellenten Ruf aufgebaut. Für erstklassige Betriebe wie {{name}}...
+{% else %}
+Mit {{reviews}} Bewertungen wächst {{name}} sichtbar. Um Ihren Service
+auf das nächste Level zu heben...
+{% endif %}
+
+{% if reviews > 100 %}
+Ihre {{reviews}} Bewertungen zeigen, dass Sie eine loyale Stammkundschaft haben.
+{% else %}
+Ihr Wachstum bei Google spricht für Ihr Engagement.
+{% endif %}</pre>
+
+<h3>Available Variables in Liquid Conditions</h3>
+<ul>
+  <li><code>rating</code> — Google star rating (number, e.g. 4.5)</li>
+  <li><code>reviews</code> — review count (number, e.g. 342)</li>
+  <li><code>city</code> — lead's city (string)</li>
+  <li><code>name</code> — business name (string)</li>
+  <li><code>category</code> — business category (string)</li>
+</ul>
+
+<h3>Preview Before Sending</h3>
+<p>Go to <strong>Email Composer → Spintax Preview</strong>. OutreachPro generates 3 different rendered versions from your template — showing you the actual variety your sends will have. You can see exactly how conditional blocks resolve for each lead.</p>
+
+<h3>Combining Spintax + Liquid + AI Personalisation</h3>
+<p>For maximum uniqueness: use Spintax for intro variation, Liquid for segment-based copy, and the <code>{{aiOpening}}</code> token for a Claude-written personalised opening. Each email is: randomly varied phrasing + conditionally relevant copy + unique AI sentence. No spam filter has seen that combination before.</p>
+
+<h3>Use Case: CycleWASH Campaign Template</h3>
+<pre>Betreff: {Kurze Frage|Eine Frage|Schnelle Frage} zu {{name}} in {{city}}
+
+{Hallo|Guten Tag|Servus} {{name}},
+
+{{aiOpening}}
+
+{% if rating > 4.5 %}
+Als einer der bestbewerteten Fahrradhändler in {{city}} wissen Sie,
+dass exzellenter Service den Unterschied macht.
+{% else %}
+Mit Ihrer wachsenden Präsenz in {{city}} ist jetzt der richtige
+Zeitpunkt, Ihren Service auf das nächste Level zu heben.
+{% endif %}
+
+{Unser CycleWASH Pro|Die CycleWASH Pro-Anlage|Unser Flaggschiff CycleWASH Pro}
+{wäscht|reinigt|pflegt} ein Fahrrad in {3-4|unter 5|nur 4} Minuten —
+{80% schneller als|deutlich schneller als|eine Zeitersparnis von 80% gegenüber}
+der herkömmlichen Methode.
+
+{Darf ich Ihnen eine kurze Demo zeigen?|Hätten Sie 30 Minuten für eine Demo?}
+
+{Beste Grüße|Mit freundlichen Grüßen|Viele Grüße},
+[NAME]</pre>
+
+<h3>API</h3>
+<pre>POST /api/spintax/preview  → {text, lead} → {versions: [3 renders], unique: N}
+POST /api/spintax/render   → {text, lead} → {result: string}
+POST /api/spintax/batch    → {text, leads[]} → {results[{leadId, rendered}]}</pre>
+`,
+"video-thumbnails":`<h2>Personalised Video Thumbnails</h2>
+<p>Add a fake "video" thumbnail to any cold email — with the lead's name personalised directly on the image. Click rates increase by 3× on average because people are naturally drawn to play buttons.</p>
+
+<h3>How It Works</h3>
+<p>OutreachPro generates an SVG image showing a dark background, a play button, and the lead's name and city personalised as text. The image is base64-encoded and embedded directly in the email — no external image hosting needed, no broken images.</p>
+
+<h3>Generating a Thumbnail</h3>
+<ol>
+  <li>Go to <strong>Email Composer → Video Thumbnail</strong></li>
+  <li>Select a lead (or generate for all leads in batch)</li>
+  <li>Enter your headline text (e.g. "80% faster bike cleaning — for {{name}}")</li>
+  <li>Enter CTA text (e.g. "Watch the 2-minute demo →")</li>
+  <li>Choose background colour</li>
+  <li>Click <strong>Generate</strong></li>
+  <li>Copy the embed HTML and paste it into your email body</li>
+</ol>
+
+<h3>Batch Generation</h3>
+<p>Generate thumbnails for all leads in your campaign at once. Go to <strong>Email Composer → Batch Thumbnails</strong>, configure the design, and click Generate All. Each thumbnail is unique — the lead's name and city are personalised on every image.</p>
+
+<h3>Email Template Example</h3>
+<pre>Subject: "I recorded something for {{name}}"
+
+Hi {{name}},
+
+I put together a quick 2-minute video specifically for
+your team at {{name}} about how CycleWASH Pro works
+in a bike shop environment.
+
+[VIDEO THUMBNAIL HERE — click the embed HTML into body]
+
+Would love your thoughts. Worth 2 minutes?
+
+Best,
+[Your name]</pre>
+
+<h3>API</h3>
+<pre>POST /api/video-thumbnail
+  Body: { leadName, leadCity, headline, cta, bgColor, textColor }
+  → { svg, dataUri, embedHtml }
+
+POST /api/video-thumbnail/batch
+  Body: { leads[], headline, cta, bgColor }
+  → { count, thumbnails[] }</pre>
+`,
+"voice-scripts":`<h2>Voice Message Script Generator</h2>
+<p>Claude writes personalised voicemail and WhatsApp voice message scripts for each lead. The script is tailored to their specific business — using their name, city, category, star rating, and review count to make the message feel researched, not templated. Includes [PAUSE] and [EMPHASISE] markers for natural, confident delivery.</p>
+
+<h3>Why Voice Still Works in 2026</h3>
+<p>HubSpot's 2026 State of Sales report found that 42% of B2B prospects respond better to social and voice outreach than email. A 30-second voicemail after 2 unanswered emails can unlock leads who've been ignoring your emails — the channel switch alone signals persistence and professionalism.</p>
+
+<h3>Generating a Script</h3>
+<ol>
+  <li>Go to <strong>Email Composer → Voice Scripts</strong></li>
+  <li>Select a lead from the dropdown</li>
+  <li>Choose duration: 30 sec (connection request) or 60 sec (full pitch)</li>
+  <li>Choose tone: friendly, professional, direct, or warm</li>
+  <li>Choose language: de, en, fr, es, etc.</li>
+  <li>Click <strong>Generate Script</strong></li>
+  <li>Review and edit — then record via your phone or WhatsApp</li>
+</ol>
+
+<h3>Example Output — 30-Second German Voicemail</h3>
+<pre>[PAUSE 1s]
+Hallo, hier spricht [NAME] von CycleWASH. [PAUSE 0.5s]
+
+Ich rufe wegen Fahrrad Müller in Köln an. [PAUSE 0.5s]
+Mit Ihren [EMPHASISE] 342 Bewertungen und 4,8 Sternen [PAUSE 0.5s]
+gehören Sie zu den besten Fahrradhändlern der Stadt. [PAUSE 0.5s]
+
+Ich würde Ihnen gerne zeigen, wie Sie [EMPHASISE] jedes Fahrrad
+in unter 4 Minuten [PAUSE 0.5s] professionell reinigen können. [PAUSE 0.5s]
+
+Meine Nummer ist [THEIR NUMBER]. [PAUSE 0.5s]
+Ich freue mich auf Ihr Feedback. [PAUSE 0.5s] Auf Wiederhören.</pre>
+
+<h3>Best Practices for Voice Outreach</h3>
+<ul>
+  <li><strong>Call timing</strong> — Tuesday–Thursday, 10–11am and 2–4pm have the highest answer rates</li>
+  <li><strong>Leave a voicemail</strong> — if no answer, always leave the script. 27% of voicemails generate a callback</li>
+  <li><strong>WhatsApp voice</strong> — in Germany, WhatsApp voice messages have an 85%+ listen rate. Higher than email open rates</li>
+  <li><strong>Reference your email</strong> — always mention you sent an email, so they can find it if interested</li>
+  <li><strong>Maximum 30 seconds</strong> — anything longer gets deleted without finishing</li>
+</ul>
+
+<h3>The 3-Touch Sequence with Voice</h3>
+<pre>Day 0  — Email: personalised pitch
+Day 3  — Voicemail: 30-second personal script
+Day 5  — WhatsApp: same script as voice note
+Day 7  — Email: follow-up referencing "I left you a voicemail"
+Day 14 — LinkedIn: connection request</pre>
+
+<h3>API</h3>
+<pre>POST /api/voice/script   → {lead, duration, tone, language, purpose}
+                           → {script, words, estimatedSeconds}
+POST /api/voice/batch    → {leadIds[], duration, tone, language}
+                           → {scripts[{leadId, script}]}</pre>
+`,
+"warmup":`<h2>Email Warmup</h2>
+<p>Email warmup gradually increases your sending volume over 4–6 weeks, building sender reputation and ensuring your emails reach the primary inbox — not spam.</p>
+
+<h3>How Warmup Works</h3>
+<p>New email addresses have no sending history. Email providers are suspicious of sudden high-volume sending from unknown addresses. Warmup solves this by starting with a small daily volume and increasing gradually — signalling to Gmail and Outlook that this is a legitimate, trusted sender.</p>
+
+<h3>Warmup Schedule</h3>
+<pre>Week 1: 5 emails/day
+Week 2: 10 emails/day
+Week 3: 20 emails/day
+Week 4: 30 emails/day
+Week 5: 40 emails/day
+Week 6: 50 emails/day (ready for campaigns)</pre>
+
+<h3>Domain Health Check First</h3>
+<p>Before starting warmup, run the Domain Health Dashboard (Killer Feature #1) on your sending domain. All five checks must pass (SPF, DKIM, DMARC, MX, Blacklist) before starting warmup. A domain with missing DMARC cannot be warmed up effectively.</p>
+<p>Go to <strong>Email Accounts → Domain Health</strong> and enter your sending domain. Fix any failing checks before proceeding.</p>
+
+<h3>Warmup Metrics</h3>
+<p>The Warmup dashboard shows daily sent/received counts and a reputation score (0–100). Keep reputation above 80 before starting cold outreach campaigns. If reputation drops below 70, pause your campaigns and let the warmup continue for another week.</p>
+
+<h3>Multiple Inboxes</h3>
+<p>For high-volume outreach (100+ emails/day), warm up multiple inboxes and rotate between them in your campaigns. Go to <strong>Email Accounts</strong> to add multiple senders. Each account has its own warmup progress tracker.</p>
+
+<h3>Tips</h3>
+<ul>
+  <li>Use a custom domain, never @gmail.com for cold outreach</li>
+  <li>Set up SPF, DKIM, and DMARC before day 1 of warmup</li>
+  <li>Never send more than 50 cold emails/day from a single inbox</li>
+  <li>Check Domain Health weekly during warmup</li>
+  <li>If you get spam complaints, pause immediately and investigate</li>
+</ul>
+`,
+"workspaces":`<h2>White-Label Client Workspaces</h2>
+<p>Run OutreachPro as an outreach agency. Each client gets a completely isolated workspace — their own leads, campaigns, inbox, CRM, and analytics — all from one OutreachPro instance.</p>
+
+<h3>Creating a Workspace</h3>
+<ol>
+  <li>Go to <strong>Workspace → Manage Workspaces</strong></li>
+  <li>Click <strong>New Workspace</strong></li>
+  <li>Enter the client name and their sender email</li>
+  <li>Pick a brand colour (shows in the workspace switcher)</li>
+  <li>Click <strong>Create</strong></li>
+</ol>
+<p>OutreachPro creates a dedicated data directory for this workspace. All leads, campaigns, and deals created while in this workspace are stored separately — completely isolated from other clients.</p>
+
+<h3>Switching Workspaces</h3>
+<p>Use the workspace selector in the top bar. The current workspace name and colour are shown. Switching instantly loads that workspace's data — leads, campaigns, CRM, and analytics.</p>
+
+<h3>Master Dashboard</h3>
+<p>The default workspace shows aggregate stats across all workspaces: total leads, active campaigns, pipeline value, and won revenue per client. Use this to monitor all clients at a glance.</p>
+
+<h3>Workspace Stats API</h3>
+<pre>GET /api/workspaces              → list all workspaces
+POST /api/workspaces             → create workspace
+GET /api/workspaces/:id/stats   → leads, campaigns, deals, inbox count
+DELETE /api/workspaces/:id      → delete workspace</pre>
+
+<h3>Agency Pricing Model</h3>
+<p>With white-label workspaces, you can charge clients €500–2000/month for managed outreach — while your actual cost is OutreachPro's API bills (~€50–100/month). The workspace isolation means each client sees only their data, making the product fully white-label ready.</p>
+`};
+
+function sc(id){
+  document.querySelectorAll("nav a").forEach(a=>a.classList.remove("act"));
+  const f=Array.from(document.querySelectorAll("nav a")).find(a=>(a.getAttribute("onclick")||"").includes("'"+id+"'"));
+  if(f)f.classList.add("act");
+  const el=document.getElementById(id);
+  if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-// Reading progress + active nav
-const content = document.getElementById('content');
-if (content) {
-  content.addEventListener('scroll', function() {
-    const pct = content.scrollTop / (content.scrollHeight - content.clientHeight) * 100;
-    document.getElementById('rfill').style.width = pct + '%';
-    const secs = content.querySelectorAll('.h-sec[id]');
-    let cur = null;
-    secs.forEach(s => { if (s.offsetTop - content.scrollTop < 150) cur = s.id; });
-    if (cur) {
-      document.querySelectorAll('.sb-link').forEach(a => {
-        a.classList.toggle('act', (a.getAttribute('onclick')||'').includes("'"+cur+"'"));
-      });
-    }
-  });
+function lh(key){
+  const c=H[key];
+  if(!c){console.warn("No article:",key);return;}
+  document.getElementById("hbody").innerHTML=c;
+  const hca=document.getElementById("hca");
+  hca.classList.add("v");
+  document.getElementById("help").scrollIntoView({behavior:"smooth",block:"start"});
+  setTimeout(()=>hca.scrollIntoView({behavior:"smooth",block:"nearest"}),200);
+  document.querySelectorAll("nav a").forEach(a=>a.classList.remove("act"));
+  const f=Array.from(document.querySelectorAll("nav a")).find(a=>(a.getAttribute("onclick")||"").includes("'"+key+"'"));
+  if(f)f.classList.add("act");
 }
+
+function ch(){
+  document.getElementById("hca").classList.remove("v");
+  document.getElementById("hbody").innerHTML="";
+}
+
+// Activate first nav item on load
+document.getElementById("na-arch")?.classList.add("act");
 </script>
 </body>
 </html>
