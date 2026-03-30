@@ -1,0 +1,32 @@
+<h2>Buying Signal Triggers</h2>
+<p>Buying signal tracking fires the moment a lead engages with your emails. An open = 30 points. A click = 60 points. A reply = 100 points. Leads scoring 60+ are automatically flagged as hot and surface at the top of your follow-up queue.</p>
+
+<h3>How Tracking Works</h3>
+<p>OutreachPro embeds an invisible 1×1 pixel image in every email. When the lead opens the email, their email client loads the pixel and OutreachPro records an "open" event instantly. No external service required — it's a single HTTP request to your own server.</p>
+
+<h3>Embedding the Tracking Pixel</h3>
+<p>Add this to any email HTML (OutreachPro adds it automatically when sending via campaigns):</p>
+<pre>&lt;img src="https://yourserver.com/t/{{leadId}}/{{campaignId}}"
+     width="1" height="1" style="display:none"/&gt;</pre>
+
+<h3>Signal Scores</h3>
+<ul>
+  <li><strong>Open (30 pts)</strong> — lead saw your subject line and opened. Warm signal.</li>
+  <li><strong>Click (60 pts)</strong> — lead clicked a link in your email. Hot signal. Follow up within 2 hours.</li>
+  <li><strong>Reply (100 pts)</strong> — lead replied. Convert immediately. Lead auto-moves to "Replied" in CRM.</li>
+</ul>
+
+<h3>Hot Lead Queue</h3>
+<p>Go to <strong>Analytics → Buying Signals → Hot Leads</strong> to see all leads with signal score ≥ 60. These are sorted by recency — the most recently active leads are at the top. The sweet spot for follow-up is within 2 hours of a click event.</p>
+
+<h3>Why This Converts Better</h3>
+<p>The 2026 HubSpot State of Sales report confirms that signal-triggered outreach converts at 1.7× the rate of scheduled sequences. When a lead clicks your email, they're thinking about you right now. A follow-up call or personalised reply in that window feels responsive, not intrusive.</p>
+
+<h3>Combining with Smart Sequences</h3>
+<p>Use buying signals to trigger Smart Sequence branches: <em>If lead clicks link → immediately skip to Step 3 (demo offer)</em> instead of waiting the standard 7-day timer. This cuts your time-to-reply from days to hours for the hottest leads.</p>
+
+<h3>API</h3>
+<pre>POST /api/signals/track           → record event {leadId, campaignId, event}
+GET  /api/signals/hot             → leads scoring 60+ not yet actioned
+POST /api/signals/:id/action      → mark signal as actioned
+GET  /t/:leadId/:campaignId       → tracking pixel (returns 1x1 GIF)</pre>
