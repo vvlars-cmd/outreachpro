@@ -1,0 +1,40 @@
+<h2>Multi-Sender Inbox Rotation</h2>
+<p>The safest daily send limit for cold outreach from a single inbox is 50 emails. With inbox rotation, you assign 3 warmed inboxes to a campaign and OutreachPro automatically spreads sends across all three — letting you safely send 150 emails per day while each inbox stays under its 50-email limit. Instantly.ai charges $97/month for this. In OutreachPro it's built in.</p>
+
+<h3>Why 50/Day Per Inbox?</h3>
+<p>Email providers (Gmail, Outlook) monitor sending volume from new addresses. Sending 150 cold emails in one day from a new inbox triggers spam filters. But the same 150 emails spread across 3 inboxes at 50 each looks completely normal — three people having normal email conversations.</p>
+
+<h3>Setting Up Rotation</h3>
+<ol>
+  <li>First, warm up at least 2–3 inboxes for 4–6 weeks (see Email Warmup guide)</li>
+  <li>Go to <strong>Email Accounts → Inbox Rotation</strong></li>
+  <li>Enable rotation and add each warmed inbox</li>
+  <li>Set daily limit per inbox (default: 50)</li>
+  <li>Choose rotation strategy: Round-Robin, Random, or Weighted</li>
+  <li>Assign the rotation pool to any campaign</li>
+</ol>
+
+<h3>Rotation Strategies</h3>
+<ul>
+  <li><strong>Round-Robin</strong> (recommended) — cycles evenly through inboxes in sequence. Inbox A sends email 1, B sends email 2, C sends email 3, A sends email 4... Most predictable distribution.</li>
+  <li><strong>Random</strong> — picks a random available inbox for each send. Good for disguising patterns across large lists.</li>
+  <li><strong>Weighted</strong> — assign weights to inboxes (e.g. Inbox A weight 2, B weight 1). Inbox A sends twice as many. Use this when one inbox has a stronger reputation.</li>
+</ul>
+
+<h3>Rotation Stats Dashboard</h3>
+<p>The rotation dashboard shows per-inbox: emails sent today, daily limit, remaining capacity, and total capacity across all inboxes. At a glance you can see if any inbox is near its limit and should be relieved.</p>
+
+<h3>What Leads See</h3>
+<p>Each lead receives email from whichever inbox was selected for their send. The sender name and domain rotate — but this is actually a benefit: if a lead receives a follow-up from a different sender address, it doesn't feel like a mass campaign. It feels like a different colleague reaching out.</p>
+
+<h3>Scale Calculator</h3>
+<pre>1 inbox  × 50/day = 50 emails/day  = 1,000/month
+2 inboxes × 50/day = 100 emails/day = 2,000/month
+3 inboxes × 50/day = 150 emails/day = 3,000/month
+5 inboxes × 50/day = 250 emails/day = 5,000/month</pre>
+
+<h3>API</h3>
+<pre>GET  /api/rotation/config         → current rotation settings
+POST /api/rotation/config         → update settings
+POST /api/rotation/next-sender    → get next sender to use (auto-increments count)
+GET  /api/rotation/stats          → per-inbox sent today / remaining</pre>
