@@ -1,0 +1,31 @@
+<h2>Opportunity Scoring</h2>
+<p>Every active CRM deal gets a score from 1–99 showing how likely it is to close. The score is calculated from stage, deal value vs average, activity recency, and email engagement. Positive and negative factors are shown so you know exactly why a deal scored the way it did. Salesforce charges $175/user/month for this. It's built into OutreachPro.</p>
+
+<h3>Scoring Factors</h3>
+<ul>
+  <li><strong>Stage (up to 40pts)</strong> — Proposal stage scores 32pts, Replied scores 14pts, Prospect scores 2pts</li>
+  <li><strong>Deal value vs average (up to 20pts)</strong> — deals above 1.5× average get full 20pts, below 0.5× average lose 5pts</li>
+  <li><strong>Activity recency (up to 20pts)</strong> — activity in last 3 days = 20pts; no activity in 14+ days = −10pts</li>
+  <li><strong>Email engagement (up to 15pts)</strong> — replied = 15pts, meeting booked = 12pts, opened = 5pts</li>
+  <li><strong>Stage velocity</strong> — if stuck in stage too long, −5pts</li>
+</ul>
+
+<h3>Risk Tiers</h3>
+<ul>
+  <li><strong>Score 70–99</strong> — Low risk. Likely to close. Focus here first.</li>
+  <li><strong>Score 40–69</strong> — Medium risk. Needs attention to progress.</li>
+  <li><strong>Score 0–39</strong> — High risk. Likely to stall or go cold.</li>
+</ul>
+
+<h3>How to Use Scores Daily</h3>
+<ol>
+  <li>Go to <strong>CRM → Scored Deals</strong> — sorted highest to lowest</li>
+  <li>Focus calls and follow-ups on 70+ scores first</li>
+  <li>Check 40–69 scores: what's blocking progress? Log a call, send a follow-up, check the Daily Task Queue</li>
+  <li>Review sub-40 scores: consider re-engagement campaign or move to Lost</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/deals/scored
+→ deals[] sorted by opportunityScore desc, each with:
+  { opportunityScore, risk: 'low|medium|high', factors: [{label, impact, pts}] }</pre>
