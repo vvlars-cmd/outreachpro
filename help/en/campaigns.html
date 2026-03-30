@@ -1,1 +1,32 @@
-<h2>Campaign Management</h2><p>Each campaign has a name, daily send limit, and sequence steps. Click <strong>+ New Campaign</strong>, set a name and daily limit (50–100 recommended). Go to Sequences to build email steps with delays.</p><h3>A/B Testing</h3><p>Enable A/B on any step to split-test two subject lines 50/50.</p><h3>Status</h3><ul><li><strong>Draft</strong> — not launched</li><li><strong>Active</strong> — sending</li><li><strong>Paused</strong> — stopped</li><li><strong>Completed</strong> — done</li></ul>
+<h2>Campaigns</h2>
+<p>A campaign is a container for a sequence of emails sent to a list of leads. OutreachPro handles scheduling, daily limits, stop-on-reply, and A/B subject testing automatically.</p>
+
+<h3>Creating a Campaign</h3>
+<ol>
+  <li>Go to <strong>Campaigns → New Campaign</strong></li>
+  <li>Set a name, sender email, and daily send limit (recommended: 20–40/day per inbox)</li>
+  <li>Toggle <strong>Stop on Reply</strong> — when a lead replies, OutreachPro stops sending further steps to them automatically</li>
+  <li>Add leads from your Lead Finder (filter by status: new)</li>
+  <li>Attach a sequence of email steps (see Sequences)</li>
+  <li>Click <strong>Activate</strong> to start sending</li>
+</ol>
+
+<h3>A/B Subject Testing (Killer Feature #3)</h3>
+<p>Test two subject lines against each other automatically. In any campaign, click <strong>A/B Test</strong> and enter two subject variants:</p>
+<pre>Subject A: "Quick question about {{name}}'s bikes"
+Subject B: "Saw your {{rating}}★ reviews — impressive"</pre>
+<p>Set the split % (default: 50/50) and auto-promote threshold (default: 50 sends). After 50 sends, OutreachPro calculates which subject got more opens and automatically promotes the winner for all remaining sends. The losing subject is retired.</p>
+
+<h3>Campaign Statuses</h3>
+<ul>
+  <li><strong>Draft</strong> — not sending yet, still being configured</li>
+  <li><strong>Active</strong> — sending daily up to the limit</li>
+  <li><strong>Paused</strong> — temporarily stopped (resumes from current step)</li>
+  <li><strong>Complete</strong> — all leads have received all steps</li>
+</ul>
+
+<h3>Daily Limits</h3>
+<p>Never exceed 50 emails/day per inbox for cold outreach. OutreachPro enforces your daily limit automatically — if you set 30/day, it sends 30 at random intervals throughout the day to avoid spam filters.</p>
+
+<h3>LinkedIn Steps</h3>
+<p>Add LinkedIn connection requests as steps in any sequence (Killer Feature #7). After connecting, follow-up messages can be added as later steps. Claude generates personalised connection notes based on the lead's business profile.</p>
