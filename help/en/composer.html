@@ -1,1 +1,42 @@
-<h2>HTML Email Composer</h2><p>Rich HTML editor with live preview. Use <code>{{name}}</code>, <code>{{company}}</code>, <code>{{city}}</code>, <code>{{date}}</code>, <code>{{product}}</code>, <code>{{category}}</code>, <code>{{rating}}</code> tokens anywhere in subject or body.</p><h3>AI Draft Assistant</h3><p>Select a lead, click <strong>Generate Opening</strong>. AI reads Apify data and writes a personalised first sentence.</p><h3>Bulk Personalise</h3><p>Click <strong>Personalise All Leads</strong> to process every lead in one batch with progress tracking.</p><h3>Templates</h3><p>Save/load named templates. Export as .html or import from file.</p>
+<h2>Email Composer</h2>
+<p>The Email Composer uses Claude AI to write personalised cold emails for each individual lead — using real data from their Google Business profile (category, rating, reviews, website, city) to craft a unique opening line that doesn't sound templated.</p>
+
+<h3>Per-Lead Personalisation</h3>
+<ol>
+  <li>Go to <strong>Email Composer</strong></li>
+  <li>Select a lead from the dropdown (or select "All leads" for batch)</li>
+  <li>Choose a template or write your own subject and body with <code>{{tokens}}</code></li>
+  <li>Click <strong>AI Personalise</strong> — Claude writes a unique opening line using the lead's real business data</li>
+  <li>Review the draft, edit if needed</li>
+  <li>Click <strong>Send via Gmail</strong> or <strong>Save as Draft</strong></li>
+</ol>
+
+<h3>Available Tokens</h3>
+<ul>
+  <li><code>{{name}}</code> — business name</li>
+  <li><code>{{city}}</code> — city</li>
+  <li><code>{{category}}</code> — business category</li>
+  <li><code>{{rating}}</code> — Google rating (e.g. 4.5)</li>
+  <li><code>{{reviews}}</code> — review count</li>
+  <li><code>{{website}}</code> — website URL</li>
+  <li><code>{{aiOpening}}</code> — Claude's personalised opening line</li>
+  <li><code>{{product}}</code> — your product name (from workspace settings)</li>
+</ul>
+
+<h3>Batch Personalisation</h3>
+<p>To personalise emails for all leads at once: select "All leads" and click <strong>Batch Personalise</strong>. Claude processes each lead sequentially. For 25 leads, expect 60–90 seconds. Each lead gets a unique opening line — no two emails are the same.</p>
+
+<h3>Video Thumbnails (Killer Feature #10)</h3>
+<p>Add a fake "video thumbnail" to any email to dramatically increase click rates (3× average). Click <strong>Generate Video Thumbnail</strong> — OutreachPro creates a personalised SVG image with the lead's name, city, and a play button overlay. The image is base64-encoded and embeds directly in the email — no hosting needed.</p>
+<p>Example use: <em>"I recorded a 2-minute video specifically for [Business Name] about how CycleWASH Pro can cut your bike cleaning time by 80%."</em></p>
+
+<h3>LinkedIn Message Generator</h3>
+<p>Switch to <strong>LinkedIn</strong> tab in the composer. Select connection request or follow-up message type. Claude generates a personalised LinkedIn message (max 300 chars for connection requests, staying within LinkedIn's limit). Copy and send manually or add as a sequence step.</p>
+
+<h3>Tips</h3>
+<ul>
+  <li>Keep subject lines under 50 characters — they display fully on mobile</li>
+  <li>Use the lead's star rating in the subject: "Saw your {{rating}}★ reviews" performs 40% better than generic subjects</li>
+  <li>Always include one personalised sentence in the first line — it's what determines if they keep reading</li>
+  <li>Test two subject variants using A/B testing before mass sending</li>
+</ul>
