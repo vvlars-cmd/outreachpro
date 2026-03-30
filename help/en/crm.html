@@ -1,9 +1,33 @@
 <h2>CRM Pipeline</h2>
-<p>The CRM gives you a Kanban view across six stages: Prospect → Contacted → Meeting → Proposal → Won → Lost.</p>
-<h3>Adding Deals</h3>
-<p>Click <strong>+ Add Deal</strong>. Enter company name, deal value (€), and initial stage. You can also click the <em>+ Add</em> button at the bottom of any column.</p>
-<h3>Moving Deals</h3>
-<p>Click a deal card and select a new stage, or drag between columns. Deals move through: Prospect (identified) → Contacted (emailed) → Meeting (call booked) → Proposal (quote sent) → Won/Lost.</p>
+<p>The CRM Kanban board tracks every lead from first contact to closed deal. Drag cards between stages to update deal status. Revenue updates automatically as deals move to Won.</p>
 
-<h3>Integration with Unibox</h3>
-<p>When a lead replies and you label them "Interested" in Unibox, they're automatically created as a deal in the Contacted stage. "Meeting booked" creates a Meeting-stage deal.</p>
+<h3>Pipeline Stages</h3>
+<ul>
+  <li><strong>Prospect</strong> — lead identified, not yet contacted</li>
+  <li><strong>Contacted</strong> — first email or LinkedIn message sent</li>
+  <li><strong>Replied</strong> — lead has responded (positive or requesting info)</li>
+  <li><strong>Meeting</strong> — call or demo scheduled</li>
+  <li><strong>Proposal</strong> — quote or proposal sent</li>
+  <li><strong>Won</strong> — deal closed ✓ (revenue counted)</li>
+  <li><strong>Lost</strong> — not moving forward</li>
+</ul>
+
+<h3>Memory CRM (Killer Feature #5)</h3>
+<p>When a lead says "call me back in Q4" or "ping me after the holidays", Memory CRM captures this automatically. When a reply comes into your Unibox containing a timing signal, click <strong>Add to Memory</strong>. Claude extracts the follow-up date and stores a reminder.</p>
+<p>Go to <strong>CRM → Memory</strong> to see all upcoming follow-ups sorted by due date. Click <strong>Action</strong> to mark complete and trigger a personalised re-engagement email.</p>
+<p>Examples Claude understands:</p>
+<ul>
+  <li>"Call me in Q4" → follow-up queued for Oct 1</li>
+  <li>"We're busy until after Christmas" → queued for Jan 2</li>
+  <li>"Try me again in 3 months" → queued 90 days from today</li>
+  <li>"Budget approved in March" → queued for Mar 1</li>
+</ul>
+
+<h3>Deal Value</h3>
+<p>Set a deal value when creating a CRM card. This feeds the Pipeline Value KPI on the Analytics dashboard. When a deal moves to Won, the value moves from Pipeline to Won Revenue — giving you a real-time view of your outreach ROI.</p>
+
+<h3>Intent Signals in CRM</h3>
+<p>Leads flagged by the Intent Signal Detector (rapid review growth, rating improvement) are highlighted in the CRM with a 🔥 signal badge. These are the hottest leads — prioritise outreach to them first.</p>
+
+<h3>White-Label Workspaces</h3>
+<p>Each client workspace has its own isolated CRM pipeline (Killer Feature #8). Switch workspaces using the workspace selector in the top bar. The master view aggregates deal values across all workspaces.</p>
