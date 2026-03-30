@@ -1,0 +1,43 @@
+<h2>Competitor Price Monitor</h2>
+<p>Track your competitors' pricing pages and get alerted when they change their prices, launch new features, or run promotions. OutreachPro is the only sales engagement tool with this built in. Use it to stay one step ahead in every sales conversation and auto-update your email copy when the competitive landscape shifts.</p>
+
+<h3>Setting Up Competitors</h3>
+<ol>
+  <li>Go to <strong>Settings → Competitor Monitor</strong></li>
+  <li>Click <strong>Add Competitor</strong></li>
+  <li>Enter competitor name, website, and their pricing page URL</li>
+  <li>Note their current price (for change comparison)</li>
+  <li>Repeat for each competitor (recommended: 3–5 main competitors)</li>
+  <li>Click <strong>Scan Now</strong> to run the first check</li>
+</ol>
+
+<h3>CycleWASH Example Competitors</h3>
+<pre>Competitor 1: Cleanfix
+  Pricing URL: cleanfix.de/preise
+
+Competitor 2: Kärcher bike wash
+  Pricing URL: kaercher.com/de/shop/fahrrad
+
+Competitor 3: BikeWashSystem
+  Pricing URL: bikewashsystem.com/prices</pre>
+
+<h3>How to Use Competitor Intelligence in Emails</h3>
+<p>When a competitor drops prices or runs a promotion, update your email templates to reference it — without naming the competitor directly:</p>
+<pre>{% if competitor_promotion %}
+You may have seen competitors promoting discounts recently.
+We'd rather give you a better product at the same price —
+here's why CycleWASH Pro is the better long-term investment:
+{% endif %}</pre>
+
+<h3>Using Signals Offensively</h3>
+<ul>
+  <li><strong>Competitor raises prices</strong> → trigger a campaign to their known customers with your stable pricing as the hook</li>
+  <li><strong>Competitor launches new feature</strong> → add a comparison table to your email templates within 48 hours</li>
+  <li><strong>Competitor goes through leadership change</strong> → their customers are uncertain — great time to reach out</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET    /api/competitors          → list all tracked competitors
+POST   /api/competitors          → add competitor {name, website, pricingUrl, currentPrice}
+POST   /api/competitors/scan     → run scan on all competitors
+DELETE /api/competitors/:id      → remove competitor</pre>
