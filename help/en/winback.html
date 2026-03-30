@@ -1,0 +1,49 @@
+<h2>Win-Back & Re-Engagement Campaigns</h2>
+<p>Leads who went cold 90+ days ago, or deals that were marked Lost, get a completely fresh outreach — not a follow-up, but a genuine win-back email that acknowledges time has passed and circumstances may have changed. These convert at 15–25% because the lead already knows you.</p>
+
+<h3>Finding Win-Back Candidates</h3>
+<ol>
+  <li>Go to <strong>Campaigns → Win-Back</strong></li>
+  <li>Set the cutoff (default: 90 days)</li>
+  <li>OutreachPro shows: Lost deals older than cutoff + cold leads with no activity in that period</li>
+  <li>Review the list — remove any who explicitly said never</li>
+  <li>Click <strong>Generate Emails</strong> for selected leads</li>
+</ol>
+
+<h3>What Makes a Good Win-Back Email</h3>
+<p>Claude writes these with a specific structure:</p>
+<ul>
+  <li>Acknowledge time has passed — "It's been a while since we last spoke"</li>
+  <li>Reference why they didn't buy — timing, budget, competitor — without being pushy</li>
+  <li>Offer something new — updated product, new case study, different pricing</li>
+  <li>Low-pressure CTA — "No obligation, just wondering if anything has changed"</li>
+</ul>
+
+<h3>Example</h3>
+<pre>Subject: "Es ist eine Weile her — Fahrrad Müller"
+
+Hallo,
+
+ich melde mich kurz nach einigen Monaten. Damals kam das
+Timing nicht ganz hin — ich verstehe das vollkommen.
+
+Seitdem haben wir einige Verbesserungen am CycleWASH Pro
+vorgenommen, die besonders für Betriebe Ihrer Größe
+interessant sein könnten.
+
+Ist das Thema heute vielleicht wieder relevant?
+
+Keine Verpflichtung — ich bin einfach neugierig.
+
+Beste Grüße</pre>
+
+<h3>Best Timing</h3>
+<ul>
+  <li>90 days after going cold — first win-back attempt</li>
+  <li>6 months — second attempt with a different angle</li>
+  <li>12 months — final attempt, reference the year anniversary</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET  /api/winback/candidates?daysOld=90  → list of lost deals + cold leads
+POST /api/winback/generate               → {leadId, reason, language} → {email}</pre>
