@@ -1,0 +1,44 @@
+<h2>Personalised Video Thumbnails</h2>
+<p>Add a fake "video" thumbnail to any cold email — with the lead's name personalised directly on the image. Click rates increase by 3× on average because people are naturally drawn to play buttons.</p>
+
+<h3>How It Works</h3>
+<p>OutreachPro generates an SVG image showing a dark background, a play button, and the lead's name and city personalised as text. The image is base64-encoded and embedded directly in the email — no external image hosting needed, no broken images.</p>
+
+<h3>Generating a Thumbnail</h3>
+<ol>
+  <li>Go to <strong>Email Composer → Video Thumbnail</strong></li>
+  <li>Select a lead (or generate for all leads in batch)</li>
+  <li>Enter your headline text (e.g. "80% faster bike cleaning — for {{name}}")</li>
+  <li>Enter CTA text (e.g. "Watch the 2-minute demo →")</li>
+  <li>Choose background colour</li>
+  <li>Click <strong>Generate</strong></li>
+  <li>Copy the embed HTML and paste it into your email body</li>
+</ol>
+
+<h3>Batch Generation</h3>
+<p>Generate thumbnails for all leads in your campaign at once. Go to <strong>Email Composer → Batch Thumbnails</strong>, configure the design, and click Generate All. Each thumbnail is unique — the lead's name and city are personalised on every image.</p>
+
+<h3>Email Template Example</h3>
+<pre>Subject: "I recorded something for {{name}}"
+
+Hi {{name}},
+
+I put together a quick 2-minute video specifically for
+your team at {{name}} about how CycleWASH Pro works
+in a bike shop environment.
+
+[VIDEO THUMBNAIL HERE — click the embed HTML into body]
+
+Would love your thoughts. Worth 2 minutes?
+
+Best,
+[Your name]</pre>
+
+<h3>API</h3>
+<pre>POST /api/video-thumbnail
+  Body: { leadName, leadCity, headline, cta, bgColor, textColor }
+  → { svg, dataUri, embedHtml }
+
+POST /api/video-thumbnail/batch
+  Body: { leads[], headline, cta, bgColor }
+  → { count, thumbnails[] }</pre>
