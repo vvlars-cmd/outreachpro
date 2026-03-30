@@ -1,0 +1,11 @@
+node_modules
+.git
+Dockerfile
+docker-compose.yml
+.dockerignore
+tests/
+tools/
+data/*.json
+data/.gmail-token.json
+.env
+*.bak
