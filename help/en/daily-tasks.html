@@ -1,0 +1,31 @@
+<h2>Daily Task Queue — Sales Workspace</h2>
+<p>Salesforce's Spring '26 headline feature is "Sales Workspace" — a command centre showing every rep exactly what to do today. OutreachPro's Daily Task Queue does the same thing: one prioritised list combining follow-up reminders, hot signals, stale deals, sequence steps due, and A/B tests to review. Claude writes a personalised daily briefing at the top.</p>
+
+<h3>What Appears in the Queue</h3>
+<ul>
+  <li><strong>Priority 1 — Follow-ups due (high urgency)</strong> — Memory CRM reminders that are due today or overdue. A lead said "call me in May" and it's May — they're at the top.</li>
+  <li><strong>Priority 2 — Hot buying signals (high urgency)</strong> — leads who clicked a link or opened an email recently. Strike while it's hot.</li>
+  <li><strong>Priority 3 — Stale deals (medium urgency)</strong> — CRM deals with no activity in 7–30 days. These are quietly dying without attention.</li>
+  <li><strong>Priority 4 — Sequence steps due (medium urgency)</strong> — Smart Sequence next steps that are ready to send today.</li>
+  <li><strong>Priority 5 — A/B test results (low urgency)</strong> — completed tests waiting for review and winner confirmation.</li>
+</ul>
+
+<h3>Daily Briefing</h3>
+<p>Claude reads your task list and writes a 1-sentence action-oriented briefing: <em>"You have 3 overdue follow-ups from warm leads and 2 hot signals from this week — focus on the follow-ups first, then the clicked-email leads before end of day."</em></p>
+
+<h3>Using the Queue</h3>
+<ol>
+  <li>Open OutreachPro every morning → <strong>Dashboard → Today's Tasks</strong></li>
+  <li>Start with Priority 1 (follow-ups) — these are leads who gave you a specific date</li>
+  <li>Work through hot signals (Priority 2) — call or email within 2 hours of a click</li>
+  <li>Check stale deals (Priority 3) — one touch each, quick</li>
+  <li>Send sequence steps (Priority 4) — review and fire</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/tasks/today
+→ {
+    taskCount, highUrgency,
+    briefing: "Claude's daily briefing",
+    tasks: [{type, priority, urgency, title, detail, action, leadId?}]
+  }</pre>
