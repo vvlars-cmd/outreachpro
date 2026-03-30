@@ -1,0 +1,39 @@
+<h2>LinkedIn Outreach</h2>
+<p>Add LinkedIn connection requests and messages as steps in your outreach sequences. Claude generates personalised connection notes for each lead — staying within LinkedIn's 300-character limit for connection requests.</p>
+
+<h3>Adding LinkedIn Steps</h3>
+<ol>
+  <li>Go to <strong>Sequences</strong> and open any sequence</li>
+  <li>Click <strong>Add Step → LinkedIn</strong></li>
+  <li>Choose type: <strong>Connection Request</strong> or <strong>Message</strong></li>
+  <li>Click <strong>AI Generate</strong> — Claude writes a personalised note</li>
+  <li>Review and edit if needed</li>
+  <li>Set delay (e.g. Day 2 — send connection request 2 days after first email)</li>
+</ol>
+
+<h3>Recommended Multichannel Sequence</h3>
+<pre>Day 0  — Email: personalised pitch
+Day 2  — LinkedIn: connection request (personalised note)
+Day 5  — Email: follow-up with case study
+Day 8  — LinkedIn: message to connected lead
+Day 14 — Email: final follow-up</pre>
+<p>This multichannel approach generates 3–4× more replies than email-only sequences.</p>
+
+<h3>Connection Request Templates</h3>
+<p>OutreachPro ships with 3 default LinkedIn templates. Add your own at <strong>Settings → LinkedIn Templates</strong>. Claude uses the template as a starting point and personalises it for each lead.</p>
+
+<h3>Important Notes</h3>
+<ul>
+  <li>LinkedIn connection requests must be sent manually — LinkedIn's API prohibits automated connection requests</li>
+  <li>OutreachPro generates the text and notifies you when it's time to send</li>
+  <li>Connection requests: max 300 characters</li>
+  <li>Messages to connections: max 500 characters</li>
+  <li>LinkedIn limits ~100 connection requests per week — pace yourself</li>
+</ul>
+
+<h3>API</h3>
+<pre>GET  /api/linkedin/templates         → list templates
+POST /api/linkedin/templates         → create template
+POST /api/linkedin/generate          → generate message for lead
+  Body: { lead, templateId, type: 'connection'|'message' }
+  → { message, charCount }</pre>
