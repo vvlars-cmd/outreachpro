@@ -1,0 +1,34 @@
+<h2>Memory CRM — AI Follow-up Reminders</h2>
+<p>Memory CRM uses Claude to extract follow-up timing from reply emails and automatically queue re-engagement messages. Never forget a "call me back in Q4" again.</p>
+
+<h3>How It Works</h3>
+<ol>
+  <li>A lead replies: "We're all set for now, but check back in March"</li>
+  <li>In Unibox, click <strong>Add to Memory</strong> on that reply</li>
+  <li>Claude reads the message and extracts: follow-up date = March 1, intent = "maybe"</li>
+  <li>A reminder is created and appears in <strong>CRM → Memory</strong></li>
+  <li>On March 1, the reminder shows as "Due" with a one-click re-engagement button</li>
+</ol>
+
+<h3>Timing Phrases Claude Understands</h3>
+<ul>
+  <li>"Call me in Q4" → October 1</li>
+  <li>"After the holidays" → January 2</li>
+  <li>"Try me in 3 months" → today + 90 days</li>
+  <li>"Budget approved in March" → March 1</li>
+  <li>"We're reviewing vendors in spring" → April 1</li>
+  <li>"Not until next year" → January 1 next year</li>
+</ul>
+
+<h3>Due Memories</h3>
+<p>Go to <strong>CRM → Memory → Due Today</strong> to see all follow-ups that are due. Each entry shows the original message, the lead's name, and the extracted follow-up context. Click <strong>Re-engage</strong> to open the Email Composer pre-filled with a personalised re-engagement email that references the original conversation.</p>
+
+<h3>Manual Memory</h3>
+<p>You can also add memories manually without a reply text. Set the lead, follow-up date, and a note. Useful for adding reminders from phone calls or LinkedIn conversations that happened outside OutreachPro.</p>
+
+<h3>API</h3>
+<pre>GET  /api/memory           → all memories
+GET  /api/memory/due       → due today or overdue
+POST /api/memory           → create {leadId, messageText, followUpDate?}
+POST /api/memory/:id/action → mark actioned {note?}
+DELETE /api/memory/:id     → delete</pre>
