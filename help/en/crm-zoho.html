@@ -1,0 +1,40 @@
+<h2>Zoho CRM Integration</h2>
+<p>Zoho CRM is popular with SMEs and growing sales teams, especially in European and Indian markets. OutreachPro connects via OAuth2 to sync leads, create deals, and push bulk records efficiently — Zoho's API supports up to 100 records per request, making it the fastest CRM to bulk-sync to.</p>
+
+<h3>Getting Zoho OAuth Credentials</h3>
+<ol>
+  <li>Go to <strong>api-console.zoho.com</strong> (or <code>.eu</code>, <code>.in</code> depending on your region)</li>
+  <li>Click <strong>Add Client → Self Client</strong></li>
+  <li>Copy your <strong>Client ID</strong> and <strong>Client Secret</strong></li>
+  <li>Click <strong>Generate Code</strong> → Scope: <code>ZohoCRM.modules.ALL,ZohoCRM.settings.ALL</code></li>
+  <li>Set time: 10 minutes → Generate</li>
+  <li>Under <strong>Generate Access Token</strong> → paste the code → your account server region</li>
+  <li>Copy the <strong>refresh_token</strong> from the response (save it — you can only see it once)</li>
+  <li>In OutreachPro: Settings → CRM → Zoho → enter clientId, clientSecret, refreshToken, region → Test</li>
+</ol>
+<p><strong>Regions:</strong> <code>com</code> (US), <code>eu</code> (Europe), <code>in</code> (India), <code>com.au</code> (Australia), <code>jp</code> (Japan)</p>
+
+<h3>Bulk Sync — 100 Leads at Once</h3>
+<p>Zoho's API supports up to 100 records per request. OutreachPro automatically batches your leads into groups of 50 for reliable bulk sync. A list of 200 leads syncs in 4 API calls — much faster than HubSpot or Salesforce which process one record at a time.</p>
+
+<h3>Data Mapping</h3>
+<pre>OutreachPro → Zoho CRM Lead
+name        → Last_Name (+ First_Name split)
+email       → Email
+phone       → Phone
+city        → City
+website     → Website
+category    → Description
+source      → Lead_Source = "OutreachPro"
+rating+reviews → Description field</pre>
+
+<h3>Use Case: European SME Sales</h3>
+<p>Zoho CRM is particularly popular with German Mittelstand companies. If your prospects use Zoho, sync your OutreachPro leads directly into their Zoho instance when doing partnership or channel sales. Or use Zoho as your own CRM alongside OutreachPro — let OutreachPro handle prospecting and email, Zoho handle deal tracking and invoicing.</p>
+
+<h3>API</h3>
+<pre>POST /api/crm/zoho/config    → {clientId, clientSecret, refreshToken, region}
+POST /api/crm/zoho/test      → test connection
+GET  /api/crm/zoho/leads     → list Zoho leads
+POST /api/crm/zoho/leads     → create lead
+POST /api/crm/zoho/deals     → create deal
+POST /api/crm/zoho/sync      → bulk sync leads → Zoho (batches of 50)</pre>
