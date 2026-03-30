@@ -1,6 +1,6 @@
 {
   "name": "outreachpro",
-  "version": "2.5.1",
+  "version": "3.1.0",
   "description": "AI-powered B2B sales engagement platform. Self-hosted Instantly.ai clone \u2014 Claude AI, Apify lead scraping, Gmail, CRM, 6-language i18n. One Docker command.",
   "main": "server.js",
   "bin": {
@@ -16,7 +16,9 @@
     "test:watch": "node tests/agent.js --watch",
     "test:agent": "node tests/agent.js",
     "test:fix": "node tests/agent.js --fix",
-    "test:noai": "node tests/agent.js --no-ai"
+    "test:noai": "node tests/agent.js --no-ai",
+    "build": "echo \"No build step required\"",
+    "vercel-build": "echo \"Ready for Vercel\""
   },
   "files": [
     "server.js",
