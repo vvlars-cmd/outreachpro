@@ -1,0 +1,29 @@
+<h2>Pipeline Inspection</h2>
+<p>A weekly snapshot of your pipeline showing exactly what changed: new deals entered, deals that moved forward, deals that stalled, and closed-won deals. Salesforce calls this "Pipeline Management" and includes it at their $175/user/month Enterprise tier. In OutreachPro it's a single API call.</p>
+
+<h3>What the Dashboard Shows</h3>
+<ul>
+  <li><strong>Active pipeline</strong> — total count and value of all open deals</li>
+  <li><strong>Won this week</strong> — deals closed in the last 7 days + their value</li>
+  <li><strong>New this week</strong> — deals that entered the pipeline in the last 7 days</li>
+  <li><strong>Stalled</strong> — deals with no activity logged in 7+ days (danger zone)</li>
+  <li><strong>By stage</strong> — breakdown of count and value at each pipeline stage</li>
+</ul>
+
+<h3>Stalled Deal Action Plan</h3>
+<p>Any deal with no activity in 7 days appears in the Stalled list. The Daily Task Queue also flags these with medium urgency. For each stalled deal:</p>
+<ol>
+  <li>Check the Activity Timeline — what was the last touchpoint?</li>
+  <li>Check Memory CRM — did the lead ask to be contacted later?</li>
+  <li>Log a new activity: call, follow-up email, or LinkedIn message</li>
+  <li>If no response within 7 more days: move to Lost and re-enrol in a win-back campaign</li>
+</ol>
+
+<h3>API</h3>
+<pre>GET /api/pipeline/inspection
+→ {
+    summary: { activePipeline, totalPipelineValue, wonThisWeek, wonValue, newThisWeek, stalled },
+    byStage: { Prospect: {count, value}, ... },
+    stalledDeals: [{id, name, stage, value}],
+    recentWins: [{id, name, value}]
+  }</pre>
