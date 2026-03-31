@@ -1,7 +1,7 @@
 const fs=require('fs'),path=require('path');
 const USE_SUPABASE=!!(process.env.SUPABASE_URL&&process.env.SUPABASE_SERVICE_KEY);
 let supabase=null;
-if(USE_SUPABASE){const{createClient}=require('@supabase/supabase-js');supabase=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_KEY);console.log('Supabase connected:',process.env.SUPABASE_URL);}
+if(USE_SUPABASE){const{createClient}=require('@supabase/supabase-js');supabase=createClient(process.env.SUPABASE_URL,process.env.SUPABASE_SERVICE_KEY);console.log('Supabase connected');}
 const DATA_DIR=process.env.DATA_DIR||(process.env.VERCEL?'/tmp/outreachpro-data':path.join(__dirname,'data'));
 try{if(!fs.existsSync(DATA_DIR))fs.mkdirSync(DATA_DIR,{recursive:true});}catch(e){}
 function readJSON(file,def=[]){try{const p=path.join(DATA_DIR,file);if(!fs.existsSync(p))return def;return JSON.parse(fs.readFileSync(p,'utf8'));}catch{return def;}}
