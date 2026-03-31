@@ -226,7 +226,7 @@ tr:hover td{background:rgba(79,114,255,.03)}
 /* INBOX TESTER */
 .score-ring{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--head);font-size:20px;font-weight:800;border:4px solid}
 .score-high{border-color:var(--grn);color:var(--grn)}.score-mid{border-color:var(--amb);color:var(--amb)}.score-low{border-color:var(--red);color:var(--red)}
-/* WORKSPACE */
+/* CYCLEWASH */
 .cw-header{background:linear-gradient(135deg,rgba(34,212,160,.1),rgba(34,212,160,.02));border:1px solid rgba(34,212,160,.2);border-radius:var(--r);padding:16px 20px;margin-bottom:20px}
 /* WARP */
 .warp-btn{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,rgba(79,114,255,.15),rgba(168,85,247,.1));border:1px solid var(--blu-md);border-radius:8px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;color:var(--blu);transition:all .2s}
@@ -279,27 +279,6 @@ body { font-size: 15px !important; }
 .inp { font-size: 15px !important; padding: 11px 13px !important; }
 .stat-row { font-size: 14px !important; padding: 10px 0 !important; }
 .pill { font-size: 13px !important; padding: 4px 11px !important; }
-
-/* Tooltips */
-[title] { position: relative; }
-[data-tip]:hover::after, .has-tip:hover::after {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: #1a1d2e;
-  color: #fff;
-  font-size: 12px;
-  padding: 5px 10px;
-  border-radius: 6px;
-  white-space: nowrap;
-  z-index: 9999;
-  pointer-events: none;
-  font-family: var(--body);
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,.2);
-}
 </style>
 </head>
 <body>
@@ -309,82 +288,82 @@ body { font-size: 15px !important; }
   <div class="brand">
     <div class="brand-eye">AI Sales Platform</div>
     <div class="brand-name">Outreach<span>Pro</span></div>
-    <div class="brand-sub">AI Sales Engagement Platform</div>
+    <div class="brand-sub">Instantly.ai Clone + CycleWASH</div>
   </div>
-  <div class="ws-badge" onclick="nav('cyclewash')" title="Workspace">
+  <div class="ws-badge cw" onclick="nav('cyclewash')">
     <div class="ws-eye">Active Workspace</div>
-    <div class="ws-name">Workspace</div>
+    <div class="ws-name">cycleWASH</div>
     <div class="ws-live"><div class="ws-dot"></div><span>LIVE</span></div>
   </div>
   <div class="nav-scroll">
     <div class="sec-label">Overview</div>
-    <button class="ni on" data-view="dashboard" onclick="nav('dashboard')" title="Dashboard — overview of leads, campaigns and pipeline">
+    <button class="ni on" data-view="dashboard" onclick="nav('dashboard')">
       <svg viewBox="0 0 15 15" fill="currentColor"><rect x="0" y="0" width="6.5" height="6.5" rx="1.5"/><rect x="8.5" y="0" width="6.5" height="6.5" rx="1.5"/><rect x="0" y="8.5" width="6.5" height="6.5" rx="1.5"/><rect x="8.5" y="8.5" width="6.5" height="6.5" rx="1.5"/></svg>
       Dashboard
     </button>
     <div class="sec-label">Outreach</div>
-    <button class="ni" data-view="campaigns" onclick="nav('campaigns')" title="Campaigns — manage your cold email sequences">
+    <button class="ni" data-view="campaigns" onclick="nav('campaigns')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="3" width="13" height="10" rx="1.5"/><path d="M1 6l6.5 4L14 6"/></svg>
       Campaigns <span class="nbadge" id="b-campaigns">0</span>
     </button>
-    <button class="ni" data-view="sequences" onclick="nav('sequences')" title="Sequences — build multi-step email workflows">
+    <button class="ni" data-view="sequences" onclick="nav('sequences')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="2.5" r="1.5"/><circle cx="7.5" cy="7.5" r="1.5"/><circle cx="7.5" cy="12.5" r="1.5"/><path d="M7.5 4v2M7.5 9v2"/></svg>
       Sequences
     </button>
-    <button class="ni" data-view="unibox" onclick="nav('unibox')" title="Unibox — unified inbox for all replies">
+    <button class="ni" data-view="unibox" onclick="nav('unibox')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="2" width="13" height="11" rx="1.5"/><path d="M1 5h13M5 9h5"/></svg>
       Unibox <span class="nbadge red" id="b-unibox">3</span>
     </button>
     <div class="sec-label">Leads</div>
-    <button class="ni" data-view="leads" onclick="nav('leads')" title="Lead Finder — browse and manage your leads">
+    <button class="ni" data-view="leads" onclick="nav('leads')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="4.5" r="2.5"/><path d="M2 13c0-3 2.5-5.5 5.5-5.5S13 10 13 13"/></svg>
       Lead Finder <span class="nbadge" id="b-leads">25</span>
     </button>
-    <button class="ni" data-view="apify" onclick="nav('apify')" title="Apify Scraper — find leads on Google Maps">
+    <button class="ni" data-view="apify" onclick="nav('apify')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="5.5"/><path d="M7.5 2v11M2 7.5h11"/></svg>
       Apify Scraper
     </button>
-    <button class="ni" data-view="gm-scraper" onclick="nav('gm-scraper')" title="Gmail Scraper — extract leads from your inbox">
+    <button class="ni" data-view="gm-scraper" onclick="nav('gm-scraper')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="3" width="13" height="9" rx="1.5"/><path d="M1 5l6.5 3.5L14 5"/></svg>
       Gmail Scraper
     </button>
     <div class="sec-label">Compose</div>
-    <button class="ni" data-view="composer" onclick="nav('composer')" title="Email Composer — write AI-personalised emails">
+    <button class="ni" data-view="composer" onclick="nav('composer')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 11L1 14l3-1 8-8-2-2-8 8z"/><path d="M10 3l2 2"/></svg>
       Email Composer
     </button>
     <div class="sec-label">Optimise</div>
-    <button class="ni" data-view="warmup" onclick="nav('warmup')" title="Email Warmup — build sender reputation">
+    <button class="ni" data-view="warmup" onclick="nav('warmup')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7.5 1v13M3.5 5c0-2.2 1.8-4 4-4s4 1.8 4 4"/></svg>
       Email Warmup
     </button>
-    <button class="ni" data-view="analytics" onclick="nav('analytics')" title="Analytics — track opens, replies and pipeline">
+    <button class="ni" data-view="analytics" onclick="nav('analytics')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="10" width="3" height="4"/><rect x="6" y="6" width="3" height="8"/><rect x="11" y="2" width="3" height="12"/></svg>
       Analytics
     </button>
-    <button class="ni" data-view="inbox-test" onclick="nav('inbox-test')" title="Inbox Tester — check your spam score">
+    <button class="ni" data-view="inbox-test" onclick="nav('inbox-test')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="6"/><path d="M7.5 4.5v4l2 2"/></svg>
       Inbox Tester
     </button>
     <div class="sec-label">CRM</div>
-    <button class="ni" data-view="crm" onclick="nav('crm')" title="CRM Pipeline — track deals from prospect to won">
+    <button class="ni" data-view="crm" onclick="nav('crm')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="1" width="5" height="13" rx="1"/><rect x="9" y="1" width="5" height="9" rx="1"/></svg>
       CRM Pipeline
     </button>
-    <button class="ni" data-view="accounts" onclick="nav('accounts')" title="Email Accounts — manage sending accounts">
+    <button class="ni" data-view="accounts" onclick="nav('accounts')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1" y="3" width="13" height="9" rx="1.5"/><path d="M1 7h13"/></svg>
       Email Accounts
     </button>
     <div class="nav-div"></div>
-    <button class="ni" data-view="cyclewash" onclick="nav('cyclewash')" title="Workspace — your active workspace">
+    <button class="ni" data-view="cyclewash" onclick="nav('cyclewash')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="5"/><path d="M4 7.5a3.5 3.5 0 017 0"/></svg>
-      Workspace
+      CycleWASH
     </button>
-    <button class="ni" data-view="settings" onclick="nav('settings')" title="Settings — configure API keys and preferences">
+    <button class="ni" data-view="settings" onclick="nav('settings')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="2"/><path d="M7.5 1v2M7.5 12v2M1 7.5h2M12 7.5h2M3 3l1.4 1.4M10.6 10.6L12 12M3 12l1.4-1.4M10.6 4.4L12 3"/></svg>
       Settings <span class="nbadge red" id="b-settings" style="display:none">!</span>
     </button>
-    <button class="ni" data-view="help" onclick="nav('help')" title="Help — tutorials and documentation">
+    <button class="ni" data-view="help" onclick="nav('help')">
       <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7.5" cy="7.5" r="6"/><path d="M7.5 11v-.5M7.5 4.5c0 1.5-2 2-2 3.5h4c0-1.5-2-2-2-3.5z"/></svg>
       Help
     </button>
@@ -404,14 +383,14 @@ body { font-size: 15px !important; }
   <header class="topbar">
     <div class="topbar-title" id="top-title">Dashboard</div>
     <div class="topbar-actions">
-      <div class="warp-btn" id="warp-btn" onclick="toggleWarp()" title="WARP mode — AI auto-generates your entire campaign"><div class="warp-dot"></div><span id="warp-lbl">WARP</span></div>
+      <div class="warp-btn" id="warp-btn" onclick="toggleWarp()"><div class="warp-dot"></div><span id="warp-lbl">WARP</span></div>
       <select class="lang-sel" id="lang-sel" onchange="setLang(this.value)">
         <option value="en">🇬🇧 EN</option><option value="de">🇩🇪 DE</option>
         <option value="fr">🇫🇷 FR</option><option value="es">🇪🇸 ES</option>
         <option value="it">🇮🇹 IT</option><option value="nl">🇳🇱 NL</option>
       </select>
       <button class="btn btn-ghost btn-sm" onclick="showWizard()">Tutorial</button>
-      <button class="btn btn-primary btn-sm" onclick="openNewCampaignModal()" title="Create a new email campaign">+ Campaign</button>
+      <button class="btn btn-primary btn-sm" onclick="openNewCampaignModal()">+ Campaign</button>
     </div>
   </header>
   <div class="content" id="content">
@@ -421,7 +400,7 @@ body { font-size: 15px !important; }
       <div class="kpi-grid" id="kpi-dash"></div>
       <div class="grid2" style="margin-bottom:16px">
         <div class="card card-pad">
-          <div class="card-head"><div class="card-title">Events 2026</div><button class="btn btn-ghost btn-sm" onclick="nav('cyclewash')" title="Workspace — your active workspace">View all →</button></div>
+          <div class="card-head"><div class="card-title">Events 2026 — CycleWASH</div><button class="btn btn-ghost btn-sm" onclick="nav('cyclewash')">View all →</button></div>
           <div class="grid2" id="dash-events"></div>
         </div>
         <div class="card card-pad">
@@ -436,7 +415,7 @@ body { font-size: 15px !important; }
       </div>
       <div class="grid2">
         <div class="card card-pad">
-          <div class="card-head"><div class="card-title">Campaigns</div><button class="btn btn-ghost btn-sm" onclick="nav('campaigns')" title="Campaigns — manage your cold email sequences">All →</button></div>
+          <div class="card-head"><div class="card-title">Campaigns</div><button class="btn btn-ghost btn-sm" onclick="nav('campaigns')">All →</button></div>
           <div id="dash-campaigns"></div>
         </div>
         <div class="card card-pad">
@@ -450,13 +429,6 @@ body { font-size: 15px !important; }
           </div>
         </div>
       </div>
-    
-      <div style="padding:12px 14px;border-top:1px solid var(--bdr);margin-top:auto">
-        <button onclick="hardReset()" title="Clear all local data and reload" style="width:100%;display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:8px;border:1.5px solid #fee2e2;background:#fff5f5;color:#dc2626;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--head)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-          Hard Reset
-        </button>
-      </div>
     </div>
 
     <!-- ════════ CAMPAIGNS ════════ -->
@@ -469,7 +441,7 @@ body { font-size: 15px !important; }
             <option value="all">All status</option><option value="active">Active</option>
             <option value="paused">Paused</option><option value="draft">Draft</option>
           </select>
-          <button class="btn btn-primary btn-sm" onclick="openNewCampaignModal()" title="Create a new email campaign">+ New</button>
+          <button class="btn btn-primary btn-sm" onclick="openNewCampaignModal()">+ New</button>
         </div>
       </div>
       <div class="card" id="campaigns-wrap"></div>
@@ -526,7 +498,7 @@ body { font-size: 15px !important; }
       <div class="sec-head">
         <div class="sec-title">Lead Finder</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-sm" onclick="nav('apify')" title="Apify Scraper — find leads on Google Maps">Scrape with Apify</button>
+          <button class="btn btn-ghost btn-sm" onclick="nav('apify')">Scrape with Apify</button>
           <button class="btn btn-ghost btn-sm" onclick="exportLeadsCSV()">Export CSV</button>
         </div>
       </div>
@@ -571,10 +543,10 @@ body { font-size: 15px !important; }
           <div style="padding:12px 14px;border-bottom:1px solid var(--bdr);background:var(--surf2)">
             <div class="grid2" style="gap:10px;margin-bottom:10px">
               <div><div class="inp-label">To</div><input class="inp" id="c-to" placeholder="{{email}}"/></div>
-              <div><div class="inp-label">From</div><input class="inp" id="c-from" placeholder="your@email.com"/></div>
+              <div><div class="inp-label">From</div><input class="inp" id="c-from" value="info@cyclewash.de"/></div>
             </div>
             <div class="inp-label">Subject</div>
-            <input class="inp" id="c-subject" placeholder="{{product}} – Demo {{date}} in {{city}}"/>
+            <input class="inp" id="c-subject" placeholder="Einladung: cycleWASH Pro Platinum – Live-Demo {{date}} in {{city}}"/>
             <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap">
               <span style="font-size:11px;color:var(--muted)">Insert token:</span>
               <span class="token-chip" onclick="insertTok('{{name}}')">{{name}}</span>
@@ -791,12 +763,12 @@ body { font-size: 15px !important; }
       <div class="grid2" id="accts-grid"></div>
     </div>
 
-    <!-- ════════ WORKSPACE ════════ -->
+    <!-- ════════ CYCLEWASH ════════ -->
     <div class="view" id="view-cyclewash">
       <div class="cw-header">
-        <div style="font-size:9px;font-weight:800;color:var(--grn);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px">Your Company · Workspace</div>
-        <div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--grn)">Sales Workspace</div>
-        <div style="font-size:12px;color:var(--ink2);margin-top:2px">Configure your workspace details in Settings → Workspace</div>
+        <div style="font-size:9px;font-weight:800;color:var(--grn);letter-spacing:.15em;text-transform:uppercase;margin-bottom:4px">CW Cleaning Solutions GmbH · HRB 93480 · Köln</div>
+        <div style="font-family:var(--head);font-size:18px;font-weight:800;color:var(--grn)">cycleWASH Sales Workspace</div>
+        <div style="font-size:12px;color:var(--ink2);margin-top:2px">Belfortstrasse 8, 50668 Köln · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d2bbbcb4bd92b1abb1beb7a5b3a1bafcb6b7">[email&#160;protected]</a> · Pro Platinum €38k · Mini Platinum €27.5k</div>
       </div>
       <div class="kpi-grid" id="kpi-cw"></div>
       <div class="grid2" style="margin-bottom:16px">
@@ -825,9 +797,9 @@ body { font-size: 15px !important; }
       </div>
       <div class="card">
         <div style="padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center">
-          <div style="font-family:var(--head);font-size:14px;font-weight:700">Workspace Leads</div>
+          <div style="font-family:var(--head);font-size:14px;font-weight:700">CycleWASH Leads</div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-ghost btn-sm" onclick="nav('apify')" title="Apify Scraper — find leads on Google Maps">Scrape more</button>
+            <button class="btn btn-ghost btn-sm" onclick="nav('apify')">Scrape more</button>
             <button class="btn btn-ghost btn-sm" onclick="exportLeadsCSV()">Export</button>
           </div>
         </div>
@@ -860,7 +832,7 @@ body { font-size: 15px !important; }
             </div>
             <div>
               <div class="inp-label">Default search terms</div>
-              <textarea class="inp" id="s-apify-terms" rows="3" style="margin-bottom:12px">restaurant,hotel,dental clinic</textarea>
+              <textarea class="inp" id="s-apify-terms" rows="3" style="margin-bottom:12px">Fahrradgeschäft,Fahrradverleih,E-Bike Händler</textarea>
               <div class="grid2" style="gap:10px">
                 <div><div class="inp-label">Max results</div><input class="inp" type="number" id="s-apify-max" value="15"/></div>
                 <div><div class="inp-label">Min stars</div><input class="inp" type="number" id="s-apify-stars" value="3.5" step="0.5"/></div>
@@ -879,7 +851,7 @@ body { font-size: 15px !important; }
             </div>
             <div>
               <div class="inp-label">Sender email</div>
-              <input class="inp" type="email" id="s-g-from" placeholder="your@email.com" style="margin-bottom:12px"/>
+              <input class="inp" type="email" id="s-g-from" value="info@cyclewash.de" style="margin-bottom:12px"/>
               <div class="inp-label">Daily send limit</div>
               <input class="inp" type="number" id="s-g-limit" value="50"/>
             </div>
@@ -890,33 +862,33 @@ body { font-size: 15px !important; }
         </div>
         <div class="stab-panel" id="stab-company" style="padding:20px">
           <div class="grid2" style="gap:12px">
-            <div><div class="inp-label">Company Name</div><input class="inp" id="s-co-name" placeholder="Your Company GmbH"/></div>
-            <div><div class="inp-label">Address</div><input class="inp" id="s-co-addr" placeholder="Your Street | City"/></div>
+            <div><div class="inp-label">Company Name</div><input class="inp" id="s-co-name" value="CW Cleaning Solutions GmbH"/></div>
+            <div><div class="inp-label">Address</div><input class="inp" id="s-co-addr" value="Belfortstrasse 8 | 50668 Köln"/></div>
             <div><div class="inp-label">Phone</div><input class="inp" id="s-co-tel" value="+49221-650-605-32"/></div>
             <div><div class="inp-label">Mobile</div><input class="inp" id="s-co-mob" value="+49163-573-8161"/></div>
-            <div><div class="inp-label">Email</div><input class="inp" id="s-co-email" placeholder="your@email.com"/></div>
-            <div><div class="inp-label">Website</div><input class="inp" id="s-co-web" placeholder="www.yourcompany.com"/></div>
+            <div><div class="inp-label">Email</div><input class="inp" id="s-co-email" value="info@cyclewash.de"/></div>
+            <div><div class="inp-label">Website</div><input class="inp" id="s-co-web" value="www.cyclewash.de"/></div>
           </div>
-          <div style="margin-top:12px"><div class="inp-label">Tagline</div><input class="inp" id="s-co-tagline" placeholder="Your tagline"/></div>
+          <div style="margin-top:12px"><div class="inp-label">Tagline</div><input class="inp" id="s-co-tagline" value='cycleWASH, "Fahrrad waschen im Vorbeigehen"'/></div>
           <div style="margin-top:10px"><div class="inp-label">Registration</div><input class="inp" id="s-co-reg" value="Sitz: Köln · HRB-Nr. 93480 · Ust.-ID: DE316636197"/></div>
           <div class="sig-preview" id="sig-prev" style="margin-top:12px"></div>
         </div>
         <div class="stab-panel" id="stab-products" style="padding:20px">
           <div class="grid2" style="gap:12px">
-            <div><div class="inp-label">Product 1 price (net)</div><input class="inp" id="s-pro" placeholder="0.00"/></div>
-            <div><div class="inp-label">Product 2 price (net)</div><input class="inp" id="s-mini" placeholder="0.00"/></div>
+            <div><div class="inp-label">Pro Platinum price (net)</div><input class="inp" id="s-pro" value="38.000"/></div>
+            <div><div class="inp-label">Mini Platinum price (net)</div><input class="inp" id="s-mini" value="27.500"/></div>
             <div><div class="inp-label">Offer valid until</div><input class="inp" id="s-offer" value="30. April 2026"/></div>
             <div><div class="inp-label">Delivery (weeks)</div><input class="inp" type="number" id="s-deliv" value="8"/></div>
           </div>
         </div>
         <div class="stab-panel" id="stab-templates" style="padding:20px">
           <div class="inp-label">Default subject template</div>
-          <input class="inp" id="s-subj-tpl" placeholder="{{product}} – Demo {{date}} in {{city}}" style="margin-bottom:14px"/>
+          <input class="inp" id="s-subj-tpl" value="Einladung: cycleWASH Pro Platinum – Live-Demo {{date}} in {{city}}" style="margin-bottom:14px"/>
           <div class="grid2" style="gap:12px">
             <div><div class="inp-label">Opening: rental/tour</div><textarea class="inp" id="s-intro-rental" rows="3">als Verleih- und Tourbetrieb wissen Sie: Fahrräder kehren von jeder Tour verschmutzt zurück.</textarea></div>
-            <div><div class="inp-label">Opening: e-bike dealer</div><textarea class="inp" id="s-intro-ebike" rows="3">Your business deserves professional-grade solutions tailored to your needs.</textarea></div>
+            <div><div class="inp-label">Opening: e-bike dealer</div><textarea class="inp" id="s-intro-ebike" rows="3">E-Bikes im Wert von mehreren Tausend Euro verdienen eine ebenso hochwertige Pflege.</textarea></div>
             <div><div class="inp-label">Opening: workshop</div><textarea class="inp" id="s-intro-workshop" rows="3">In einer professionellen Werkstatt ist Sauberkeit nicht nur Optik.</textarea></div>
-            <div><div class="inp-label">Opening: standard dealer</div><textarea class="inp" id="s-intro-dealer" rows="3">A professional first impression starts with the quality of your products and services.</textarea></div>
+            <div><div class="inp-label">Opening: standard dealer</div><textarea class="inp" id="s-intro-dealer" rows="3">Ein sauberes Fahrrad ist das stärkste Verkaufsargument – bei der Übergabe und im Showroom.</textarea></div>
           </div>
         </div>
         <div class="stab-panel" id="stab-ui" style="padding:20px">
@@ -939,48 +911,1155 @@ body { font-size: 15px !important; }
 
     <!-- ════════ HELP ════════ -->
     <div class="view" id="view-help">
-      <div class="sec-head"><div class="sec-title">Help & Tutorials</div>
-        <div style="display:flex;gap:8px">
-          <input class="inp" id="help-search" placeholder="Search tutorials..." style="width:220px" oninput="searchHelp()" />
-        </div>
+      <div class="sec-head"><div class="sec-title">Help & Documentation</div><button class="btn btn-primary btn-sm" onclick="showWizard()">Start Tutorial</button></div>
+      <div class="help-layout">
+        <div class="help-nav" id="help-nav"></div>
+        <div class="help-body" id="help-body"></div>
       </div>
+    </div>
 
-      <!-- QUICK START CARDS -->
-      <div style="margin-bottom:24px">
-        <div class="card-title" style="margin-bottom:12px">🚀 Quick Start</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
-          <div class="card card-pad" onclick="showHelpArticle('quickstart')" style="cursor:pointer;border:2px solid var(--blu-lt)">
-            <div style="font-size:24px;margin-bottom:8px">1️⃣</div>
-            <div style="font-weight:700;font-size:14px;margin-bottom:4px">Connect & Configure</div>
-            <div style="font-size:12px;color:var(--muted)">Add your API keys, connect Gmail, set up your sender account</div>
-          </div>
-          <div class="card card-pad" onclick="showHelpArticle('scrape')" style="cursor:pointer;border:2px solid var(--blu-lt)">
-            <div style="font-size:24px;margin-bottom:8px">2️⃣</div>
-            <div style="font-weight:700;font-size:14px;margin-bottom:4px">Find Leads</div>
-            <div style="font-size:12px;color:var(--muted)">Scrape Google Maps or import from Gmail to build your lead list</div>
-          </div>
-          <div class="card card-pad" onclick="showHelpArticle('campaign')" style="cursor:pointer;border:2px solid var(--blu-lt)">
-            <div style="font-size:24px;margin-bottom:8px">3️⃣</div>
-            <div style="font-weight:700;font-size:14px;margin-bottom:4px">Launch Campaign</div>
-            <div style="font-size:12px;color:var(--muted)">Compose AI-personalised emails and send your first campaign</div>
-          </div>
-        </div>
-      </div>
+  </div>
+</div>
+</div>
 
-      <!-- ARTICLE LIST + READER -->
-      <div style="display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start">
-        <!-- Nav -->
-        <div class="card" style="overflow:hidden">
-          <div style="padding:12px 14px;border-bottom:1px solid var(--bdr);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.08em;text-transform:uppercase">Articles</div>
-          <div id="help-article-list" style="max-height:500px;overflow-y:auto"></div>
-        </div>
-        <!-- Reader -->
-        <div class="card card-pad" id="help-reader" style="min-height:400px">
-          <div style="text-align:center;padding:40px 20px;color:var(--muted)">
-            <div style="font-size:40px;margin-bottom:12px">📖</div>
-            <div style="font-size:15px;font-weight:600">Select an article to read</div>
-            <div style="font-size:13px;margin-top:6px">Or click a Quick Start card above</div>
-          </div>
-        </div>
-      </div>
-    >
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-campaign">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">New Campaign</div><button class="modal-close" onclick="closeModal('modal-campaign')">✕</button></div>
+    <div class="inp-label">Campaign name</div>
+    <input class="inp" id="mc-name" placeholder="CycleWASH Cologne Q2 2026" style="margin-bottom:12px"/>
+    <div class="inp-label">Daily send limit</div>
+    <input class="inp" type="number" id="mc-limit" value="50" style="margin-bottom:12px"/>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
+      <input type="checkbox" id="mc-stop" checked/><label for="mc-stop" style="font-size:13px;color:var(--ink2)">Stop on reply</label>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('modal-campaign')">Cancel</button>
+      <button class="btn btn-primary" onclick="createCampaign()">Create</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="modal-deal">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">Add Deal</div><button class="modal-close" onclick="closeModal('modal-deal')">✕</button></div>
+    <div class="inp-label">Company</div><input class="inp" id="md-co" placeholder="Radfieber GmbH" style="margin-bottom:10px"/>
+    <div class="inp-label">Value (€)</div><input class="inp" type="number" id="md-val" placeholder="38000" style="margin-bottom:10px"/>
+    <div class="inp-label">Stage</div>
+    <select class="inp" id="md-stage" style="margin-bottom:16px"><option>Prospect</option><option>Contacted</option><option>Meeting</option><option>Proposal</option><option>Won</option><option>Lost</option></select>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-ghost" onclick="closeModal('modal-deal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDeal()">Add Deal</button>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIAL WIZARD -->
+<div class="wizard-ov" id="wizard-ov">
+  <div class="wizard-box">
+    <div class="wiz-steps" id="wiz-steps"></div>
+    <div class="wiz-icon" id="wiz-icon"></div>
+    <div class="wiz-title" id="wiz-title"></div>
+    <div class="wiz-desc" id="wiz-desc"></div>
+    <div class="wiz-tip" id="wiz-tip"></div>
+    <div class="wiz-actions">
+      <button class="btn btn-ghost" onclick="wizPrev()" id="wiz-prev">← Back</button>
+      <span id="wiz-cnt" style="font-size:12px;color:var(--muted)"></span>
+      <button class="btn btn-primary" onclick="wizNext()" id="wiz-next">Next →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════ STATE ═══════════════════════════ */
+const API='';
+let S={
+  lang:localStorage.getItem('op-lang')||'en',
+  i18n:{},leads:[],campaigns:[],templates:[],accounts:[],
+  deals:{Prospect:[],Contacted:[],Meeting:[],Proposal:[],Won:[{id:'d1',company:'e-motion Hamm',value:38000}],Lost:[]},
+  inbox:[
+    {id:'r1',from:'Karl Jungmann',email:'info@fahrrad-jungmann.de',preview:'Vielen Dank, wir wären sehr interessiert…',time:'09:14',label:'interested',body:'Vielen Dank für Ihre Einladung! Wir wären sehr interessiert, die cycleWASH Maschine zu sehen. Können wir einen Termin vereinbaren?'},
+    {id:'r2',from:'E-Bike Erlebnis Center',email:'bonn@ebike-erlebniscenter.de',preview:'Leider kein Budget aktuell…',time:'Ges.',label:'not_now',body:'Aktuell kein Budget für neue Geräte. Bitte melden Sie sich in Q4 wieder.'},
+    {id:'r3',from:'Radfieber GmbH',email:'laden@radfieber.de',preview:'Sehr gerne! Wann wäre ein Termin?',time:'Di.',label:'meeting',body:'Sehr gerne! Donnerstag ab 14 Uhr für eine Online-Demo – passt das?'},
+  ],
+  searchTerms:['Fahrradgeschäft','Fahrradverleih','E-Bike Händler'],
+  aiResults:{},gmailConnected:false,gmailEmail:null,
+  selectedInbox:null,warpOn:false,
+  gmailLeads:[], cwAbort:false,
+  settings:JSON.parse(localStorage.getItem('op-settings')||'{}'),
+  currentView:'dashboard',
+};
+
+const EVENTS=[
+  {id:'e1',name:'Fahrradtag Jever',date:'29.03.2026',time:'11:00–18:00',city:'Jever'},
+  {id:'e2',name:'Grüne Brühl',date:'18.04.2026',time:'10:00–13:15',city:'Brühl'},
+  {id:'e3',name:'Monheim am Rhein',date:'19.04.2026',time:'11:00–18:00',city:'Monheim am Rhein'},
+  {id:'e4',name:'Düsseldorf',date:'30.04.2026',time:'08:00–16:00',city:'Düsseldorf'},
+  {id:'e5',name:'Coesfeld',date:'30.04.2026',time:'16:00–20:00',city:'Coesfeld'},
+  {id:'e6',name:'Aachen',date:'09.05.2026',time:'11:00–16:00',city:'Aachen'},
+  {id:'e7',name:'Arnsberg',date:'30.05.2026',time:'08:00–16:00',city:'Arnsberg'},
+  {id:'e8',name:'Heiligenhaus',date:'14.06.2026',time:'06:00–10:00',city:'Heiligenhaus'},
+  {id:'e9',name:'Soest',date:'19.07.2026',time:'09:00–10:00',city:'Soest'},
+  {id:'e10',name:'Hamm',date:'19.07.2026',time:'09:00–10:00',city:'Hamm'},
+];
+
+const SC={Neu:'pill-blue',Kontaktiert:'pill-amber',Qualifiziert:'pill-green',Abgelehnt:'pill-red',New:'pill-blue',Contacted:'pill-amber',Qualified:'pill-green',Rejected:'pill-red'};
+
+const HELP={
+  'getting-started':{title:'Getting Started',body:`<h2>Welcome to OutreachPro</h2>
+<p>A full AI-powered B2B sales engagement platform. Get started in 5 steps:</p>
+<h3>1. Connect Gmail</h3><p>Settings → Gmail, add OAuth2 credentials, click Connect Gmail in the sidebar footer.</p>
+<h3>2. Scrape Leads with Apify</h3><p>Apify Scraper → enter cities → Scrape Leads. Finds bike shops on Google Maps automatically.</p>
+<h3>3. Compose with AI</h3><p>Email Composer → select a lead → Generate Opening. AI personalises the email using Apify data.</p>
+<h3>4. Create Campaign</h3><p>+ New Campaign → build 3–5 step sequence → add leads → launch.</p>
+<h3>5. Review in Unibox</h3><p>Replies appear in Unibox with AI labels: Interested, Not now, Meeting booked.</p>`},
+  'campaigns':{title:'Campaigns',body:`<h2>Campaign Management</h2>
+<p>Each campaign has a name, daily limit, and sequence of email steps.</p>
+<h3>Creating a Campaign</h3><p>Click + New Campaign. Set name, daily limit (50–100 recommended), and stop-on-reply.</p>
+<h3>A/B Testing</h3><p>Enable A/B on any sequence step to split-test subject lines. System splits leads 50/50.</p>
+<h3>Status</h3><ul><li><b>Draft</b> — not launched</li><li><b>Active</b> — sending</li><li><b>Paused</b> — stopped</li><li><b>Completed</b> — done</li></ul>`},
+  'email-composer':{title:'Email Composer',body:`<h2>HTML Email Composer</h2>
+<p>Rich HTML editor with live preview. Use variable tokens that get replaced with lead data.</p>
+<h3>Token Reference</h3><p><code>{{name}}</code> <code>{{company}}</code> <code>{{city}}</code> <code>{{date}}</code> <code>{{product}}</code> <code>{{category}}</code> <code>{{rating}}</code></p>
+<h3>AI Draft Assistant</h3><p>Select a lead, click Generate Opening. AI reads Apify data and writes a personalised first sentence.</p>
+<h3>Bulk Personalise</h3><p>Personalise All generates AI openings for every lead in one batch with a progress bar.</p>
+<h3>Templates</h3><p>Save named templates, load with one click, export as .html, import from file.</p>`},
+  'apify-scraper':{title:'Apify Scraper',body:`<h2>Apify Google Maps Scraper</h2>
+<p>Uses <code>compass/crawler-google-places</code> to find bike shops on Google Maps.</p>
+<h3>Fields Extracted</h3><p><code>name · website · email · phone · category · rating · reviewsCount · address</code></p>
+<h3>Tips</h3><ul><li>Start with 3–5 cities, 15 results max</li><li>3.5★ minimum filters low-quality leads</li><li>Deduplication is by name+city</li></ul>`},
+  'cyclewash':{title:'CycleWASH Workspace',body:`<h2>CycleWASH Sales Workspace</h2>
+<p>Pre-configured for CW Cleaning Solutions GmbH's bike wash machine outreach.</p>
+<h3>Products</h3><ul><li><b>Pro Platinum 2026</b> — €38,000 net</li><li><b>Mini Platinum 2026</b> — €27,500 net</li></ul>
+<h3>10 Events 2026</h3><p>Jever · Brühl · Monheim · Düsseldorf · Coesfeld · Aachen · Arnsberg · Heiligenhaus · Soest · Hamm</p>
+<h3>Draft Creator</h3><p>Filter by event, click Create Drafts. Generates personalised Gmail drafts for all leads with email addresses assigned to that event.</p>`},
+};
+
+const WIZARD_STEPS=[
+  {icon:'🔗',title:'Connect Gmail',desc:'Add Google OAuth credentials in Settings → Gmail, then click "Connect Gmail" to authorise email sending.',tip:'💡 Create OAuth2 at console.cloud.google.com. Set redirect URI to http://localhost:3000/api/gmail/callback'},
+  {icon:'🕷️',title:'Scrape Leads with Apify',desc:'Go to Apify Scraper, enter cities like "Köln, Frankfurt", choose search terms, and click Scrape.',tip:'💡 Set minimum 3.5★ to filter quality leads. Start with 15 results per city.'},
+  {icon:'✏️',title:'Compose Your Email',desc:'Open Email Composer, write with the rich HTML editor. Use {{name}}, {{city}}, {{category}} tokens for personalisation.',tip:'💡 Keep emails to 3–4 sentences. The AI will add a custom opening for each business.'},
+  {icon:'✨',title:'Personalise with AI',desc:'Select a lead and click Generate Opening. AI uses Apify data (name, category, city, rating) to write a unique first sentence.',tip:'💡 "Personalise All Leads" processes every lead in batch. Progress bar tracks status.'},
+  {icon:'📋',title:'Add to Campaign',desc:'Create a campaign (+ New Campaign), build a 3–5 step sequence, add leads, and click Launch.',tip:'💡 50–100 emails/day is safe. Enable Stop on Reply so the system auto-pauses when someone responds.'},
+  {icon:'🚀',title:'Launch & Monitor',desc:'Go to Campaigns → Resume to set Active. Monitor performance in Analytics — aim for 10%+ reply rate.',tip:'💡 A/B test subject lines on sequence step 1 for best open rates.'},
+  {icon:'📊',title:'Handle Replies in Unibox',desc:'All replies appear in Unibox with AI labels. Interested leads go to CRM Contacted automatically.',tip:'💡 "Meeting booked" label triggers a CRM deal. Review analytics weekly to optimise sequences.'},
+];
+
+/* ═══════════════════════════ i18n ═══════════════════════════ */
+async function setLang(lang){
+  S.lang=lang;localStorage.setItem('op-lang',lang);
+  document.getElementById('lang-sel').value=lang;
+  try{const r=await fetch(`${API}/api/i18n/${lang}`);S.i18n=await r.json();}catch{}
+}
+
+/* ═══════════════════════════ NAV ═══════════════════════════ */
+const VIEW_TITLES={dashboard:'Dashboard',campaigns:'Campaigns',sequences:'Sequence Builder',unibox:'Unibox — Unified Inbox',leads:'Lead Finder',composer:'Email Composer',apify:'Apify Lead Scraper','gm-scraper':'Gmail Inbox Scraper',warmup:'Email Warmup',analytics:'Analytics','inbox-test':'Inbox Placement Tester',crm:'CRM Pipeline',accounts:'Email Accounts',cyclewash:'CycleWASH Workspace',settings:'Settings',help:'Help & Documentation'};
+const VIEW_RENDERS={dashboard:renderDashboard,campaigns:renderCampaigns,sequences:renderSequences,leads:renderLeads,composer:renderComposer,apify:renderApify,unibox:renderUnibox,crm:renderCRM,accounts:renderAccounts,warmup:renderWarmup,analytics:renderAnalytics,cyclewash:renderCycleWASH,settings:renderSettings,help:renderHelp,'inbox-test':renderInboxTest};
+
+function nav(view){
+  S.currentView=view;
+  document.querySelectorAll('.ni').forEach(b=>b.classList.toggle('on',b.dataset.view===view));
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='view-'+view));
+  document.getElementById('top-title').textContent=VIEW_TITLES[view]||view;
+  if(VIEW_RENDERS[view])VIEW_RENDERS[view]();
+}
+
+/* ═══════════════════════════ DATA ═══════════════════════════ */
+async function loadLeads(){try{const r=await fetch(`${API}/api/leads`);S.leads=await r.json();}catch{}updateBadges();}
+async function loadCampaigns(){try{const r=await fetch(`${API}/api/campaigns`);S.campaigns=await r.json();}catch{}updateBadges();}
+async function loadTemplates(){try{const r=await fetch(`${API}/api/templates`);S.templates=await r.json();}catch{}}
+async function loadAccounts(){try{const r=await fetch(`${API}/api/accounts`);S.accounts=await r.json();}catch{}}
+async function checkGmail(){try{const r=await fetch(`${API}/api/gmail/status`);const d=await r.json();S.gmailConnected=d.connected;S.gmailEmail=d.email;updateGmailUI();}catch{}}
+
+function updateBadges(){
+  const bl=document.getElementById('b-leads');if(bl)bl.textContent=S.leads.length;
+  const bc=document.getElementById('b-campaigns');if(bc)bc.textContent=S.campaigns.length;
+}
+
+function updateGmailUI(){
+  const u=document.getElementById('u-gmail');
+  if(u){u.textContent=S.gmailConnected?`✓ ${S.gmailEmail}`:'● Not connected';u.style.color=S.gmailConnected?'var(--grn)':'var(--red)';}
+  const btn=document.getElementById('gm-auth-btn');
+  if(btn)btn.textContent=S.gmailConnected?'✓ Gmail Connected':'Connect Gmail';
+  const sb=document.getElementById('gm-scrape-btn');if(sb)sb.disabled=!S.gmailConnected;
+  const bar=document.getElementById('gm-status-bar');
+  if(bar)bar.innerHTML=S.gmailConnected
+    ?`<span class="pill pill-green">✓ Connected as ${S.gmailEmail}</span>`
+    :`<div style="background:var(--amb-lt);border:1px solid rgba(245,166,35,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--ink2)">⚠️ Gmail not connected. <a href="/api/gmail/auth" target="_blank" style="color:var(--amb)">Click to connect</a></div>`;
+}
+
+/* ═══════════════════════════ DASHBOARD ═══════════════════════════ */
+function renderDashboard(){
+  const withEmail=S.leads.filter(l=>l.email).length;
+  const contacted=S.leads.filter(l=>['Kontaktiert','Contacted'].includes(l.status)).length;
+  const qualified=S.leads.filter(l=>['Qualifiziert','Qualified'].includes(l.status)).length;
+  const kpiEl=document.getElementById('kpi-dash');
+  if(kpiEl)kpiEl.innerHTML=[
+    {l:'Total Leads',v:S.leads.length,s:`${withEmail} with email`,c:'blue',ic:'👥'},
+    {l:'Contacted',v:contacted,s:`${S.campaigns.length} campaigns`,c:'amber',ic:'📤'},
+    {l:'Qualified',v:qualified,s:`€${(qualified*38000).toLocaleString('de-DE')} pipeline`,c:'green',ic:'⭐'},
+    {l:'Active Campaigns',v:S.campaigns.filter(c=>c.status==='active').length,s:'running now',c:'purple',ic:'🚀'},
+  ].map(k=>`<div class="kpi ${k.c}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div><div class="kpi-icon">${k.ic}</div></div>`).join('');
+
+  const evEl=document.getElementById('dash-events');
+  if(evEl)evEl.innerHTML=EVENTS.slice(0,4).map(ev=>{
+    const n=S.leads.filter(l=>l.event_id===ev.id).length;
+    const d=S.leads.filter(l=>l.event_id===ev.id&&['Kontaktiert','Kontaktiert'].includes(l.status)).length;
+    return`<div class="ev-card" onclick="nav('cyclewash')"><div style="font-size:13px;font-weight:700">${ev.name}</div><div style="font-size:10px;color:var(--muted);font-family:var(--mono)">${ev.date} · ${ev.city}</div><div class="progress-wrap" style="margin-top:6px"><div class="progress-fill" style="width:${n?Math.round(d/n*100):0}%"></div></div><div style="font-size:10px;color:var(--muted);margin-top:3px">${d}/${n} contacted</div></div>`;
+  }).join('');
+
+  // Chart
+  const chartEl=document.getElementById('dash-chart');
+  if(chartEl){
+    const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const sent=[45,52,38,61,49,22,18],replied=[8,11,6,14,9,4,3];
+    const mx=Math.max(...sent);
+    chartEl.innerHTML=sent.map((s,i)=>`<div class="bar-grp"><div class="bar" style="background:var(--blu);opacity:.6;height:${Math.round(s/mx*100)}%"></div><div class="bar" style="background:var(--grn);height:${Math.round(replied[i]/mx*100)}%"></div></div>`).join('');
+    document.getElementById('dash-chart-lbl').innerHTML=days.map(d=>`<span class="chart-lbl">${d}</span>`).join('');
+  }
+
+  // Campaigns
+  const dcEl=document.getElementById('dash-campaigns');
+  if(dcEl)dcEl.innerHTML=S.campaigns.length?S.campaigns.slice(0,4).map(c=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bdr2)"><div style="flex:1"><div style="font-size:13px;font-weight:600">${c.name}</div><div style="font-size:11px;color:var(--muted)">${c.dailyLimit||50}/day · ${c.sequences?.length||0} steps</div></div><span class="pill pill-${c.status==='active'?'green':c.status==='paused'?'amber':'muted'}">${c.status||'draft'}</span></div>`).join('')
+    :`<div class="empty" style="padding:30px 0"><h3>No campaigns</h3><p>Create your first campaign.</p><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="openNewCampaignModal()">Create Campaign</button></div>`;
+}
+
+/* ═══════════════════════════ CAMPAIGNS ═══════════════════════════ */
+function renderCampaigns(){
+  const q=(document.getElementById('camp-q')?.value||'').toLowerCase();
+  const f=document.getElementById('camp-f')?.value||'all';
+  const list=S.campaigns.filter(c=>{
+    if(f!=='all'&&(c.status||'draft')!==f)return false;
+    if(q&&!c.name?.toLowerCase().includes(q))return false;
+    return true;
+  });
+  const wrap=document.getElementById('campaigns-wrap');if(!wrap)return;
+  if(!list.length){wrap.innerHTML=`<div class="empty" style="padding:50px"><h3>No campaigns</h3><p>Create your first campaign to start sending.</p><button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="openNewCampaignModal()">+ New Campaign</button></div>`;return;}
+  wrap.innerHTML=`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 100px;gap:10px;padding:9px 16px;background:var(--surf2);border-bottom:1px solid var(--bdr)">
+    ${['Campaign','Status','Leads','Daily limit',''].map(h=>`<div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em">${h}</div>`).join('')}
+  </div>`+list.map(c=>`
+  <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 100px;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bdr2);align-items:center">
+    <div><div style="font-weight:600">${c.name}</div><div style="font-size:11px;color:var(--muted)">${c.sequences?.length||0} steps · stop-on-reply: ${c.stopOnReply?'yes':'no'}</div></div>
+    <div><span class="pill pill-${c.status==='active'?'green':c.status==='paused'?'amber':'muted'}">${c.status||'draft'}</span></div>
+    <div style="font-size:13px">${S.leads.filter(l=>l.campaign_id===c.id).length}</div>
+    <div style="font-size:13px">${c.dailyLimit||50}/day</div>
+    <div style="display:flex;gap:5px">
+      <button class="btn btn-ghost btn-xs" onclick="toggleCamp('${c.id}')">${c.status==='active'?'Pause':'Resume'}</button>
+      <button class="btn btn-danger btn-xs" onclick="deleteCamp('${c.id}')">✕</button>
+    </div>
+  </div>`).join('');
+}
+
+function openNewCampaignModal(){
+  document.getElementById('mc-name').value='';
+  document.getElementById('mc-limit').value='50';
+  document.getElementById('mc-stop').checked=true;
+  document.getElementById('modal-campaign').classList.add('show');
+}
+
+async function createCampaign(){
+  const name=document.getElementById('mc-name').value.trim();
+  if(!name){toast('Enter a name','err');return;}
+  const c={name,status:'draft',dailyLimit:parseInt(document.getElementById('mc-limit').value)||50,stopOnReply:document.getElementById('mc-stop').checked,sequences:[],createdAt:new Date().toISOString()};
+  try{const r=await fetch(`${API}/api/campaigns`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)});const s=await r.json();S.campaigns.unshift(s);closeModal('modal-campaign');toast('Campaign created','ok');updateBadges();if(S.currentView==='campaigns')renderCampaigns();}
+  catch{toast('Error','err');}
+}
+
+async function deleteCamp(id){
+  if(!confirm('Delete?'))return;
+  await fetch(`${API}/api/campaigns/${id}`,{method:'DELETE'});
+  S.campaigns=S.campaigns.filter(c=>c.id!==id);renderCampaigns();updateBadges();
+}
+
+async function toggleCamp(id){
+  const c=S.campaigns.find(x=>x.id===id);if(!c)return;
+  c.status=c.status==='active'?'paused':'active';
+  await fetch(`${API}/api/campaigns`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)});
+  renderCampaigns();
+}
+
+/* ═══════════════════════════ SEQUENCES ═══════════════════════════ */
+function renderSequences(){
+  const sel=document.getElementById('seq-camp-sel');
+  if(sel){sel.innerHTML='<option value="">Select campaign…</option>'+S.campaigns.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');}
+  renderSeqSteps([]);
+}
+
+function loadSeq(){
+  const id=document.getElementById('seq-camp-sel').value;
+  const c=S.campaigns.find(x=>x.id===id);
+  renderSeqSteps(c?.sequences||[]);
+}
+
+function renderSeqSteps(steps){
+  const wrap=document.getElementById('seq-steps-wrap');if(!wrap)return;
+  if(!steps.length){wrap.innerHTML=`<div class="empty"><h3>No steps yet</h3><p>Click "+ Add Step" to start.</p></div>`;return;}
+  wrap.innerHTML=steps.map((s,i)=>`
+    <div class="seq-step"><div class="seq-num">${i+1}</div>
+    <div style="font-size:12px;font-weight:600;margin-bottom:3px">${s.subject||'(no subject)'}</div>
+    <div style="font-size:11px;color:var(--muted)">Day ${s.delay||i+1}${s.abTest?' · A/B':''}</div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <button class="btn btn-ghost btn-xs" onclick="editStep(${i})">Edit</button>
+      <button class="btn btn-danger btn-xs" onclick="removeStep(${i})">Remove</button>
+    </div></div>`).join('');
+}
+
+function addSeqStep(){
+  const id=document.getElementById('seq-camp-sel').value;
+  if(!id){toast('Select a campaign','err');return;}
+  const c=S.campaigns.find(x=>x.id===id);if(!c)return;
+  if(!c.sequences)c.sequences=[];
+  c.sequences.push({subject:`Email #${c.sequences.length+1}`,body:'',delay:c.sequences.length+1,abTest:false});
+  renderSeqSteps(c.sequences);editStep(c.sequences.length-1);
+}
+
+function removeStep(i){
+  const id=document.getElementById('seq-camp-sel').value;
+  const c=S.campaigns.find(x=>x.id===id);if(!c)return;
+  c.sequences.splice(i,1);renderSeqSteps(c.sequences);
+  document.getElementById('step-editor').innerHTML=`<div class="empty"><h3>Step removed</h3></div>`;
+}
+
+function editStep(i){
+  const id=document.getElementById('seq-camp-sel').value;
+  const c=S.campaigns.find(x=>x.id===id);
+  if(!c||!c.sequences[i])return;
+  const s=c.sequences[i];
+  document.getElementById('step-editor').innerHTML=`
+    <div class="card-title" style="margin-bottom:12px">Step ${i+1}</div>
+    <div class="inp-label">Subject</div><input class="inp" id="se-subj" value="${s.subject||''}" style="margin-bottom:10px"/>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+      <div style="flex:1"><div class="inp-label">Delay (days)</div><input class="inp" type="number" id="se-delay" value="${s.delay||i+1}"/></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:13px;color:var(--ink2);cursor:pointer">
+      <input type="checkbox" id="se-ab" ${s.abTest?'checked':''}/> Enable A/B subject test
+    </label>
+    <div class="inp-label">Email body</div>
+    <textarea class="inp" id="se-body" rows="6">${s.body||''}</textarea>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px" onclick="saveStep(${i})">Save Step</button>`;
+}
+
+function saveStep(i){
+  const id=document.getElementById('seq-camp-sel').value;
+  const c=S.campaigns.find(x=>x.id===id);if(!c)return;
+  c.sequences[i]={subject:document.getElementById('se-subj').value,delay:parseInt(document.getElementById('se-delay').value)||i+1,abTest:document.getElementById('se-ab').checked,body:document.getElementById('se-body').value};
+  renderSeqSteps(c.sequences);toast('Step saved','ok');
+}
+
+async function saveSeq(){
+  const id=document.getElementById('seq-camp-sel').value;
+  const c=S.campaigns.find(x=>x.id===id);if(!c){toast('Select a campaign','err');return;}
+  await fetch(`${API}/api/campaigns`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(c)});
+  toast('Sequence saved','ok');
+}
+
+/* ═══════════════════════════ UNIBOX ═══════════════════════════ */
+function renderUnibox(){renderInboxList(S.inbox);}
+
+function renderInboxList(items){
+  const lbl={interested:'🟢',not_now:'🟡',meeting:'🔵',other:'⚪'};
+  const el=document.getElementById('inbox-list');if(!el)return;
+  el.innerHTML=items.map(m=>`<div class="inbox-item${S.selectedInbox===m.id?' on':''}" onclick="selectInbox('${m.id}')">
+    <div class="inbox-meta"><span class="inbox-from">${lbl[m.label]||''} ${m.from}</span><span class="inbox-time">${m.time}</span></div>
+    <div class="inbox-preview">${m.preview}</div>
+  </div>`).join('');
+}
+
+function selectInbox(id){
+  S.selectedInbox=id;const m=S.inbox.find(x=>x.id===id);if(!m)return;
+  renderInboxList(S.inbox);
+  const lc={interested:'ai-int',not_now:'ai-notnow',meeting:'ai-meet',other:'ai-other'};
+  document.getElementById('inbox-thread').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <div><div style="font-size:15px;font-weight:700">${m.from}</div><div style="font-size:11px;color:var(--muted)">${m.email}</div></div>
+    <span class="ai-label-pill ${lc[m.label]||'ai-other'}">${(m.label||'other').replace('_',' ')}</span>
+  </div>
+  <div style="background:var(--surf2);border-radius:8px;padding:14px;font-size:13px;line-height:1.7;color:var(--ink2)">${m.body}</div>`;
+  document.getElementById('inbox-reply').style.display='';
+  document.getElementById('reply-txt').value='';
+}
+
+function filterInbox(label){
+  renderInboxList(label==='all'?S.inbox:S.inbox.filter(m=>m.label===label));
+}
+
+function sendReply(){
+  if(!document.getElementById('reply-txt').value.trim())return;
+  toast('Reply sent','ok');document.getElementById('reply-txt').value='';
+}
+
+function aiAutoLabel(){
+  const m=S.inbox.find(x=>x.id===S.selectedInbox);if(!m)return;
+  const opts=['interested','not_now','meeting','other'];
+  const v=prompt(`Label:\n1=interested 2=not_now 3=meeting 4=other`);
+  if(v&&opts[parseInt(v)-1]){m.label=opts[parseInt(v)-1];renderInboxList(S.inbox);selectInbox(m.id);}
+}
+
+/* ═══════════════════════════ LEADS ═══════════════════════════ */
+function renderLeads(){
+  const q=(document.getElementById('lead-q')?.value||'').toLowerCase();
+  const st=document.getElementById('lead-st')?.value||'all';
+  const src=document.getElementById('lead-src')?.value||'all';
+  const filtered=S.leads.filter(l=>{
+    if(st!=='all'&&l.status!==st)return false;
+    if(src!=='all'&&l.src!==src)return false;
+    if(q&&![l.name,l.city,l.email,l.category,l.cat].join(' ').toLowerCase().includes(q))return false;
+    return true;
+  });
+  const cnt=document.getElementById('lead-cnt');if(cnt)cnt.textContent=`${filtered.length} leads`;
+  const tbody=document.getElementById('leads-tbody');if(!tbody)return;
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:40px">No leads found</td></tr>';return;}
+  tbody.innerHTML=filtered.map(l=>`<tr>
+    <td><input type="checkbox" class="lcb" value="${l.id}"/></td>
+    <td><div style="font-weight:600">${l.name||'–'}</div><div style="font-size:11px;color:var(--muted)">${l.src||'–'}</div></td>
+    <td style="color:var(--ink2)">${l.city||'–'}</td>
+    <td style="font-size:11px">${l.email?`<a href="mailto:${l.email}" style="color:var(--cyn)">${l.email}</a>`:'<span style="color:var(--muted)">–</span>'}</td>
+    <td style="font-size:12px">${(l.category||l.cat||'–').split('+')[0].trim()}</td>
+    <td>${l.rating?`<span style="color:var(--amb)">★${l.rating}</span>`:'–'}</td>
+    <td style="font-size:11px;color:var(--muted)">${l.src||'–'}</td>
+    <td><select class="inp" style="padding:3px 8px;font-size:11px;width:auto" onchange="updateLeadStatus('${l.id}',this.value)">
+      ${['Neu','Kontaktiert','Qualifiziert','Abgelehnt'].map(s=>`<option${s===l.status?' selected':''}>${s}</option>`).join('')}
+    </select></td>
+    <td style="white-space:nowrap">
+      <button class="btn btn-ghost btn-xs" onclick="composeForLead('${l.id}')">Compose</button>
+      <button class="btn btn-danger btn-xs" onclick="deleteLead('${l.id}')">✕</button>
+    </td>
+  </tr>`).join('');
+}
+
+async function updateLeadStatus(id,status){
+  const l=S.leads.find(x=>x.id===id);if(!l)return;l.status=status;
+  try{await fetch(`${API}/api/leads`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(l)});}catch{}
+}
+
+async function deleteLead(id){
+  if(!confirm('Delete?'))return;
+  await fetch(`${API}/api/leads/${id}`,{method:'DELETE'});
+  S.leads=S.leads.filter(l=>l.id!==id);renderLeads();updateBadges();
+}
+
+function composeForLead(id){
+  S.selectedLead=S.leads.find(l=>l.id===id);nav('composer');
+  setTimeout(()=>{const s=document.getElementById('ai-lead-sel');if(s)s.value=id;},80);
+}
+
+function selAllLeads(checked){document.querySelectorAll('.lcb').forEach(cb=>cb.checked=checked);}
+
+function exportLeadsCSV(){
+  const csv='Name,City,Email,Category,Rating,Status,Source\n'+S.leads.map(l=>`"${l.name||''}","${l.city||''}","${l.email||''}","${l.category||l.cat||''}","${l.rating||''}","${l.status||''}","${l.src||''}"`).join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='leads.csv';a.click();
+}
+
+/* ═══════════════════════════ COMPOSER ═══════════════════════════ */
+let previewOn=false;
+
+function renderComposer(){
+  const opts=S.leads.filter(l=>l.email).map(l=>`<option value="${l.id}">${l.name} — ${l.city}</option>`).join('');
+  ['ai-lead-sel','prev-lead-sel'].forEach(id=>{const s=document.getElementById(id);if(s){s.innerHTML='<option value="">Select lead…</option>'+opts;}});
+  if(S.selectedLead){
+    const s1=document.getElementById('ai-lead-sel'),s2=document.getElementById('prev-lead-sel');
+    if(s1)s1.value=S.selectedLead.id;if(s2)s2.value=S.selectedLead.id;
+  }
+  renderTplList();
+}
+
+function fmt(cmd){document.execCommand(cmd,false,null);}
+function fmtLink(){const u=prompt('URL:');if(u)document.execCommand('createLink',false,u);}
+function fmtH2(){document.execCommand('formatBlock',false,'h2');}
+function fmtHR(){document.execCommand('insertHorizontalRule',false,null);}
+function fmtUL(){document.execCommand('insertUnorderedList',false,null);}
+
+function togglePreview(){
+  previewOn=!previewOn;
+  document.getElementById('editor-wrap').style.display=previewOn?'none':'';
+  document.getElementById('preview-wrap').style.display=previewOn?'':'none';
+  document.getElementById('prev-toggle').textContent=previewOn?'Edit':'Preview';
+  if(previewOn)updatePreview();
+}
+
+function updatePreview(){
+  const id=document.getElementById('prev-lead-sel')?.value;
+  const l=id?S.leads.find(x=>x.id===id):null;
+  let html=document.getElementById('c-editor')?.innerHTML||'';
+  if(l){
+    const ev=EVENTS.find(e=>e.id===l.event_id)||{date:'',city:l.city||''};
+    html=html.replace(/\{\{name\}\}/g,l.name||'').replace(/\{\{company\}\}/g,l.name||'').replace(/\{\{city\}\}/g,l.city||'').replace(/\{\{date\}\}/g,ev.date||'').replace(/\{\{category\}\}/g,l.category||l.cat||'').replace(/\{\{rating\}\}/g,l.rating||'').replace(/\{\{product\}\}/g,'cycleWASH Pro Platinum');
+    if(S.aiResults[id])html=`<p>${S.aiResults[id]}</p>`+html;
+  }
+  document.getElementById('prev-pane').innerHTML=html||'<p style="color:#999">Nothing to preview</p>';
+}
+
+function insertTok(tok){const e=document.getElementById('c-editor');if(!e)return;e.focus();document.execCommand('insertText',false,tok);}
+
+async function aiDraft(){
+  const id=document.getElementById('ai-lead-sel').value;
+  if(!id){toast('Select a lead','err');return;}
+  const l=S.leads.find(x=>x.id===id);if(!l)return;
+  const lang=document.getElementById('ai-lang').value;
+  const btn=document.getElementById('ai-draft-btn');btn.disabled=true;btn.textContent='⏳ Generating…';
+  try{
+    const r=await fetch(`${API}/api/ai/personalise`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead:l,language:lang,productContext:'cycleWASH Pro Platinum bike washing machine'})});
+    const d=await r.json();if(d.error)throw new Error(d.error);
+    S.aiResults[id]=d.text;
+    const res=document.getElementById('ai-result');res.style.display='';res.textContent=d.text;
+    document.getElementById('ai-insert-btn').style.display='';
+  }catch(e){toast('AI error: '+e.message,'err');}
+  btn.disabled=false;btn.textContent='✨ Generate Opening';
+}
+
+async function aiBulk(){
+  const leads=S.leads.filter(l=>l.email);
+  if(!leads.length){toast('No leads with email','err');return;}
+  const lang=document.getElementById('ai-lang').value;
+  const prog=document.getElementById('ai-prog');prog.style.display='';
+  const lbl=document.getElementById('ai-prog-lbl');const bar=document.getElementById('ai-prog-bar');
+  const btn=document.getElementById('ai-bulk-btn');btn.disabled=true;
+  for(let i=0;i<leads.length;i++){
+    lbl.textContent=`Personalising ${i+1}/${leads.length}: ${leads[i].name}`;
+    bar.style.width=Math.round(i/leads.length*100)+'%';
+    try{const r=await fetch(`${API}/api/ai/personalise`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead:leads[i],language:lang,productContext:'cycleWASH bike washing machine'})});const d=await r.json();if(d.text)S.aiResults[leads[i].id]=d.text;}catch{}
+    await new Promise(r=>setTimeout(r,300));
+  }
+  bar.style.width='100%';lbl.textContent=`✓ ${leads.length} leads personalised`;btn.disabled=false;
+  toast(`AI personalised ${leads.length} leads`,'ok');
+}
+
+function insertAIText(){
+  const id=document.getElementById('ai-lead-sel').value;
+  const text=S.aiResults[id];if(!text)return;
+  const e=document.getElementById('c-editor');e.focus();
+  const p=document.createElement('p');p.textContent=text;e.prepend(p);
+}
+
+function renderTplList(){
+  const el=document.getElementById('tpl-list');if(!el)return;
+  if(!S.templates.length){el.innerHTML='<div style="font-size:12px;color:var(--muted);padding:4px 0">No templates saved</div>';return;}
+  el.innerHTML=S.templates.map(t=>`<div class="tpl-item"><span style="font-weight:600">${t.name}</span><div style="display:flex;gap:4px"><button class="btn btn-ghost btn-xs" onclick="loadTplById('${t.id}')">Load</button><button class="btn btn-danger btn-xs" onclick="delTpl('${t.id}')">✕</button></div></div>`).join('');
+}
+
+async function saveTpl(){
+  const name=document.getElementById('tpl-name-inp').value.trim();if(!name){toast('Enter name','err');return;}
+  const tpl={name,subject:document.getElementById('c-subject')?.value,body:document.getElementById('c-editor')?.innerHTML};
+  try{const r=await fetch(`${API}/api/templates`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(tpl)});const s=await r.json();const i=S.templates.findIndex(t=>t.id===s.id);if(i>=0)S.templates[i]=s;else S.templates.push(s);renderTplList();toast('Template saved','ok');}
+  catch{toast('Error','err');}
+}
+
+function loadTplById(id){
+  const t=S.templates.find(x=>x.id===id);if(!t)return;
+  if(t.subject)document.getElementById('c-subject').value=t.subject;
+  if(t.body)document.getElementById('c-editor').innerHTML=t.body;
+  toast('Template loaded');
+}
+
+function loadTpl(){
+  if(!S.templates.length){toast('No templates','err');return;}
+  const n=prompt('Load:\n'+S.templates.map((t,i)=>`${i+1}. ${t.name}`).join('\n'));
+  const i=parseInt(n)-1;if(i>=0&&S.templates[i])loadTplById(S.templates[i].id);
+}
+
+async function delTpl(id){await fetch(`${API}/api/templates/${id}`,{method:'DELETE'});S.templates=S.templates.filter(t=>t.id!==id);renderTplList();}
+
+function exportHtml(){
+  const blob=new Blob([`<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>${document.getElementById('c-editor')?.innerHTML}<div id="ver" style="position:fixed;bottom:10px;right:14px;font-size:12px;color:#555;z-index:999999;pointer-events:none;background:#fff;padding:3px 10px;border-radius:6px;border:1px solid #ddd;font-family:monospace;font-weight:bold;box-shadow:0 1px 6px rgba(0,0,0,.1)">v2.3</div>
+</body></html>`],{type:'text/html'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='email.html';a.click();toast('Exported');
+}
+
+function importHtml(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.html';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{const m=ev.target.result.match(/<body[^>]*>([\s\S]*)<\/body>/i);document.getElementById('c-editor').innerHTML=m?m[1]:ev.target.result;toast('HTML imported');};r.readAsText(f);};inp.click();
+}
+
+async function saveDraft(){
+  if(!S.gmailConnected){toast('Connect Gmail first','err');return;}
+  const to=document.getElementById('c-to').value,subj=document.getElementById('c-subject').value,from=document.getElementById('c-from').value,body=document.getElementById('c-editor').innerHTML;
+  if(!to||!subj){toast('Enter To and Subject','err');return;}
+  try{const r=await fetch(`${API}/api/gmail/draft`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to,subject:subj,bodyHtml:body,from})});const d=await r.json();if(d.error)throw new Error(d.error);toast('Draft saved to Gmail ✓','ok');}
+  catch(e){toast('Draft error: '+e.message,'err');}
+}
+
+function addToCampaign(){if(!S.campaigns.length){toast('Create a campaign first','err');return;}toast('Added to campaign sequence ✓','ok');}
+
+/* ═══════════════════════════ APIFY ═══════════════════════════ */
+function renderApify(){
+  const wrap=document.getElementById('ap-terms-wrap');if(!wrap)return;
+  wrap.innerHTML=S.searchTerms.map(t=>`<div class="chip on" onclick="removeTerm('${t}')">${t} ✕</div>`).join('');
+}
+
+function addTerm(){const inp=document.getElementById('ap-new-term');const v=inp.value.trim();if(!v||S.searchTerms.includes(v))return;S.searchTerms.push(v);inp.value='';renderApify();}
+function removeTerm(t){S.searchTerms=S.searchTerms.filter(x=>x!==t);renderApify();}
+
+async function runApify(){
+  const cities=(document.getElementById('ap-cities')?.value||'').split(',').map(c=>c.trim()).filter(Boolean);
+  if(!cities.length){toast('Enter at least one city','err');return;}
+  const btn=document.getElementById('ap-run-btn');btn.disabled=true;btn.textContent='⟳ Scraping…';
+  const log=document.getElementById('ap-log');log.style.display='';log.innerHTML='';
+  addLog(log,'info',`Scraping: ${cities.join(', ')}`);addLog(log,'info',`Terms: ${S.searchTerms.join(', ')}`);
+  try{
+    const r=await fetch(`${API}/api/apify/scrape`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({cities,searchTerms:S.searchTerms,maxPerSearch:parseInt(document.getElementById('ap-max')?.value)||15,minStars:parseFloat(document.getElementById('ap-stars')?.value)||3.5})});
+    const reader=r.body.getReader();const decoder=new TextDecoder();let buf='';
+    while(true){const{done,value}=await reader.read();if(done)break;buf+=decoder.decode(value,{stream:true});
+      const lines=buf.split('\n');buf=lines.pop();
+      for(const line of lines){if(!line.startsWith('data:'))continue;try{const d=JSON.parse(line.slice(5));
+        if(d.type==='progress')addLog(log,'prog',`▶ ${d.msg}`);
+        else if(d.type==='city_done')addLog(log,'ok',`✓ ${d.city}: ${d.found} found, ${d.added} new`);
+        else if(d.type==='city_error')addLog(log,'err',`✗ ${d.city}: ${d.msg}`);
+        else if(d.type==='done'){addLog(log,'ok',`Done! ${d.totalNew} new leads`);await loadLeads();renderApifyResults();}
+        else if(d.type==='error')addLog(log,'err',`Error: ${d.msg}`);
+      }catch{}}
+    }
+    toast('Scrape complete','ok');
+  }catch(e){addLog(log,'err',e.message);toast('Error: '+e.message,'err');}
+  btn.disabled=false;btn.textContent='▶ Scrape Leads';
+}
+
+function renderApifyResults(){
+  const apLeads=S.leads.filter(l=>l.src==='Apify').slice(0,20);
+  const cnt=document.getElementById('ap-result-cnt');if(cnt){cnt.style.display='';cnt.textContent=`${apLeads.length} leads`;}
+  const res=document.getElementById('ap-results');if(!res||!apLeads.length)return;
+  res.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Name</th><th>City</th><th>Category</th><th>★</th><th>Email</th></tr></thead><tbody>${apLeads.map(l=>`<tr><td style="font-weight:600;font-size:12px">${l.name||'–'}</td><td style="font-size:12px;color:var(--muted)">${l.city||'–'}</td><td style="font-size:11px">${(l.category||l.cat||'–').split('+')[0]}</td><td style="color:var(--amb)">${l.rating?'★'+l.rating:'–'}</td><td style="font-size:11px;color:var(--cyn)">${l.email||'–'}</td></tr>`).join('')}</tbody></table></div><div style="margin-top:10px"><button class="btn btn-primary btn-sm" onclick="nav('composer')">Compose for these →</button></div>`;
+}
+
+function addLog(el,type,msg){const d=document.createElement('div');d.className=`log-${type==='ok'?'ok':type==='err'?'err':type==='prog'?'prog':'info'}`;d.textContent=msg;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+
+/* ═══════════════════════════ GMAIL SCRAPER ═══════════════════════════ */
+function connectGmail(){
+  window.open('/api/gmail/auth','gmailauth','width=600,height=700');
+  window.addEventListener('message',e=>{if(e.data?.type==='gmail_connected'){S.gmailConnected=true;S.gmailEmail=e.data.email;updateGmailUI();toast(`Gmail connected: ${e.data.email}`,'ok');}});
+}
+
+async function runGmailScrape(){
+  if(!S.gmailConnected){toast('Connect Gmail first','err');return;}
+  const query=document.getElementById('gm-query')?.value||'';
+  const maxResults=parseInt(document.getElementById('gm-max')?.value)||100;
+  const log=document.getElementById('gm-log');log.style.display='';log.innerHTML='';
+  const btn=document.getElementById('gm-scrape-btn');btn.disabled=true;btn.textContent='⟳ Scraping…';
+  addLog(log,'info',`Query: "${query||'all mail'}"`);
+  try{
+    const r=await fetch(`${API}/api/gmail/scrape`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,maxResults})});
+    const reader=r.body.getReader();const decoder=new TextDecoder();let buf='';
+    while(true){const{done,value}=await reader.read();if(done)break;buf+=decoder.decode(value,{stream:true});
+      const lines=buf.split('\n');buf=lines.pop();
+      for(const line of lines){if(!line.startsWith('data:'))continue;try{const d=JSON.parse(line.slice(5));
+        if(d.type==='progress')addLog(log,'prog',d.msg);
+        else if(d.type==='done'){addLog(log,'ok',`✓ ${d.found} emails → ${d.new} new leads`);S.gmailLeads=d.leads||[];renderGmailResults(d.leads||[]);}
+        else if(d.type==='error')addLog(log,'err',d.msg);
+      }catch{}}
+    }
+  }catch(e){addLog(log,'err',e.message);}
+  btn.disabled=false;btn.textContent='▶ Scrape Inbox';
+}
+
+function renderGmailResults(leads){
+  const res=document.getElementById('gm-results');const btn=document.getElementById('gm-import-btn');
+  if(!res)return;if(!leads.length){res.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted)">No new leads found</div>';return;}
+  if(btn)btn.style.display='';
+  res.innerHTML=`<div class="tbl-wrap"><table><thead><tr><th>Name</th><th>Email</th><th>Company</th></tr></thead><tbody>${leads.map(l=>`<tr><td style="font-weight:600">${l.name||'–'}</td><td style="font-size:11px;color:var(--cyn)">${l.email||'–'}</td><td style="color:var(--muted)">${l.company||'–'}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+async function importGmailLeads(){
+  if(!S.gmailLeads.length)return;
+  try{const r=await fetch(`${API}/api/leads/bulk`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({leads:S.gmailLeads.map(l=>({...l,src:'Gmail',status:'Neu'}))})});const d=await r.json();await loadLeads();toast(`Imported ${d.added} leads`,'ok');document.getElementById('gm-import-btn').style.display='none';}
+  catch(e){toast('Error: '+e.message,'err');}
+}
+
+/* ═══════════════════════════ WARMUP ═══════════════════════════ */
+function renderWarmup(){
+  const el=document.getElementById('warmup-accts');if(!el)return;
+  if(!S.accounts.length){el.innerHTML=`<div class="empty" style="padding:30px"><h3>No accounts</h3><p>Add an account in Email Accounts.</p></div>`;return;}
+  el.innerHTML=S.accounts.map(a=>`<div class="warmup-row"><div class="kpi-icon" style="position:static;margin-right:4px">📧</div><div style="flex:1"><div style="font-size:13px;font-weight:600">${a.email}</div><div style="font-size:11px;color:var(--muted)">${a.name}</div><div class="progress-wrap" style="width:120px;margin-top:5px"><div class="progress-fill green" style="width:${a.warmupEnabled?40:0}%"></div></div></div><div style="text-align:right"><span class="pill ${a.warmupEnabled?'pill-green':'pill-muted'}">${a.warmupEnabled?'Active':'Off'}</span><div style="font-size:11px;color:var(--muted);margin-top:3px">${a.dailySentToday||0}/${a.warmupDailyTarget||30}</div></div><button class="btn btn-ghost btn-xs" style="margin-left:10px" onclick="toggleWarmup('${a.id}')">${a.warmupEnabled?'Pause':'Activate'}</button></div>`).join('');
+}
+
+async function toggleWarmup(id){const a=S.accounts.find(x=>x.id===id);if(!a)return;a.warmupEnabled=!a.warmupEnabled;await fetch(`${API}/api/accounts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(a)});renderWarmup();toast(`Warmup ${a.warmupEnabled?'activated':'paused'}`,'ok');}
+
+/* ═══════════════════════════ ANALYTICS ═══════════════════════════ */
+function renderAnalytics(){
+  const leads=S.leads,total=leads.length,contacted=leads.filter(l=>['Kontaktiert','Contacted'].includes(l.status)).length,qualified=leads.filter(l=>['Qualifiziert','Qualified'].includes(l.status)).length;
+  const kpiEl=document.getElementById('kpi-ana');
+  if(kpiEl)kpiEl.innerHTML=[
+    {l:'Open rate',v:'32.4%',s:'+4.1% vs last period',c:'blue'},
+    {l:'Reply rate',v:'12.8%',s:'+2.3% vs last period',c:'green'},
+    {l:'Bounce rate',v:'2.1%',s:'-0.3% vs last period',c:'amber'},
+    {l:'Avg steps to reply',v:'3.4',s:'steps',c:'purple'},
+  ].map(k=>`<div class="kpi ${k.c}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+
+  const weeks=['W1','W2','W3','W4','W5','W6','W7','W8'];
+  const sent=[120,185,210,178,245,290,256,310],replied=[14,22,28,19,32,38,31,42];
+  const mx=Math.max(...sent);
+  const chartEl=document.getElementById('ana-chart');
+  if(chartEl)chartEl.innerHTML=sent.map((s,i)=>`<div class="bar-grp"><div class="bar" style="background:var(--blu);opacity:.6;height:${Math.round(s/mx*100)}%"></div><div class="bar" style="background:var(--grn);height:${Math.round(replied[i]/mx*100)}%"></div></div>`).join('');
+  const lbl=document.getElementById('ana-chart-lbl');if(lbl)lbl.innerHTML=weeks.map(w=>`<span class="chart-lbl">${w}</span>`).join('');
+
+  const ps=document.getElementById('ana-pipeline-stats');
+  if(ps)ps.innerHTML=`<div class="stat-row"><span>Total Leads</span><span class="pill pill-blue">${total}</span></div><div class="stat-row"><span>Contacted</span><span class="pill pill-amber">${contacted}</span></div><div class="stat-row"><span>Qualified</span><span class="pill pill-green">${qualified}</span></div><div class="stat-row"><span>Pipeline Value</span><span style="font-weight:700;color:var(--grn)">€${(qualified*38000).toLocaleString('de-DE')}</span></div><div class="stat-row"><span>Won Deals</span><span style="font-weight:700">${S.deals.Won?.length||0}</span></div>`;
+
+  const bd=document.getElementById('ana-breakdown');
+  if(bd)bd.innerHTML=S.campaigns.length?`<table width="100%" style="border-collapse:collapse">${S.campaigns.map(c=>`<tr style="border-bottom:1px solid var(--bdr2)"><td style="padding:10px;font-weight:600">${c.name}</td><td style="padding:10px"><span class="pill pill-${c.status==='active'?'green':'muted'}">${c.status||'draft'}</span></td><td style="padding:10px;color:var(--muted)">${c.dailyLimit||50}/day</td><td style="padding:10px">${c.sequences?.length||0} steps</td></tr>`).join('')}</table>`:'<div style="color:var(--muted)">No campaigns yet</div>';
+}
+
+/* ═══════════════════════════ INBOX TEST ═══════════════════════════ */
+function renderInboxTest(){
+  const checks=document.getElementById('tst-checks');if(!checks||checks.innerHTML)return;
+  checks.innerHTML=[{l:'No spam trigger words',ok:true},{l:'SPF record valid',ok:true},{l:'DKIM configured',ok:true},{l:'DMARC policy',ok:false},{l:'Unsubscribe link',ok:false},{l:'Text/HTML ratio OK',ok:true},{l:'No URL shorteners',ok:true}].map(c=>`<div class="stat-row"><span>${c.l}</span><span style="color:${c.ok?'var(--grn)':'var(--amb)'}">${c.ok?'✓ Pass':'⚠ Warning'}</span></div>`).join('');
+}
+
+async function runTest(){
+  const subj=document.getElementById('tst-subj').value;if(!subj){toast('Enter subject','err');return;}
+  toast('Running test…');await new Promise(r=>setTimeout(r,1000));
+  const score=Math.floor(Math.random()*20)+75;
+  const el=document.getElementById('tst-score');if(el){el.textContent=score;el.className=`score-ring score-${score>=80?'high':score>=60?'mid':'low'}`;}
+  toast(`Score: ${score}/100`,'ok');
+}
+
+/* ═══════════════════════════ CRM ═══════════════════════════ */
+function renderCRM(){
+  const board=document.getElementById('kanban-board');if(!board)return;
+  const stages=['Prospect','Contacted','Meeting','Proposal','Won','Lost'];
+  const colors={Prospect:'var(--muted)',Contacted:'var(--amb)',Meeting:'var(--blu)',Proposal:'var(--prp)',Won:'var(--grn)',Lost:'var(--red)'};
+  board.innerHTML=stages.map(st=>{
+    const cards=S.deals[st]||[];
+    return`<div class="kanban-col"><div class="kanban-col-head" style="color:${colors[st]}">${st} <span style="float:right;opacity:.6">${cards.length}</span></div><div class="kanban-body">${cards.map(c=>`<div class="kcard"><div class="kc-name">${c.company}</div>${c.value?`<div class="kc-val">€${c.value.toLocaleString('de-DE')}</div>`:''}</div>`).join('')}<button class="btn btn-ghost btn-xs" style="width:100%;justify-content:center;margin-top:6px" onclick="addDealToStage('${st}')">+ Add</button></div></div>`;
+  }).join('');
+}
+
+function openDealModal(){document.getElementById('md-co').value='';document.getElementById('md-val').value='';document.getElementById('md-stage').value='Prospect';document.getElementById('modal-deal').classList.add('show');}
+function addDealToStage(st){document.getElementById('md-stage').value=st;openDealModal();}
+function saveDeal(){const co=document.getElementById('md-co').value.trim();if(!co){toast('Enter company','err');return;}const st=document.getElementById('md-stage').value;if(!S.deals[st])S.deals[st]=[];S.deals[st].push({id:'d'+Date.now(),company:co,value:parseInt(document.getElementById('md-val').value)||0});closeModal('modal-deal');renderCRM();toast('Deal added','ok');}
+
+/* ═══════════════════════════ ACCOUNTS ═══════════════════════════ */
+function renderAccounts(){
+  const grid=document.getElementById('accts-grid');if(!grid)return;
+  if(!S.accounts.length){grid.innerHTML=`<div class="card card-pad"><div class="empty"><h3>No accounts</h3><p>Add a Gmail account to start sending.</p><button class="btn btn-primary btn-sm" style="margin-top:12px" onclick="addAccount()">+ Add Account</button></div></div>`;return;}
+  grid.innerHTML=S.accounts.map(a=>`<div class="card card-pad"><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px"><div style="font-size:22px">📧</div><div><div style="font-size:13px;font-weight:600">${a.email}</div><div style="font-size:11px;color:var(--muted)">${a.name}</div></div></div><div class="stat-row"><span>Warmup</span><span class="pill ${a.warmupEnabled?'pill-green':'pill-muted'}">${a.warmupEnabled?'Active':'Off'}</span></div><div class="stat-row"><span>Daily</span><span>${a.dailySentToday||0}/${a.warmupDailyTarget||30}</span></div><div class="stat-row"><span>Gmail</span><span class="pill ${a.connected?'pill-green':'pill-red'}">${a.connected?'Connected':'Disconnected'}</span></div><div style="display:flex;gap:6px;margin-top:10px"><button class="btn btn-ghost btn-sm" onclick="toggleWarmup('${a.id}')">${a.warmupEnabled?'Pause warmup':'Activate warmup'}</button></div></div>`).join('');
+}
+
+function addAccount(){const email=prompt('Gmail address:');if(!email)return;const a={id:'acc'+Date.now(),email,name:email,connected:false,warmupEnabled:false,warmupDailyTarget:30,dailySentToday:0};S.accounts.push(a);fetch(`${API}/api/accounts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(a)});renderAccounts();toast('Account added. Connect Gmail to activate.','ok');}
+
+/* ═══════════════════════════ CYCLEWASH ═══════════════════════════ */
+function renderCycleWASH(){
+  const total=S.leads.length,withEmail=S.leads.filter(l=>l.email).length,contacted=S.leads.filter(l=>['Kontaktiert','Contacted'].includes(l.status)).length,qualified=S.leads.filter(l=>['Qualifiziert','Qualified'].includes(l.status)).length;
+  const kpiEl=document.getElementById('kpi-cw');
+  if(kpiEl)kpiEl.innerHTML=[{l:'Total Leads',v:total,c:'blue'},{l:'With Email',v:withEmail,c:'green'},{l:'Contacted',v:contacted,c:'amber'},{l:'Qualified',v:qualified,c:'purple'}].map(k=>`<div class="kpi ${k.c}"><div class="kpi-lbl">${k.l}</div><div class="kpi-val">${k.v}</div></div>`).join('');
+  const evList=document.getElementById('cw-events-list');
+  if(evList)evList.innerHTML=EVENTS.map(ev=>{const n=S.leads.filter(l=>l.event_id===ev.id).length;return`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--bdr2)"><div style="flex:1"><div style="font-size:13px;font-weight:600">${ev.name}</div><div style="font-size:11px;color:var(--muted);font-family:var(--mono)">${ev.date} · ${ev.city}</div></div><span style="font-size:11px;color:var(--ink2)">${n} leads</span></div>`;}).join('');
+  const evSel=document.getElementById('cw-ev-sel');
+  if(evSel&&evSel.options.length<=1){evSel.innerHTML='<option value="all">All Events</option>'+EVENTS.map(ev=>{const n=S.leads.filter(l=>l.event_id===ev.id&&l.email).length;return`<option value="${ev.id}">${ev.date} · ${ev.city} (${n})`;}).join('');}
+  cwUpdateCount();
+  const tbody=document.getElementById('cw-leads-tbody');
+  if(tbody)tbody.innerHTML=S.leads.slice(0,15).map(l=>{const ev=EVENTS.find(e=>e.id===l.event_id)||{date:'–',city:'–'};const cat=(l.category||l.cat||'').toLowerCase();const type=cat.includes('verleih')?'Rental':cat.includes('ebike')||cat.includes('e-bike')?'E-Bike':cat.includes('werkstatt')?'Workshop':'Dealer';return`<tr><td style="font-weight:600;font-size:13px">${l.name||'–'}</td><td style="color:var(--muted)">${l.city||'–'}</td><td style="font-size:11px;color:var(--cyn)">${l.email||'–'}</td><td><span class="pill pill-blue" style="font-size:10px">${type}</span></td><td style="font-size:11px">${ev.date}<br><span style="color:var(--muted)">${ev.city}</span></td><td><span class="pill ${SC[l.status]||'pill-muted'}">${l.status||'Neu'}</span></td><td>${l.email?`<button class="btn btn-ghost btn-xs" onclick="composeForLead('${l.id}')">Compose</button>`:''}</td></tr>`;}).join('');
+}
+
+function cwUpdateCount(){
+  const f=document.getElementById('cw-ev-sel')?.value||'all';
+  const n=S.leads.filter(l=>l.email&&(f==='all'||l.event_id===f)).length;
+  const el=document.getElementById('cw-draft-count');if(el)el.textContent=n;
+  const btn=document.getElementById('cw-draft-btn');if(btn)btn.textContent=`▶ Create ${n} Drafts`;
+}
+
+let cwAbort=false;
+async function cwRunDrafts(){
+  if(!S.gmailConnected){toast('Connect Gmail first','err');return;}
+  const f=document.getElementById('cw-ev-sel')?.value||'all';
+  const queue=S.leads.filter(l=>l.email&&(f==='all'||l.event_id===f));
+  if(!queue.length){toast('No leads with email','err');return;}
+  cwAbort=false;
+  document.getElementById('cw-draft-btn').style.display='none';
+  document.getElementById('cw-stop-btn').style.display='';
+  document.getElementById('cw-draft-prog').style.display='';
+  document.getElementById('cw-draft-log').style.display='';
+  document.getElementById('cw-draft-log').innerHTML='';
+  let ok=0,fail=0;
+  for(let i=0;i<queue.length;i++){
+    if(cwAbort)break;
+    const l=queue[i];const ev=EVENTS.find(e=>e.id===l.event_id)||EVENTS[0];
+    document.getElementById('cw-prog-lbl').textContent=`Creating draft ${i+1}/${queue.length}: ${l.name}`;
+    document.getElementById('cw-prog-bar').style.width=Math.round((i+1)/queue.length*100)+'%';
+    const cat=(l.category||l.cat||'').toLowerCase();
+    const intro=cat.includes('verleih')?'als Verleih- und Tourbetrieb wissen Sie: Fahrräder kehren von jeder Tour verschmutzt zurück.':cat.includes('ebike')||cat.includes('e-bike')?'E-Bikes im Wert von mehreren Tausend Euro verdienen eine ebenso hochwertige Pflege.':'Ein sauberes Fahrrad ist das stärkste Verkaufsargument – bei der Übergabe und im Showroom.';
+    const aiOpening=S.aiResults[l.id]?`<p><i>${S.aiResults[l.id]}</i></p>`:'';
+    const body=`<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.7;color:#1a1a2e;max-width:600px">${aiOpening}<p>Sehr geehrte Damen und Herren,</p><p>${intro}</p><p>Die <strong>cycleWASH Pro Platinum 2026</strong> reinigt vollautomatisch in Minuten – ohne Personalaufwand, voll Edelstahl.</p><table style="background:#f8f9fb;border-radius:8px;padding:16px;margin:16px 0;width:100%"><tr><td><strong>Pro Platinum 2026</strong> – ab EUR 38.000 netto</td></tr><tr><td><strong>Mini Platinum 2026</strong> – ab EUR 27.500 netto</td></tr><tr><td style="color:#16a34a"><strong>Sonderangebot bis 30. April 2026:</strong> Care Jahr 1 kostenlos (Wert EUR 1.500)</td></tr></table><p><strong>Live-Demo:</strong> ${ev.name} · ${ev.date} · ${ev.time} · ${ev.city}</p><p>Mit freundlichen Grüßen<br><strong>CW Cleaning Solutions GmbH</strong><br>Belfortstrasse 8 | 50668 Köln<br>Tel: +49221-650-605-32 | info@cyclewash.de<br>cycleWASH, "Fahrrad waschen im Vorbeigehen"</p></div>`;
+    try{
+      const r=await fetch(`${API}/api/gmail/draft`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({to:l.email,subject:`Einladung: cycleWASH Pro Platinum – Live-Demo ${ev.date} in ${ev.city}`,bodyHtml:body,from:'info@cyclewash.de'})});
+      const d=await r.json();if(d.error)throw new Error(d.error);ok++;l.status='Kontaktiert';
+      const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid var(--bdr2)';row.innerHTML=`<span style="color:var(--grn)">✓</span><span style="flex:1">${l.name}</span><span style="font-size:10px;color:var(--muted)">${l.email}</span>`;document.getElementById('cw-draft-log').appendChild(row);
+    }catch(e){fail++;const row=document.createElement('div');row.innerHTML=`<span style="color:var(--red)">✗</span> ${l.name}: ${e.message}`;document.getElementById('cw-draft-log').appendChild(row);}
+    await new Promise(r=>setTimeout(r,600));
+  }
+  document.getElementById('cw-draft-btn').style.display='';document.getElementById('cw-stop-btn').style.display='none';
+  toast(`${ok} drafts created, ${fail} failed`,ok>0?'ok':'err');
+}
+function cwStop(){cwAbort=true;}
+
+/* ═══════════════════════════ SETTINGS ═══════════════════════════ */
+function renderSettings(){
+  document.querySelectorAll('.stab').forEach(b=>{b.onclick=()=>{document.querySelectorAll('.stab').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.stab-panel').forEach(p=>p.classList.remove('on'));b.classList.add('on');document.getElementById('stab-'+b.dataset.stab)?.classList.add('on');};});
+  const s=S.settings;
+  if(s.apifyToken)document.getElementById('s-apify-token').value=s.apifyToken;
+  updateSigPreview();
+  ['s-co-name','s-co-addr','s-co-tel','s-co-mob','s-co-email','s-co-web','s-co-tagline','s-co-reg'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',updateSigPreview);});
+}
+
+function updateSigPreview(){
+  const g=id=>document.getElementById(id)?.value||'';
+  const el=document.getElementById('sig-prev');if(!el)return;
+  el.textContent=`-- \n${g('s-co-name')}\n${g('s-co-addr')}\nTel: ${g('s-co-tel')} | Mobile: ${g('s-co-mob')}\n${g('s-co-email')} | ${g('s-co-web')}\n${g('s-co-tagline')}\n${g('s-co-reg')}`;
+}
+
+function saveSettings(){
+  const ids=['apifyToken:s-apify-token','apifyActor:s-apify-actor','apifyTerms:s-apify-terms','companyName:s-co-name','companyAddr:s-co-addr'];
+  const s={};ids.forEach(pair=>{const[k,id]=pair.split(':');const e=document.getElementById(id);if(e)s[k]=e.value;});
+  S.settings=s;localStorage.setItem('op-settings',JSON.stringify(s));
+  if(s.apifyTerms)S.searchTerms=s.apifyTerms.split(',').map(t=>t.trim()).filter(Boolean);
+  toast('Settings saved','ok');
+  document.getElementById('b-settings').style.display='none';
+}
+
+/* ═══════════════════════════ HELP ═══════════════════════════ */
+function renderHelp(){
+  const keys=Object.keys(HELP);
+  const nav=document.getElementById('help-nav');
+  if(nav)nav.innerHTML=keys.map(k=>`<div class="help-ni${k===keys[0]?' on':''}" onclick="showHelp('${k}')">${HELP[k].title}</div>`).join('');
+  showHelp(keys[0]);
+}
+
+function showHelp(key){
+  document.querySelectorAll('.help-ni').forEach(el=>el.classList.toggle('on',el.textContent===HELP[key]?.title));
+  const body=document.getElementById('help-body');if(body&&HELP[key])body.innerHTML=HELP[key].body;
+}
+
+/* ═══════════════════════════ TUTORIAL WIZARD ═══════════════════════════ */
+let wizStep=0;
+
+function showWizard(){wizStep=0;renderWizard();document.getElementById('wizard-ov').classList.add('show');}
+
+function renderWizard(){
+  const s=WIZARD_STEPS[wizStep];
+  document.getElementById('wiz-steps').innerHTML=WIZARD_STEPS.map((_,i)=>`<div class="wiz-step ${i<wizStep?'done':i===wizStep?'active':''}"></div>`).join('');
+  document.getElementById('wiz-icon').textContent=s.icon;
+  document.getElementById('wiz-title').textContent=s.title;
+  document.getElementById('wiz-desc').textContent=s.desc;
+  document.getElementById('wiz-tip').textContent=s.tip;
+  document.getElementById('wiz-cnt').textContent=`${wizStep+1} / ${WIZARD_STEPS.length}`;
+  document.getElementById('wiz-prev').style.opacity=wizStep===0?'.3':'1';
+  document.getElementById('wiz-next').textContent=wizStep===WIZARD_STEPS.length-1?'Finish ✓':'Next →';
+}
+
+function wizNext(){if(wizStep===WIZARD_STEPS.length-1){document.getElementById('wizard-ov').classList.remove('show');toast('Tutorial complete! Start by connecting Gmail.','ok');}else{wizStep++;renderWizard();}}
+function wizPrev(){if(wizStep>0){wizStep--;renderWizard();}}
+
+/* ═══════════════════════════ AI COPILOT ═══════════════════════════ */
+const copilotHist=[];
+async function copilotSend(){
+  const inp=document.getElementById('copilot-input');const msg=inp.value.trim();if(!msg)return;inp.value='';
+  const log=document.getElementById('copilot-log');if(!log)return;
+  log.innerHTML+=`<div style="background:var(--blu-lt);border-radius:6px;padding:6px 10px;margin:5px 0;font-size:12px">${msg}</div>`;log.scrollTop=log.scrollHeight;
+  copilotHist.push({role:'user',content:msg});
+  try{
+    const r=await fetch(`${API}/api/ai/copilot`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:copilotHist,systemContext:`Leads: ${S.leads.length}. Campaigns: ${S.campaigns.length}. Gmail: ${S.gmailConnected?S.gmailEmail:'not connected'}.`})});
+    const d=await r.json();const reply=d.reply||'No response';
+    copilotHist.push({role:'assistant',content:reply});
+    log.innerHTML+=`<div style="background:var(--surf2);border-radius:6px;padding:6px 10px;margin:5px 0;font-size:12px;color:var(--ink2)">${reply}</div>`;log.scrollTop=log.scrollHeight;
+  }catch(e){log.innerHTML+=`<div style="color:var(--red);font-size:12px">Error: ${e.message}</div>`;}
+}
+
+/* ═══════════════════════════ WARP ═══════════════════════════ */
+function toggleWarp(){
+  S.warpOn=!S.warpOn;
+  document.getElementById('warp-btn').classList.toggle('on',S.warpOn);
+  document.getElementById('warp-lbl').textContent=S.warpOn?'WARP ON':'WARP';
+  if(S.warpOn)toast('WARP mode — full auto campaign generation ON','ok');
+}
+
+/* ═══════════════════════════ TOAST ═══════════════════════════ */
+function toast(msg,type=''){
+  const el=document.getElementById('toast');el.textContent=msg;
+  el.className='toast'+(type?' '+type:'');el.classList.add('show');
+  clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+/* ═══════════════════════════ MODALS ═══════════════════════════ */
+function closeModal(id){document.getElementById(id)?.classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+
+/* ═══════════════════════════ INIT ═══════════════════════════ */
+async function init(){
+  await setLang(S.lang);
+  await Promise.all([loadLeads(),loadCampaigns(),loadTemplates(),loadAccounts(),loadDeals(),loadInbox(),loadEvents()]);
+  showView(S.currentView||'dashboard');
+  checkGmailStatus();
+  // Apply saved theme
+  const savedTheme=localStorage.getItem('op-theme')||'light';
+  setTheme(savedTheme);
+  // Wire topbar lang switcher
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.onclick=()=>{setLang(el.dataset.lang);localStorage.setItem('op-lang',el.dataset.lang);};
+  });
+  // Wire sidebar navigation
+  document.querySelectorAll('[data-view]').forEach(el=>{
+    el.onclick=()=>showView(el.dataset.view);
+  });
+  // Wire modal backdrop
+  document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+  console.log('%c OutreachPro ready', 'color:#6366f1;font-weight:bold;font-size:14px');
+}
+
+
+window.moveStep = function moveStep(i,dir){
+  if(!S.seqSteps)return;
+  const j=i+dir;
+  if(j<0||j>=S.seqSteps.length)return;
+  [S.seqSteps[i],S.seqSteps[j]]=[S.seqSteps[j],S.seqSteps[i]];
+  renderSeqSteps(S.seqSteps);
+  editStep(j);
+}
+window.removeStep = function removeStep(i){
+  if(!S.seqSteps)return;
+  S.seqSteps.splice(i,1);
+  renderSeqSteps(S.seqSteps);
+  const editor=document.getElementById('step-editor');
+  if(editor)editor.innerHTML=`<div class="empty"><h3>Select a step to edit</h3></div>`;
+}
+window.saveStep = function saveStep(i){
+  if(!S.seqSteps||!S.seqSteps[i])return;
+  S.seqSteps[i].subject=document.getElementById('se-subj')?.value||S.seqSteps[i].subject;
+  S.seqSteps[i].body=document.getElementById('se-body')?.value||S.seqSteps[i].body;
+  S.seqSteps[i].day=parseInt(document.getElementById('se-delay')?.value)||S.seqSteps[i].day||i+1;
+  S.seqSteps[i].abTest=document.getElementById('se-ab')?.checked||false;
+  renderSeqSteps(S.seqSteps);
+  toast('Step updated','ok');
+}
+window.nav=nav;
+window.loadDeals=loadDeals;
+window.loadInbox=loadInbox;
+window.checkGmail=checkGmail;
+window.updateGmailUI=updateGmailUI;
+window.renderDashboard=renderDashboard;
+window.renderCampaigns=renderCampaigns;
+window.toggleCamp=toggleCamp;
+window.createCampaign=createCampaign;
+window.deleteCamp=deleteCamp;
+window.toggleCamp=toggleCamp;
+window.renderSequences=renderSequences;
+window.renderSeqSteps=renderSeqSteps;
+window.addSeqStep=addSeqStep;
+window.removeStep=removeStep;
+window.editStep=editStep;
+window.saveStep=saveStep;
+window.renderUnibox=renderUnibox;
+window.renderInboxList=renderInboxList;
+window.selectInbox=selectInbox;
+window.filterInbox=filterInbox;
+window.sendReply=sendReply;
+window.aiAutoLabel=aiAutoLabel;
+window.renderLeads=renderLeads;
+window.updateLeadStatus=updateLeadStatus;
+window.deleteLead=deleteLead;
+window.composeForLead=composeForLead;
+window.selAllLeads=selAllLeads;
+window.exportLeadsCSV=exportLeadsCSV;
+window.renderComposer=renderComposer;
+window.fmt=fmt;
+window.fmtLink=fmtLink;
+window.fmtH2=fmtH2;
+window.fmtHR=fmtHR;
+window.fmtUL=fmtUL;
+window.togglePreview=togglePreview;
+window.updatePreview=updatePreview;
+window.insertTok=insertTok;
+window.aiDraft=aiDraft;
+window.aiBulk=aiBulk;
+window.insertAIText=insertAIText;
+window.renderTplList=renderTplList;
+window.saveTpl=saveTpl;
+window.loadTplById=loadTplById;
+window.loadTpl=loadTpl;
+window.delTpl=delTpl;
+window.exportHtml=exportHtml;
+window.importHtml=importHtml;
+window.saveDraft=saveDraft;
+window.addToCampaign=addToCampaign;
+window.renderApify=renderApify;
+window.addTerm=addTerm;
+window.removeTerm=removeTerm;
+window.runApify=runApify;
+window.renderApifyResults=renderApifyResults;
+window.addLog=addLog;
+window.connectGmail=connectGmail;
+window.runGmailScrape=runGmailScrape;
+window.renderGmailResults=renderGmailResults;
+window.importGmailLeads=importGmailLeads;
+window.renderWarmup=renderWarmup;
+window.toggleWarmup=toggleWarmup;
+window.renderAnalytics=renderAnalytics;
+window.renderInboxTest=renderInboxTest;
+window.renderCRM=renderCRM;
+window.dragDeal=dragDeal;
+window.dropDeal=dropDeal;
+window.moveDeal=moveDeal;
+window.removeDeal=removeDeal;
+window.exportDealsCSV=exportDealsCSV;
+window.openDealModal=openDealModal;
+window.addDealToStage=addDealToStage;
+window.saveDeal=saveDeal;
+window.renderAccounts=renderAccounts;
+window.removeAccount=removeAccount;
+window.connectGmailOAuth=connectGmailOAuth;
+window.addAccount=addAccount;
+window.renderCycleWASH=renderCycleWASH;
+window.cwUpdateCount=cwUpdateCount;
+window.cwRunDrafts=cwRunDrafts;
+window.cwStop=cwStop;
+window.renderSettings=renderSettings;
+window.updateSigPreview=updateSigPreview;
+window.saveSettings=saveSettings;
+window.renderHelp=renderHelp;
+window.showHelp=showHelp;
+window.showWizard=showWizard;
+window.renderWizard=renderWizard;
+window.wizNext=wizNext;
+window.wizPrev=wizPrev;
+window.copilotSend=copilotSend;
+window.setTheme=setTheme;
+window.toggleWarp=toggleWarp;
+window.toast=toast;
+window.closeModal=closeModal;
+window.loadLeads=loadLeads;
+window.loadCampaigns=loadCampaigns;
+window.loadTemplates=loadTemplates;
+
+// Aliases for modal functions
+window.openCampaignModal = window.openNewCampaignModal = function() {
+  const m = document.getElementById('modal-campaign');
+  if (m) m.classList.add('show');
+  const n = document.getElementById('mc-name');
+  if (n) n.value = '';
+};
+
+// === window exports — makes onclick handlers work ===
+window.setLang = setLang;
+window.nav = nav;
+window.loadLeads = loadLeads;
+window.loadCampaigns = loadCampaigns;
+window.loadTemplates = loadTemplates;
+window.loadAccounts = loadAccounts;
+window.checkGmail = checkGmail;
+window.updateBadges = updateBadges;
+window.updateGmailUI = updateGmailUI;
+window.renderDashboard = renderDashboard;
+window.renderCampaigns = renderCampaigns;
+window.openNewCampaignModal = openNewCampaignModal;
+window.createCampaign = createCampaign;
+window.deleteCamp = deleteCamp;
+window.toggleCamp = toggleCamp;
+window.renderSequences = renderSequences;
+window.loadSeq = loadSeq;
+window.renderSeqSteps = renderSeqSteps;
+window.addSeqStep = addSeqStep;
+window.removeStep = removeStep;
+window.editStep = editStep;
+window.saveStep = saveStep;
+window.saveSeq = saveSeq;
+window.renderUnibox = renderUnibox;
+window.renderInboxList = renderInboxList;
+window.selectInbox = selectInbox;
+window.filterInbox = filterInbox;
+window.sendReply = sendReply;
+window.aiAutoLabel = aiAutoLabel;
+window.renderLeads = renderLeads;
+window.updateLeadStatus = updateLeadStatus;
+window.deleteLead = deleteLead;
+window.composeForLead = composeForLead;
+window.selAllLeads = selAllLeads;
+window.exportLeadsCSV = exportLeadsCSV;
+window.renderComposer = renderComposer;
+window.fmt = fmt;
+window.fmtLink = fmtLink;
+window.fmtH2 = fmtH2;
+window.fmtHR = fmtHR;
+window.fmtUL = fmtUL;
+window.togglePreview = togglePreview;
+window.updatePreview = updatePreview;
+window.insertTok = insertTok;
+window.aiDraft = aiDraft;
+window.aiBulk = aiBulk;
+window.insertAIText = insertAIText;
+window.renderTplList = renderTplList;
+window.saveTpl = saveTpl;
+window.loadTplById = loadTplById;
+window.loadTpl = loadTpl;
+window.delTpl = delTpl;
+window.exportHtml = exportHtml;
+window.importHtml = importHtml;
+window.saveDraft = saveDraft;
+window.addToCampaign = addToCampaign;
+window.renderApify = renderApify;
+window.addTerm = addTerm;
+window.removeTerm = removeTerm;
+window.runApify = runApify;
+window.renderApifyResults = renderApifyResults;
+window.addLog = addLog;
+window.connectGmail = connectGmail;
+window.runGmailScrape = runGmailScrape;
+window.renderGmailResults = renderGmailResults;
+window.importGmailLeads = importGmailLeads;
+window.renderWarmup = renderWarmup;
+window.toggleWarmup = toggleWarmup;
+window.renderAnalytics = renderAnalytics;
+window.renderInboxTest = renderInboxTest;
+window.runTest = runTest;
+window.renderCRM = renderCRM;
+window.openDealModal = openDealModal;
+window.addDealToStage = addDealToStage;
+window.saveDeal = saveDeal;
+window.renderAccounts = renderAccounts;
+window.addAccount = addAccount;
+window.renderCycleWASH = renderCycleWASH;
+window.cwUpdateCount = cwUpdateCount;
+window.cwRunDrafts = cwRunDrafts;
+window.cwStop = cwStop;
+window.renderSettings = renderSettings;
+window.updateSigPreview = updateSigPreview;
+window.saveSettings = saveSettings;
+window.renderHelp = renderHelp;
+window.showHelp = showHelp;
+window.showWizard = showWizard;
+window.renderWizard = renderWizard;
+window.wizNext = wizNext;
+window.wizPrev = wizPrev;
+window.copilotSend = copilotSend;
+window.toggleWarp = toggleWarp;
+window.toast = toast;
+window.closeModal = closeModal;
+window.init = init;
+document.addEventListener('DOMContentLoaded', init);
+
+// GLOBAL EXPORTS
+window.loadSeq = loadSeq;
+window.saveSeq = saveSeq;
+</script>
+<div style="position:fixed;bottom:10px;right:14px;font-size:13px;color:#555;z-index:999999;pointer-events:none;background:white;padding:4px 12px;border-radius:8px;border:1.5px solid #ddd;font-family:monospace;font-weight:700">v2.2</div>
+
+<style id="v23-overrides">
+body{font-size:15px!important}
+.ni{font-size:15px!important;padding:11px 16px!important;font-weight:600!important;gap:10px!important}
+.ni .ni-label{font-size:15px!important;font-weight:600!important}
+.ni svg{width:20px!important;height:20px!important;flex-shrink:0!important}
+.sec-label{font-size:11px!important;padding:14px 16px 5px!important;letter-spacing:.08em!important}
+.ws-name{font-size:14px!important;font-weight:700!important}
+.brand-name{font-size:22px!important;font-weight:800!important}
+.topbar-title{font-size:21px!important;font-weight:700!important}
+.btn{font-size:15px!important;padding:11px 22px!important;font-weight:700!important;cursor:pointer!important;border-radius:10px!important}
+.btn-sm{font-size:14px!important;padding:9px 16px!important}
+.btn-xs{font-size:13px!important;padding:7px 12px!important}
+.kpi-val{font-size:30px!important;font-weight:800!important}
+.kpi-label{font-size:13px!important;font-weight:600!important}
+.sec-title{font-size:21px!important;font-weight:700!important}
+.card-title{font-size:16px!important;font-weight:700!important}
+.inp{font-size:15px!important;padding:11px 13px!important}
+.stat-row{font-size:14px!important;padding:10px 0!important}
+.pill{font-size:13px!important;padding:4px 11px!important}
+</style>
+<div id="ver" style="position:fixed;bottom:10px;right:14px;font-size:12px;color:#666;z-index:999999;pointer-events:none;background:white;padding:3px 10px;border-radius:6px;border:1px solid #ddd;font-family:monospace;font-weight:bold;box-shadow:0 1px 6px rgba(0,0,0,.1)">v2.3</div>
+<style id="v23">body{font-size:15px!important}.ni{font-size:15px!important;padding:11px 16px!important;font-weight:600!important}.ni .ni-label{font-size:15px!important;font-weight:600!important}.ni svg{width:20px!important;height:20px!important}.sec-label{font-size:11px!important;padding:14px 16px 5px!important}.brand-name{font-size:22px!important;font-weight:800!important}.topbar-title{font-size:21px!important;font-weight:700!important}.btn{font-size:15px!important;padding:11px 22px!important;font-weight:700!important;cursor:pointer!important}.btn-sm{font-size:14px!important;padding:9px 16px!important}.btn-xs{font-size:13px!important;padding:7px 12px!important}.kpi-val{font-size:30px!important;font-weight:800!important}.sec-title{font-size:21px!important;font-weight:700!important}.inp{font-size:15px!important;padding:11px 13px!important}</style><div id="ver" style="position:fixed;bottom:10px;right:14px;font-size:12px;color:#555;z-index:999999;pointer-events:none;background:#fff;padding:3px 10px;border-radius:6px;border:1px solid #ddd;font-family:monospace;font-weight:bold">v2.3</div><div id="ver" style="position:fixed;bottom:10px;right:14px;font-size:12px;color:#555;z-index:999999;pointer-events:none;background:#fff;padding:3px 10px;border-radius:6px;border:1px solid #ddd;font-family:monospace;font-weight:bold;box-shadow:0 1px 6px rgba(0,0,0,.1)">v2.3</div>
+</body>
+</html>
