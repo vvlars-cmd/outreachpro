@@ -824,11 +824,6 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/api/db/status', (req, res) => {
-  const { USE_SUPABASE } = require('./db.js');
-  res.json({ storage: USE_SUPABASE ? 'supabase' : 'json-files', persistent: USE_SUPABASE, supabaseUrl: process.env.SUPABASE_URL || null });
-});
-
 app.listen(PORT, () => {
   console.log(`\n OutreachPro running at http://localhost:${PORT}`);
   console.log(` Anthropic API: ${process.env.ANTHROPIC_API_KEY ? 'SET' : 'NOT SET'}`);
